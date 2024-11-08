@@ -1,0 +1,3 @@
+npm install --save-dev prettier
+npm install @react-navigation/native
+npm install @react-navigation/stack
