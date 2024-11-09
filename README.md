@@ -10,3 +10,5 @@ To install project dependencies, use the following commands:
 npm install @react-navigation/native
 npm install @react-navigation/stack
 npm install --save-dev prettier
+npm install react-native-paper react-native-vector-icons
+
