@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const substances = [
   { id: 1, name: 'Anabolic Steroids', category: 'Banned' },
@@ -79,6 +81,58 @@ const SubstanceSortGame = () => {
   const [requiresMedicalExceptionItems, setRequiresMedicalExceptionItems] = useState([]);
   const [score, setScore] = useState(0);
   const [availableSubstances, setAvailableSubstances] = useState([...substances]);
+  const [userName, setUserName] = useState('Player');
+
+  useEffect(() => {
+    loadUserName();
+  }, []);
+
+  const loadUserName = async () => {
+    try {
+      const userData = await AsyncStorage.getItem('userData');
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        setUserName(parsedData.first_name || 'Player');
+      }
+    } catch (error) {
+      console.error('Error loading user name:', error);
+    }
+  };
+
+  const submitScore = async (finalScore) => {
+    try {
+      const userData = await AsyncStorage.getItem('userData');
+      if (!userData) {
+        console.error('No user data found');
+        return;
+      }
+
+      const parsedData = JSON.parse(userData);
+      const userId = parsedData.id;
+
+      console.log('Submitting score:', {
+        game_name: 'substance_sort',
+        score: finalScore,
+        user_id: userId
+      });
+
+      const response = await axios.post('http://127.0.0.1:8000/game-scores', {
+        game_name: 'substance_sort',
+        score: finalScore,
+        user_id: userId
+      });
+
+      console.log('Score submission response:', response.data);
+      Alert.alert('Score Submitted', `You scored ${finalScore} points!`);
+    } catch (error) {
+      console.error('Full error details:', error);
+      console.error('Error response:', error.response?.data);
+      Alert.alert(
+        'Score Submission Failed', 
+        error.response?.data?.detail || 'Please check your connection and try again.'
+      );
+    }
+  };
 
   const handleDrop = (id, category) => {
     const droppedSubstance = availableSubstances.find((substance) => substance.id === id);
@@ -100,11 +154,12 @@ const SubstanceSortGame = () => {
       setScore((prevScore) => prevScore + (droppedSubstance.category === 'Requires Medical Exception' ? 1 : -1));
     }
 
-    if (
-      bannedItems.length + permittedItems.length + requiresMedicalExceptionItems.length ===
-      substances.length
-    ) {
+    if (availableSubstances.length === 0) {
       Alert.alert('Game Completed', 'You have successfully sorted all the substances!');
+      submitScore(score);
+    } {
+      Alert.alert('Game Completed', 'You have successfully sorted all the substances!');
+      submitScore(score); // Add score submission when game is completed
     }
   };
 

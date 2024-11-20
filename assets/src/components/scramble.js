@@ -2,6 +2,10 @@ import React, { useState, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { ArrowLeft } from 'lucide-react-native';
 import ConfettiCannon from 'react-native-confetti-cannon';
+import { useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { Alert } from 'react-native';
 
 const App = ({ navigation }) => {
   const [scrambleData, setScrambleData] = useState([
@@ -102,12 +106,67 @@ const App = ({ navigation }) => {
   const [showHint, setShowHint] = useState(false);
   const [answerStatus, setAnswerStatus] = useState('');
   const [showDetail, setShowDetail] = useState(false);
+  const [score, setScore] = useState(0);
+  const [userName, setUserName] = useState('Player');
   const confettiRef = useRef(null);
+
+  useEffect(() => {
+    loadUserName();
+  }, []);
+
+  const loadUserName = async () => {
+    try {
+      const userData = await AsyncStorage.getItem('userData');
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        setUserName(parsedData.first_name || 'Player');
+      }
+    } catch (error) {
+      console.error('Error loading user name:', error);
+    }
+  };
+
+  const submitScore = async (finalScore) => {
+    try {
+      const userData = await AsyncStorage.getItem('userData');
+      if (!userData) {
+        console.error('No user data found');
+        return;
+      }
+  
+      const parsedData = JSON.parse(userData);
+      const userId = parsedData.id;
+  
+      console.log('Submitting score:', {
+        game_name: 'word_scramble',
+        score: finalScore,
+        user_id: userId
+      });
+  
+      const response = await axios.post('http://127.0.0.1:8000/game-scores', {
+        game_name: 'word_scramble',
+        score: finalScore,
+        user_id: userId
+      });
+  
+      console.log('Score submission response:', response.data);
+      Alert.alert('Score Submitted', `You scored ${finalScore} points!`);
+    } catch (error) {
+      console.error('Full error details:', error);
+      console.error('Error response:', error.response?.data);
+      Alert.alert(
+        'Score Submission Failed', 
+        error.response?.data?.detail || 'Please check your connection and try again.'
+      );
+    }
+  };
 
   // Check the answer
   const checkAnswer = () => {
     const currentWord = scrambleData[currentWordIndex];
     if (input.trim().toUpperCase() === currentWord.answer.toUpperCase()) {
+      const newScore = score + 10; // Award 10 points for correct answer
+      setScore(newScore);
       setAnswerStatus({ type: 'correct', message: "Correct! You've got it right!" });
       setShowDetail(true);
       // Trigger confetti
@@ -133,6 +192,8 @@ const App = ({ navigation }) => {
       setAnswerStatus('');
       setShowDetail(false);
     } else {
+      // Game completed - submit final score
+      submitScore(score);
       setAnswerStatus({ type: 'completed', message: "Well Done! You've completed all the words!" });
     }
   };
@@ -147,6 +208,7 @@ const App = ({ navigation }) => {
       </TouchableOpacity>
 
       <Text style={styles.title}>Anti-Doping Word Scramble</Text>
+      <Text style={styles.scoreText}>Score: {score}</Text>
       <Text style={styles.scrambledText}>{scrambleData[currentWordIndex].scrambled}</Text>
 
       {showHint && (
@@ -300,6 +362,12 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   detailTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+  },
+  scoreText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',

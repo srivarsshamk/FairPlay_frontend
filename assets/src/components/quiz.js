@@ -9,6 +9,9 @@ import {
   Modal,
 } from 'react-native';
 import { ArrowLeft } from 'lucide-react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { Alert } from 'react-native';
 
 // Quiz questions database
 const questions = [
@@ -268,6 +271,49 @@ const Quiz = ({ navigation }) => {
   const [timeLeft, setTimeLeft] = useState(TIME_PER_QUESTION);
   const [showFact, setShowFact] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
+  const [userName, setUserName] = useState('Player');
+
+  useEffect(() => {
+    loadUserName();
+  }, []);
+
+  const loadUserName = async () => {
+    try {
+      const userData = await AsyncStorage.getItem('userData');
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        setUserName(parsedData.first_name || 'Player');
+      }
+    } catch (error) {
+      console.error('Error loading user name:', error);
+    }
+  };
+
+  const submitScore = async (finalScore) => {
+    try {
+      const userData = await AsyncStorage.getItem('userData');
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        const userId = parsedData.id;
+  
+        const scoreData = {
+          game_name: 'doping-quiz',
+          score: finalScore,
+          user_id: userId
+        };
+  
+        const response = await axios.post('http://127.0.0.1:8000/game-scores', scoreData);
+        
+        Alert.alert('Score Submitted', `You scored ${finalScore} points!`); // Fixed template literal
+      } else {
+        throw new Error('User data not found');
+      }
+    } catch (error) {
+      console.error('Error submitting score:', error);
+      Alert.alert('Score Submission Failed', 'Please check your connection and try again.');
+    }
+  };
+
 
   useEffect(() => {
     let timer;
@@ -343,10 +389,16 @@ const Quiz = ({ navigation }) => {
         </TouchableOpacity>
         <View style={styles.gameOverContainer}>
           <Text style={styles.gameOverTitle}>Quiz Complete!</Text>
-          <Text style={styles.gameOverScore}>Final Score: {score}/{questions.length}</Text>
+          <Text style={styles.gameOverScore}>
+            {userName}'s Score: {score}/{questions.length}
+          </Text>
           <TouchableOpacity 
             style={styles.restartButton}
             onPress={() => {
+              // Attempt to submit score first
+              submitScore(score);
+              
+              // Reset game state
               setCurrentQuestion(0);
               setScore(0);
               setSelectedAnswer(null);
