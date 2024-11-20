@@ -1,20 +1,26 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, ScrollView, Image, Animated, Easing } from "react-native";
-import { Ionicons } from '@expo/vector-icons';
-import { useState, useEffect } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { useState, useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 // Import your social media icons statically
 const socialMediaIcons = {
-  instagram: require('../../images/socialmedia/instagram.png'),
-  facebook: require('../../images/socialmedia/facebook.png'),
-  linkedin: require('../../images/socialmedia/linkedin.png'),
-  gmail: require('../../images/socialmedia/gmail.png'),
+  instagram: require("../../images/socialmedia/instagram.png"),
+  facebook: require("../../images/socialmedia/facebook.png"),
+  linkedin: require("../../images/socialmedia/linkedin.png"),
+  gmail: require("../../images/socialmedia/gmail.png"),
 };
 
 export default function HomeScreen() {
+  const navigation = useNavigation();
   const [iconScale, setIconScale] = useState({});
-  const shimmerAnim = new Animated.Value(0); // Animation value for shimmer effect
-  const scanButtonAnim = new Animated.Value(0); // Animation value for scan button shimmer
+  const shimmerAnim = new Animated.Value(0);
+  const scanButtonAnim = new Animated.Value(0);
+
+  const handleProfilePress = () => {
+    navigation.navigate('Profile');
+  };
 
   useEffect(() => {
     // Shimmer animation for title text
@@ -80,36 +86,52 @@ export default function HomeScreen() {
 
   return (
     <ImageBackground
-      source={require('../../images/homepic2.jpg')}
+      source={require("../../images/homepic2.jpg")}
       style={styles.imageBackground}
       resizeMode="cover"
       blurRadius={7}
     >
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         <View style={styles.navBar}>
-          {/* Nav buttons */}
-          <TouchableOpacity style={styles.navButton}><Text style={styles.navButtonText}>Home</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}><Text style={styles.navButtonText}>About Us</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}><Text style={styles.navButtonText}>Events</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}><Text style={styles.navButtonText}>Discussion Forum</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}><Text style={styles.navButtonText}>Play</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.navButton}>
+            <Text style={styles.navButtonText}>Home</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navButton}>
+            <Text style={styles.navButtonText}>About Us</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navButton}>
+            <Text style={styles.navButtonText}>Events</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navButton}>
+            <Text style={styles.navButtonText}>Discussion Forum</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={() => navigation.navigate("Game")}
+          >
+            <Text style={styles.navButtonText}>Play</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Title and Subtitle Section */}
         <View style={styles.titleContainer}>
           <Animated.Text style={[styles.title, shimmerStyle]}>Fair Play</Animated.Text>
-          <Text style={styles.subtitle}>Champion integrity, celebrate fairness – because true victory is earned, not taken.</Text>
+          <Text style={styles.subtitle}>
+            Champion integrity, celebrate fairness – because true victory is earned, not taken.
+          </Text>
         </View>
 
-        {/* Profile Icon */}
-        <TouchableOpacity style={styles.profileIcon}>
+        {/* Updated Profile Icon with onPress handler */}
+        <TouchableOpacity 
+          style={styles.profileIcon}
+          onPress={handleProfilePress}
+          activeOpacity={0.7}
+        >
           <Ionicons name="person-circle" size={50} color="green" />
         </TouchableOpacity>
 
-        {/* Green Rectangle Section */}
         <View style={styles.greenRectangle}>
           <View style={styles.iconContainer}>
-            {['instagram', 'facebook', 'linkedin', 'gmail'].map((icon) => (
+            {["instagram", "facebook", "linkedin", "gmail"].map((icon) => (
               <TouchableOpacity
                 key={icon}
                 onPressIn={() => handleIconPressIn(icon)}
@@ -128,7 +150,6 @@ export default function HomeScreen() {
         <StatusBar style="auto" />
       </ScrollView>
 
-      {/* Floating Action Button with shimmer effect */}
       <TouchableOpacity
         style={styles.scanButton}
         onPress={() => console.log("Scan Button Pressed")}
@@ -144,8 +165,8 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   imageBackground: {
     flex: 1,
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     position: "absolute",
   },
   scrollViewContainer: {
@@ -155,7 +176,7 @@ const styles = StyleSheet.create({
     minHeight: "220%",
   },
   titleContainer: {
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
     position: "absolute",
     top: 150,
     left: 50,
@@ -164,7 +185,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 100,
     fontWeight: "bold",
-    color: "black"
+    color: "black",
   },
   subtitle: {
     fontSize: 16,
@@ -223,24 +244,24 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
   },
   greenRectangle: {
-    position: 'absolute',
-    width: '100%',
+    position: "absolute",
+    width: "100%",
     height: 200,
-    backgroundColor: 'rgba(0, 128, 0, 0.7)',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    backgroundColor: "rgba(0, 128, 0, 0.7)",
+    alignItems: "center",
+    justifyContent: "flex-start",
     marginBottom: -1000,
     paddingTop: 30,
   },
   rectangleText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
   },
   iconContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '80%',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "80%",
     marginBottom: 20,
   },
   socialIcon: {
