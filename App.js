@@ -14,13 +14,20 @@ import MemoryGame from "./assets/src/components/memory";
 import PillRace from "./assets/src/components/pillrace";
 import ProfilePage from "./assets/src/screens/profilescreen";
 import SignupScreen from "./assets/src/screens/signupscreen";
+import LandingPage from "./assets/src/screens/Landingpage";
+
 
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Welcome">
+      <Stack.Navigator initialRouteName="LandingPage" screenOptions={{ cardStyle: { height: "100%" } }} >
+      <Stack.Screen
+          name="LandingPage"
+          component={LandingPage}
+          options={{ headerShown: false }}
+        />
         {/* Welcome Screen */}
         <Stack.Screen
           name="Welcome"
