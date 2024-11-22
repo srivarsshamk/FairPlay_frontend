@@ -152,8 +152,8 @@ export default function GameScreen({ navigation }) {
           <TouchableOpacity style={styles.navButton}>
             <Text style={styles.navButtonText}>About Us</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.navButtonText}>Events</Text>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("Post")}>
+            <Text style={styles.navButtonText}>Posts</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navButton}>
             <Text style={styles.navButtonText}>Discussion Forum</Text>

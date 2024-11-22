@@ -14,6 +14,7 @@ import MemoryGame from "./assets/src/components/memory";
 import PillRace from "./assets/src/components/pillrace";
 import ProfilePage from "./assets/src/screens/profilescreen";
 import SignupScreen from "./assets/src/screens/signupscreen";
+import Post from "./assets/src/screens/post";
 
 const Stack = createStackNavigator();
 
@@ -87,6 +88,11 @@ export default function AppNavigator() {
         <Stack.Screen
           name="SignUp"
           component={SignupScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Post"
+          component={Post}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
