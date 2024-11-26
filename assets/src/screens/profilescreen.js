@@ -1,301 +1,516 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
+  StyleSheet,
   View,
   Text,
-  TextInput,
+  Image,
   TouchableOpacity,
-  StyleSheet,
-  Alert,
+  SafeAreaView,
+  ScrollView,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ArrowLeft } from 'lucide-react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { Feather } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import ActivitySection from "../components/profile/AccountSettings";
+import EditProfile from "../components/profile/EditProfile";
 
-const ProfilePage = () => {
-  const navigation = useNavigation();
-  const [isEditing, setIsEditing] = useState(false);
-  const [profile, setProfile] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    phone_number: "",
-    id: null
-  });
 
-  const [editForm, setEditForm] = useState({ ...profile });
 
-  useEffect(() => {
-    loadUserData();
-  }, []);
+const colors = {
+  background: '#1a1a1a',
+  cardBackground: '#2d2d2d',
+  primary: '#00A86B',
+  text: '#ffffff',
+  secondaryText: '#b0b0b0',
+  border: '#404040',
+  promoBackground: '#363636',
+  headerBackground: '#424242',
+};
 
-  useFocusEffect(
-    React.useCallback(() => {
-      loadUserData();
-    }, [])
-  );
+const suggestedProfiles = [
+  {
+    id: 1,
+    name: 'Dr. Alex Johnson',
+    title: 'Senior Doping Control Officer at USADA',
+    image: 'https://via.placeholder.com/50',
+    connections: '500+',
+  },
+  {
+    id: 2,
+    name: 'Dr. Sarah Chen',
+    title: 'Laboratory Director at WADA',
+    image: 'https://via.placeholder.com/50',
+    connections: '432',
+  },
+  {
+    id: 3,
+    name: 'Michael Park',
+    title: 'Anti-Doping Education Coordinator',
+    image: 'https://via.placeholder.com/50',
+    connections: '892',
+  },
+];
 
-  const loadUserData = async () => {
-    try {
-      const userData = await AsyncStorage.getItem('userData');
-      if (userData) {
-        const parsedData = JSON.parse(userData);
-        setProfile(parsedData);
-        setEditForm(parsedData);
-      }
-    } catch (error) {
-      console.error('Error loading user data:', error);
-    }
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/users/${profile.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          first_name: editForm.first_name,
-          last_name: editForm.last_name,
-          email: editForm.email,
-          phone_number: editForm.phone_number
-        }),
-      });
-
-      if (response.ok) {
-        const updatedData = await response.json();
-        setProfile(updatedData);
-        await AsyncStorage.setItem('userData', JSON.stringify(updatedData));
-        setIsEditing(false);
-        Alert.alert('Success', 'Profile updated successfully');
-      } else {
-        const errorData = await response.json();
-        Alert.alert('Error', errorData.detail || 'Failed to update profile');
-      }
-    } catch (error) {
-      console.error('Update error:', error);
-      Alert.alert('Error', 'Network error. Please try again.');
-    }
-  };
-
-  const handleCancel = () => {
-    setEditForm({ ...profile });
-    setIsEditing(false);
-  };
+const SuggestedProfile = ({ profile, mini = false }) => {
+  if (mini) {
+    return (
+      <View style={styles.connectionPreview}>
+        <Image source={{ uri: profile.image }} style={styles.connectionPreviewImage} />
+        <Text style={styles.connectionPreviewName}>{profile.name}</Text>
+        <TouchableOpacity style={styles.miniConnectButton}>
+          <Text style={styles.miniConnectButtonText}>Connect</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.card}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => navigation.navigate('Home')}
-        >
-          <ArrowLeft size={24} color="#333" />
-        </TouchableOpacity>
-        
-        <View style={styles.header}>
-          <Text style={styles.title}>Profile</Text>
-          {!isEditing && (
-            <TouchableOpacity 
-              onPress={() => setIsEditing(true)}
-              style={styles.editButton}
-            >
-              <Text style={styles.buttonText}>Edit</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-
-        {isEditing ? (
-          <View style={styles.form}>
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>First Name</Text>
-              <TextInput
-                style={styles.input}
-                value={editForm.first_name}
-                onChangeText={(text) => setEditForm({
-                  ...editForm,
-                  first_name: text
-                })}
-                placeholder="First Name"
-              />
-            </View>
-
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Last Name</Text>
-              <TextInput
-                style={styles.input}
-                value={editForm.last_name}
-                onChangeText={(text) => setEditForm({
-                  ...editForm,
-                  last_name: text
-                })}
-                placeholder="Last Name"
-              />
-            </View>
-
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Email</Text>
-              <TextInput
-                style={styles.input}
-                value={editForm.email}
-                onChangeText={(text) => setEditForm({
-                  ...editForm,
-                  email: text
-                })}
-                placeholder="Email"
-                keyboardType="email-address"
-              />
-            </View>
-
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Phone Number</Text>
-              <TextInput
-                style={styles.input}
-                value={editForm.phone_number}
-                onChangeText={(text) => setEditForm({
-                  ...editForm,
-                  phone_number: text
-                })}
-                placeholder="Phone Number"
-                keyboardType="phone-pad"
-              />
-            </View>
-
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity 
-                style={styles.saveButton} 
-                onPress={handleSubmit}
-              >
-                <Text style={styles.buttonText}>Save Changes</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.cancelButton} 
-                onPress={handleCancel}
-              >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ) : (
-          <View style={styles.displayContainer}>
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>First Name</Text>
-              <Text style={styles.value}>{profile.first_name}</Text>
-            </View>
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Last Name</Text>
-              <Text style={styles.value}>{profile.last_name}</Text>
-            </View>
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Email</Text>
-              <Text style={styles.value}>{profile.email}</Text>
-            </View>
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Phone Number</Text>
-              <Text style={styles.value}>{profile.phone_number}</Text>
-            </View>
-          </View>
-        )}
+    <View style={styles.suggestedProfile}>
+      <Image source={{ uri: profile.image }} style={styles.suggestedProfileImage} />
+      <View style={styles.suggestedProfileInfo}>
+        <Text style={styles.suggestedProfileName}>{profile.name}</Text>
+        <Text style={styles.suggestedProfileTitle}>{profile.title}</Text>
+        <Text style={styles.suggestedProfileConnections}>
+          {profile.connections} connections
+        </Text>
       </View>
+      <TouchableOpacity style={styles.connectButton}>
+        <Text style={styles.connectButtonText}>Connect</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
+const LinkedInProfile = () => {
+  const navigation = useNavigation();
+
+  const handleEditPress = () => {
+    try {
+      navigation.navigate('EditProfile');
+    } catch (error) {
+      console.error('Navigation failed:', error);
+    }
+  };
+
+  const handleEditLanguages = () => {
+    try {
+      navigation.navigate('EditProfile', { section: 'languages' });
+    } catch (error) {
+      console.error('Navigation failed:', error);
+    }
+  };
+
+  const handleEditWadaProfile = () => {
+    try {
+      navigation.navigate('EditProfile', { section: 'wada-profile' });
+    } catch (error) {
+      console.error('Navigation failed:', error);
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <ScrollView 
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <Image
+            source={{ uri: 'https://via.placeholder.com/800x200' }}
+            style={styles.coverImage}
+          />
+          
+          <View style={styles.profileSection}>
+            <Image
+              source={{ uri: 'https://via.placeholder.com/100' }}
+              style={styles.profileImage}
+            />
+            <TouchableOpacity 
+              style={styles.editButton}
+              onPress={handleEditPress}
+              activeOpacity={0.7}
+            >
+              <Feather name="edit-2" size={20} color={colors.secondaryText} />
+            </TouchableOpacity>
+            
+            <View style={styles.profileInfo}>
+              <View style={styles.nameSection}>
+                <Text style={styles.name}>Dr. Emma Wilson</Text>
+                <Feather name="check-circle" size={16} color={colors.primary} />
+              </View>
+              <Text style={styles.education}>
+                PhD in Analytical Chemistry | WADA Accredited Laboratory
+              </Text>
+              <Text style={styles.location}>
+                Montreal, Quebec, Canada
+              </Text>
+              <TouchableOpacity style={styles.contactInfo}>
+                <Text style={styles.contactInfoText}>Contact info</Text>
+              </TouchableOpacity>
+              <Text style={styles.connections}>273 anti-doping professionals</Text>
+            </View>
+
+            <View style={styles.actionButtons}>
+              <TouchableOpacity style={styles.primaryButton}>
+                <Text style={styles.primaryButtonText}>Available</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.secondaryButton}>
+                <Text style={styles.secondaryButtonText}>Add certification</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.secondaryButton}>
+                <Text style={styles.secondaryButtonText}>Update credentials</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.moreButton}>
+                <Text style={styles.moreButtonText}>More</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.promoCards}>
+              <View style={styles.promoCard}>
+                <Feather name="briefcase" size={20} color={colors.secondaryText} />
+                <Text style={styles.promoText}>
+                  Share your expertise in anti-doping control and join our global network of professionals.
+                </Text>
+                <TouchableOpacity>
+                  <Text style={styles.getStartedText}>Get started</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.activitySection}>
+              <ActivitySection />
+            </View>
+          </View>
+        </ScrollView>
+
+        <View style={styles.sidebar}>
+          <ScrollView 
+            style={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            <View style={styles.sidebarCard}>
+              <Text style={styles.sidebarTitle}>Anti-Doping Professionals You May Know</Text>
+              {suggestedProfiles.map((profile) => (
+                <SuggestedProfile key={profile.id} profile={profile} />
+              ))}
+            </View>
+
+            <View style={styles.sidebarCard}>
+              <Text style={styles.sidebarTitle}>Recommended Professionals</Text>
+              <View style={styles.connectionsWidget}>
+                {suggestedProfiles.slice(0, 2).map((profile) => (
+                  <SuggestedProfile key={profile.id} profile={profile} mini={true} />
+                ))}
+              </View>
+            </View>
+
+            <View style={styles.sidebarCard}>
+              <View style={styles.sidebarHeader}>
+                <Text style={styles.sidebarTitle}>Working Languages</Text>
+                <TouchableOpacity 
+                  onPress={handleEditLanguages}
+                  activeOpacity={0.7}
+                >
+                  <Feather name="edit-2" size={16} color={colors.secondaryText} />
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.sidebarText}>English, French</Text>
+            </View>
+
+            <View style={styles.sidebarCard}>
+              <View style={styles.sidebarHeader}>
+                <Text style={styles.sidebarTitle}>WADA Profile & URL</Text>
+                <TouchableOpacity 
+                  onPress={handleEditWadaProfile}
+                  activeOpacity={0.7}
+                >
+                  <Feather name="edit-2" size={16} color={colors.secondaryText} />
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.sidebarLink}>
+                www.wada-ama.org/profile/emma-wilson
+              </Text>
+            </View>
+          </ScrollView>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+};
+
+
+
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 16,
+    flexDirection: 'row',
   },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-    padding: 16,
-    maxWidth: 500,
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingVertical: 20,
+    minHeight: "180%",
+    padding: 10,
+  },
+  sidebar: {
+    flex: 0.3,
+    padding: 30,
+    backgroundColor: colors.background,
+    borderLeftWidth: 1,
+    borderLeftColor: colors.border,
+    minHeight: "140%",
+  },
+  // ... (rest of the styles remain the same)
+  coverImage: {
     width: '100%',
-    marginHorizontal: 'auto',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    height: 200,
+    resizeMode: 'cover',
   },
-  backButton: {
+  profileSection: {
+    marginTop: -60,
+    backgroundColor: colors.cardBackground,
+    borderRadius: 8,
+    marginHorizontal: 8,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+  },
+  profileImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 3,
+    borderColor: colors.cardBackground,
+  },
+  editButton: {
     position: 'absolute',
+    right: 16,
     top: 16,
-    left: 16,
-    zIndex: 1,
     padding: 8,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-    marginTop: 48, // Added to accommodate back button
+  profileInfo: {
+    marginTop: 16,
   },
-  title: {
+  nameSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  name: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: colors.text,
   },
-  form: {
-    gap: 16,
+  education: {
+    fontSize: 16,
+    color: colors.secondaryText,
+    marginTop: 4,
   },
-  fieldContainer: {
-    marginBottom: 16,
-  },
-  label: {
+  location: {
     fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 4,
-    color: '#666',
+    color: colors.secondaryText,
+    marginTop: 4,
   },
-  value: {
-    fontSize: 16,
-    color: '#333',
+  contactInfo: {
+    marginTop: 8,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 4,
-    padding: 8,
-    fontSize: 16,
+  contactInfoText: {
+    color: colors.primary,
+    fontWeight: '600',
   },
-  buttonContainer: {
+  connections: {
+    marginTop: 8,
+    color: colors.secondaryText,
+  },
+  actionButtons: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
     marginTop: 16,
   },
-  editButton: {
-    backgroundColor: '#f0f0f0',
+  activitySection: {
+    marginTop: 16,
+    backgroundColor: colors.cardBackground,
+    borderRadius: 8,
+    overflow: 'hidden',
+    width: '100%',
+  },
+  primaryButton: {
+    backgroundColor: colors.primary,
     padding: 8,
-    borderRadius: 4,
+    borderRadius: 16,
+    paddingHorizontal: 16,
   },
-  saveButton: {
-    backgroundColor: '#007AFF',
-    padding: 12,
-    borderRadius: 4,
-    flex: 1,
-    alignItems: 'center',
+  primaryButtonText: {
+    color: colors.text,
+    fontWeight: '600',
   },
-  cancelButton: {
-    backgroundColor: '#f0f0f0',
-    padding: 12,
-    borderRadius: 4,
-    flex: 1,
-    alignItems: 'center',
+  secondaryButton: {
+    backgroundColor: 'transparent',
+    padding: 8,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: colors.primary,
   },
-  buttonText: {
-    color: 'white',
-    fontWeight: '500',
+  secondaryButtonText: {
+    color: colors.primary,
+    fontWeight: '600',
   },
-  cancelButtonText: {
-    color: '#333',
-    fontWeight: '500',
+  moreButton: {
+    backgroundColor: 'transparent',
+    padding: 8,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: colors.secondaryText,
   },
-  displayContainer: {
+  moreButtonText: {
+    color: colors.secondaryText,
+    fontWeight: '600',
+  },
+
+  promoCards: {
+    marginTop: 16,
     gap: 16,
-  }
+    marginBottom: 16,
+  },
+  promoCard: {
+    padding: 16,
+    backgroundColor: colors.promoBackground,
+    borderRadius: 8,
+    gap: 8,
+  },
+  promoText: {
+    color: colors.secondaryText,
+    fontSize: 14,
+  },
+  getStartedText: {
+    color: colors.primary,
+    fontWeight: '600',
+  },
+  sidebar: {
+    flex: 0.3,
+    padding: 16,
+    backgroundColor: colors.background,
+  },
+  sidebarCard: {
+    backgroundColor: colors.cardBackground,
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+  },
+  sidebarHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  sidebarTitle: {
+    fontWeight: '600',
+    fontSize: 16,
+    color: colors.text,
+  },
+  sidebarText: {
+    color: colors.secondaryText,
+  },
+  sidebarLink: {
+    color: colors.primary,
+    fontSize: 14,
+  },
+  suggestedProfilesSection: {
+    marginTop: 24,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: 16,
+  },
+  suggestedProfile: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  suggestedProfileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  suggestedProfileInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  suggestedProfileName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  suggestedProfileTitle: {
+    fontSize: 14,
+    color: colors.secondaryText,
+    marginTop: 2,
+  },
+  suggestedProfileConnections: {
+    fontSize: 12,
+    color: colors.secondaryText,
+    marginTop: 2,
+  },
+  connectButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 16,
+    marginLeft: 12,
+  },
+  connectButtonText: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  connectionsWidget: {
+    marginTop: 12,
+  },
+  connectionPreview: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  connectionPreviewImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  connectionPreviewName: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 14,
+    color: colors.text,
+  },
+  miniConnectButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.primary,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  miniConnectButtonText: {
+    color: colors.primary,
+    fontSize: 12,
+    fontWeight: '600',
+  },
 });
 
-export default ProfilePage;
+export default LinkedInProfile;
