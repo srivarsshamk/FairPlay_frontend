@@ -12,16 +12,16 @@ import Quiz from "./assets/src/components/quiz";
 import CrosswordGame from "./assets/src/components/crossword";
 import MemoryGame from "./assets/src/components/memory";
 import PillRace from "./assets/src/components/pillrace";
-import ProfilePage from "./assets/src/screens/profilescreen";
+import profilescreen from "./assets/src/screens/profilescreen";
 import SignupScreen from "./assets/src/screens/signupscreen";
 import Post from "./assets/src/screens/post";
-
+import EditProfile from "./assets/src/components/profile/EditProfile";
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Welcome">
+      <Stack.Navigator initialRouteName="WelcomeScreen">
         {/* Welcome Screen */}
         <Stack.Screen
           name="Welcome"
@@ -32,6 +32,11 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="EditProfile"
+          component={EditProfile}
           options={{ headerShown: false }}
         />
         {/* Other Screens */}
@@ -82,7 +87,7 @@ export default function AppNavigator() {
         />
         <Stack.Screen
           name="Profile"
-          component={ProfilePage}
+          component={profilescreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen

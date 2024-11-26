@@ -35,7 +35,9 @@ const SignupScreen = () => {
         last_name: lastName,
         email,
         password,
-        phone_number: phoneNumber
+        phone_number: phoneNumber,
+        bio: null, // Always send bio as null
+        age: null, // Always send age as null
       };
 
       const response = await fetch('http://127.0.0.1:8000/users', {
@@ -48,21 +50,22 @@ const SignupScreen = () => {
       });
 
       const responseData = await response.json();
+      console.log('Response Data:', responseData); // Log the response data for debugging
 
       if (response.ok) {
         Alert.alert('Success', 'Account created successfully', [
-          { 
-            text: 'Login', 
-            onPress: () => navigation.navigate('Login') 
-          }
+          {
+            text: 'Login',
+            onPress: () => navigation.navigate('Login'),
+          },
         ]);
       } else {
-        const errorMessage = responseData.detail 
+        const errorMessage = responseData.detail
           ? Array.isArray(responseData.detail)
             ? responseData.detail.map(error => `${error.loc.join('.')}: ${error.msg}`).join('\n')
             : responseData.detail
           : 'Registration failed. Please try again.';
-        
+
         Alert.alert('Registration Error', errorMessage);
       }
     } catch (error) {
@@ -78,8 +81,8 @@ const SignupScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === "ios" ? "padding" : "height"} 
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -166,59 +169,60 @@ const SignupScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#e8f4f8' },
-  scrollContainer: { 
-    flexGrow: 1, 
-    justifyContent: 'center', 
-    paddingVertical: 20 
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingVertical: 20,
   },
-  formContainer: { 
-    paddingHorizontal: 20 
+  formContainer: {
+    paddingHorizontal: 20,
   },
-  title: { 
-    fontSize: 28, 
-    fontWeight: 'bold', 
-    color: '#333', 
-    marginBottom: 30, 
-    textAlign: 'center' 
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 30,
+    textAlign: 'center',
   },
-  inputWrapper: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    backgroundColor: '#fff', 
-    borderRadius: 15, 
-    marginBottom: 15, 
-    paddingHorizontal: 15, 
-    height: 50 
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    marginBottom: 15,
+    paddingHorizontal: 15,
+    height: 50,
   },
   icon: { marginRight: 10 },
-  input: { 
-    flex: 1, 
-    fontSize: 16, 
-    color: '#333' 
+  input: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
   },
-  signupButton: { 
-    backgroundColor: '#4a90e2', 
-    borderRadius: 15, 
-    height: 50, 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    marginTop: 20 
+  signupButton: {
+    backgroundColor: '#4a90e2',
+    borderRadius: 15,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
   },
-  signupButtonDisabled: { 
-    backgroundColor: '#a0c4e7' 
+  signupButtonDisabled: {
+    backgroundColor: '#a0c4e7',
   },
-  signupButtonText: { 
-    color: '#fff', 
-    fontSize: 16, 
-    fontWeight: 'bold' 
+
+  signupButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
-  loginLink: { 
-    marginTop: 15, 
-    alignItems: 'center' 
+  loginLink: {
+    marginTop: 15,
+    alignItems: 'center',
   },
-  loginText: { 
-    color: '#4a90e2', 
-    fontSize: 16 
+  loginText: {
+    color: '#4a90e2',
+    fontSize: 16,
   },
 });
 
