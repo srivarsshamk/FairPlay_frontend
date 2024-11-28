@@ -17,12 +17,14 @@ import * as ImagePicker from "expo-image-picker";
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather } from '@expo/vector-icons';
+import { Video } from 'expo-av';
 
 export default function PostsScreen({ navigation }) {
   const [posts, setPosts] = useState([]);
   const [isCreateModalVisible, setCreateModalVisible] = useState(false);
   const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [mediaType, setMediaType] = useState(null); // 'image' or 'video'
 
   // Post Creation State
   const [image, setImage] = useState(null);
@@ -59,7 +61,7 @@ export default function PostsScreen({ navigation }) {
     }
   };
 
-  const pickImage = async () => {
+  const pickMedia = async (type) => {
     try {
       if (Platform.OS === 'web') {
         fileInputRef.current?.click();
@@ -67,57 +69,60 @@ export default function PostsScreen({ navigation }) {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         
         if (status !== "granted") {
-          Alert.alert("Permission Denied", "Sorry, we need camera roll permissions.");
+          Alert.alert("Permission Denied", "Sorry, we need media library permissions.");
           return;
         }
   
         const result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          mediaTypes: type === 'video' ? ImagePicker.MediaTypeOptions.Videos : ImagePicker.MediaTypeOptions.Images,
           allowsEditing: true,
-          aspect: [1, 1],
+          aspect: [16, 9],
           quality: 1,
         });
   
         if (!result.canceled) {
-          await uploadImage(result.assets[0]);
+          setMediaType(type);
+          await uploadMedia(result.assets[0]);
         }
       }
     } catch (err) {
-      console.error("Image pick error: " + err.message);
-      Alert.alert('Error', 'Could not pick image');
+      console.error("Media pick error: " + err.message);
+      Alert.alert('Error', 'Could not pick media');
     }
   };
   
-  const handleWebImagePick = async (event) => {
+  const handleWebMediaPick = async (event) => {
     try {
       const file = event.target.files?.[0];
       if (file) {
-        // For web, create a preview URL before uploading
+        const type = file.type.startsWith('video/') ? 'video' : 'image';
+        setMediaType(type);
         const previewUrl = URL.createObjectURL(file);
         setImage(previewUrl);
-        await uploadImage(file);
+        await uploadMedia(file);
       }
     } catch (err) {
-      console.error("Web image pick error: " + err.message);
-      Alert.alert('Error', 'Could not process image');
+      console.error("Web media pick error: " + err.message);
+      Alert.alert('Error', 'Could not process media');
     }
   };
   
-  const uploadImage = async (imageFile) => {
+  const uploadMedia = async (mediaFile) => {
     try {
       const formData = new FormData();
       
       // For web
-      if (imageFile instanceof File) {
-        formData.append('file', imageFile);
+      if (mediaFile instanceof File) {
+        formData.append('file', mediaFile);
       } 
       // For mobile
       else {
-        const fileExtension = imageFile.uri.split('.').pop();
+        const fileExtension = mediaFile.uri.split('.').pop();
+        const type = mediaType === 'video' ? `video/${fileExtension}` : `image/${fileExtension}`;
         formData.append('file', {
-          uri: imageFile.uri,
-          type: `image/${fileExtension}`,
-          name: `image.${fileExtension}`
+          uri: mediaFile.uri,
+          type: type,
+          name: `media.${fileExtension}`
         });
       }
   
@@ -127,11 +132,10 @@ export default function PostsScreen({ navigation }) {
         }
       });
   
-      // Update image URL from server response
       setImage(response.data.image_url);
     } catch (error) {
-      console.error('Image upload error:', error);
-      Alert.alert('Error', 'Could not upload image');
+      console.error('Media upload error:', error);
+      Alert.alert('Error', 'Could not upload media');
     }
   };
 
@@ -229,56 +233,80 @@ export default function PostsScreen({ navigation }) {
     setEditModalVisible(true);
   };
 
-  const renderPostItem = ({ item }) => (
-    <View style={styles.postContainer}>
-      <Image 
-        source={{ 
-          uri: `http://127.0.0.1:8000/images/${item.image_url.split('/').pop()}` 
-        }} 
-        style={styles.postImage} 
-        onError={(e) => console.error('Image load error:', e.nativeEvent.error)}
-      />
-      <View style={styles.postDetails}>
+  const renderPostItem = ({ item }) => {
+    const mediaUrl = `http://127.0.0.1:8000/images/${item.image_url.split('/').pop()}`;
+    const isVideo = item.image_url.match(/\.(mp4|mov|avi|wmv)$/i);
+
+    return (
+      <View style={styles.postContainer}>
         <Text style={styles.postTitle}>{item.title}</Text>
+        
+        <View style={styles.mediaContainer}>
+          {isVideo ? (
+            <Video
+              source={{ uri: mediaUrl }}
+              style={styles.media}
+              useNativeControls
+              resizeMode="contain"
+              isLooping
+            />
+          ) : (
+            <Image 
+              source={{ uri: mediaUrl }} 
+              style={styles.media}
+              resizeMode="contain"
+            />
+          )}
+        </View>
+
         <Text style={styles.postDescription}>{item.description}</Text>
         {item.hashtag && <Text style={styles.postHashtags}>{item.hashtag}</Text>}
+        
+        <View style={styles.postActions}>
+          <TouchableOpacity onPress={() => prepareEditPost(item)}>
+            <Feather name="edit" size={24} color="#00A86B" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => deletePost(item.id)}>
+            <Feather name="trash-2" size={24} color="red" />
+          </TouchableOpacity>
+        </View>
       </View>
-      <View style={styles.postActions}>
-        <TouchableOpacity onPress={() => prepareEditPost(item)}>
-          <Feather name="edit" size={24} color="#00A86B" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => deletePost(item.id)}>
-          <Feather name="trash-2" size={24} color="red" />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+    );
+  };
 
-  const renderImagePicker = (isEditMode) => (
-    <TouchableOpacity 
-      style={styles.imagePicker} 
-      onPress={pickImage}
-    >
+  const renderMediaPicker = (isEditMode) => (
+    <View style={styles.mediaPickerContainer}>
       {Platform.OS === 'web' && (
         <input
           type="file"
           ref={fileInputRef}
-          accept="image/*"
-          onChange={handleWebImagePick}
+          accept="image/*,video/*"
+          onChange={handleWebMediaPick}
           style={{ display: 'none' }}
         />
       )}
+      
       {image ? (
         <View style={styles.imagePreviewContainer}>
-          <Image 
-            source={{ 
-              uri: image.startsWith('http') 
-                ? `http://127.0.0.1:8000/images/${image.split('/').pop()}` 
-                : image 
-            }} 
-            style={styles.imagePreview} 
-            resizeMode="cover"
-          />
+          {mediaType === 'video' ? (
+            <Video
+              source={{ uri: image }}
+              style={styles.imagePreview}
+              useNativeControls
+              resizeMode="contain"
+              isLooping
+            />
+          ) : (
+            <Image 
+              source={{ 
+                uri: image.startsWith('http') 
+                  ? `http://127.0.0.1:8000/images/${image.split('/').pop()}` 
+                  : image 
+              }} 
+              style={styles.imagePreview} 
+              resizeMode="cover"
+            />
+          )}
           <TouchableOpacity 
             style={styles.removeImageButton} 
             onPress={removeImage}
@@ -287,14 +315,25 @@ export default function PostsScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       ) : (
-        <View style={styles.imagePickerPlaceholder}>
-          <Feather name="image" size={24} color="#00A86B" />
-          <Text style={styles.imagePickerText}>
-            {isEditMode ? 'Update Image' : 'Select Image'}
-          </Text>
+        <View style={styles.mediaButtons}>
+          <TouchableOpacity 
+            style={styles.mediaButton} 
+            onPress={() => pickMedia('image')}
+          >
+            <Feather name="image" size={24} color="#00A86B" />
+            <Text style={styles.mediaButtonText}>Select Image</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.mediaButton} 
+            onPress={() => pickMedia('video')}
+          >
+            <Feather name="video" size={24} color="#00A86B" />
+            <Text style={styles.mediaButtonText}>Select Video</Text>
+          </TouchableOpacity>
         </View>
       )}
-    </TouchableOpacity>
+    </View>
   );
 
   return (
@@ -321,15 +360,67 @@ export default function PostsScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        contentContainerStyle={styles.listContainer}
-        data={posts}
-        renderItem={renderPostItem}
-        keyExtractor={(item) => item.id.toString()}
-        ListEmptyComponent={
-          <Text style={styles.emptyListText}>No posts yet. Create one!</Text>
-        }
-      />
+       {/* Posts Container with ScrollView */}
+       <ScrollView 
+  style={styles.scrollContainer}
+  contentContainerStyle={styles.contentContainer}
+  showsVerticalScrollIndicator={true}
+  persistentScrollbar={true}
+  nestedScrollEnabled={true} // Add this for Android
+  scrollEnabled={true} // Explicitly enable scrolling
+>
+  {posts.length === 0 ? (
+    <Text style={styles.emptyListText}>No posts yet. Create one!</Text>
+  ) : (
+    posts.map((item) => {
+      const mediaUrl = `http://127.0.0.1:8000/images/${item.image_url.split('/').pop()}`;
+      const isVideo = item.image_url.match(/\.(mp4|mov|avi|wmv)$/i);
+
+
+            return (
+              <View key={item.id} style={styles.postContainer}>
+                <Text style={styles.postTitle}>{item.title}</Text>
+                
+                <View style={styles.mediaContainer}>
+                  {isVideo ? (
+                    <Video
+                      source={{ uri: mediaUrl }}
+                      style={styles.media}
+                      useNativeControls
+                      resizeMode="contain"
+                      isLooping
+                    />
+                  ) : (
+                    <Image 
+                      source={{ uri: mediaUrl }} 
+                      style={styles.media}
+                      resizeMode="contain"
+                    />
+                  )}
+                </View>
+
+                <Text style={styles.postDescription}>{item.description}</Text>
+                {item.hashtag && <Text style={styles.postHashtags}>{item.hashtag}</Text>}
+                
+                <View style={styles.postActions}>
+                  <TouchableOpacity 
+                    style={styles.actionButton} 
+                    onPress={() => prepareEditPost(item)}
+                  >
+                    <Feather name="edit-2" size={20} color="#00A86B" />
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={styles.actionButton} 
+                    onPress={() => deletePost(item.id)}
+                  >
+                    <Feather name="trash-2" size={20} color="#FF4444" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            );
+          })
+        )}
+      </ScrollView>
 
       <TouchableOpacity 
         style={styles.createPostButton}
@@ -377,7 +468,7 @@ export default function PostsScreen({ navigation }) {
               onChangeText={setHashtags}
             />
 
-            {renderImagePicker(false)}
+            {renderMediaPicker(false)}
 
             <TouchableOpacity 
               style={styles.submitButton}
@@ -428,7 +519,7 @@ export default function PostsScreen({ navigation }) {
               onChangeText={setHashtags}
             />
 
-            {renderImagePicker(true)}
+            {renderMediaPicker(true)}
 
             <TouchableOpacity 
               style={styles.submitButton}
@@ -445,6 +536,52 @@ export default function PostsScreen({ navigation }) {
 
 
 const styles = StyleSheet.create({
+  mediaContainer: {
+    width: '100%',
+    height: 250, // Increased height for better visibility
+    borderRadius: 8,
+    overflow: 'hidden',
+    marginBottom: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  media: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain', // Changed to 'contain' to fit entire image/video
+  },
+  mediaButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    padding: 10,
+  },
+  mediaButton: {
+    alignItems: 'center',
+    padding: 10,
+  },
+  mediaButtonText: {
+    color: '#00A86B',
+    marginTop: 5,
+  },
+  mediaPickerContainer: {
+    width: '100%',
+    marginVertical: 10,
+  },
+  scrollContainer: {
+    flex: 1,
+    marginTop: 100, // Space for navigation bar
+    marginBottom: 20,
+    paddingHorizontal: 16,
+    ...(Platform.OS === 'web' ? {
+      height: 'calc(100vh - 200px)', // Explicit height for web
+      overflowY: 'auto', // Changed from 'scroll' to 'auto'
+    } : {}),
+  },
+  contentContainer: {
+    paddingBottom: 80, // Space for create post button
+    flexGrow: 1, // Ensure content can grow
+  },
   backgroundImage: {
     flex: 1,
     width: '100%',
@@ -471,6 +608,11 @@ const styles = StyleSheet.create({
   navButton: {
     padding: 8,
   },
+  actionButton: {
+    padding: 8,
+    borderRadius: 6,
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+  },
   navButtonText: {
     color: 'white',
     fontSize: 14,
@@ -481,12 +623,21 @@ const styles = StyleSheet.create({
     paddingBottom: 80, // Space for create post button
   },
   postContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    margin: 10,
-    borderRadius: 10,
-    flexDirection: 'row',
-    padding: 10,
-    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  postTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
+    color: '#333',
   },
   postImage: {
     width: 100,
@@ -497,15 +648,21 @@ const styles = StyleSheet.create({
   postDetails: {
     flex: 1,
   },
-  postTitle: {
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
   postDescription: {
-    color: 'gray',
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 8,
+    lineHeight: 20,
   },
   postHashtags: {
+    fontSize: 14,
     color: '#00A86B',
+    marginBottom: 12,
+  },
+  postActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 12,
   },
   imagePickerPlaceholder: {
     flexDirection: 'row',
@@ -517,10 +674,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     color: '#00A86B',
     fontWeight: '500',
-  },
-  postActions: {
-    flexDirection: 'row',
-    gap: 10,
   },
   createPostButton: {
     position: 'absolute',
@@ -610,4 +763,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'gray',
   },
+  ...(Platform.OS === 'web' && {
+    '@global': {
+      '::-webkit-scrollbar': {
+        width: '10px',
+      },
+      '::-webkit-scrollbar-track': {
+        background: '#F0F0F0',
+        borderRadius: '10px',
+      },
+      '::-webkit-scrollbar-thumb': {
+        background: '#00A86B',
+        borderRadius: '10px',
+      },
+      '::-webkit-scrollbar-thumb:hover': {
+        background: '#03615b',
+      }
+    }
+  })
 });

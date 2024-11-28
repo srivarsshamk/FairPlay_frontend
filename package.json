@@ -24,7 +24,9 @@
     "expo": "~51.0.28",
     "expo-asset": "~10.0.10",
     "expo-av": "^15.0.1",
+    "expo-image-picker": "^16.0.3",
     "expo-status-bar": "~1.12.1",
+    "framer-motion": "^11.11.17",
     "lucide-react": "^0.456.0",
     "lucide-react-native": "^0.460.0",
     "react": "18.2.0",
@@ -41,6 +43,7 @@
     "react-native-screens": "^4.0.0",
     "react-native-svg": "^15.8.0",
     "react-native-web": "~0.19.10",
+    "react-router-dom": "^7.0.1",
     "three": "^0.170.0"
   },
   "devDependencies": {

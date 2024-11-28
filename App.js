@@ -15,6 +15,11 @@ import PillRace from "./assets/src/components/pillrace";
 import ProfilePage from "./assets/src/screens/profilescreen";
 import SignupScreen from "./assets/src/screens/signupscreen";
 import Post from "./assets/src/screens/post";
+import CrosswordRulesScreen from "./assets/src/components/crosswordrules";
+import CrosswordGame1 from "./assets/src/components/crossword1";
+import CrosswordGame2 from "./assets/src/components/crossword2";
+import CrosswordGame3 from "./assets/src/components/crossword3";
+import CrosswordLevelSelector from "./assets/src/components/crosswordlevel";
 
 const Stack = createStackNavigator();
 
@@ -71,6 +76,21 @@ export default function AppNavigator() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
+          name="Crossword1"
+          component={CrosswordGame1}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Crossword2"
+          component={CrosswordGame2}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Crossword3"
+          component={CrosswordGame3}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
           name="Memory Game"
           component={MemoryGame}
           options={{ headerShown: false }}
@@ -93,6 +113,16 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Post"
           component={Post}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Crossword Rules"
+          component={CrosswordRulesScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Crossword Level"
+          component={CrosswordLevelSelector}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

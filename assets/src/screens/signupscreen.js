@@ -35,7 +35,9 @@ const SignupScreen = () => {
         last_name: lastName,
         email,
         password,
-        phone_number: phoneNumber
+        phone_number: phoneNumber,
+        age: null,
+        bio: null
       };
 
       const response = await fetch('http://127.0.0.1:8000/users', {
