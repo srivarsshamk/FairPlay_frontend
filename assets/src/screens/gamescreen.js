@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, Animated } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { useState, useRef, useEffect } from 'react';
+import { Audio } from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import WelcomePopup from '../components/welcomepopup';
 import Leaderboard from '../components/leaderboard';
@@ -11,9 +12,10 @@ export default function GameScreen({ navigation }) {
   const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
   const [showWelcomePopup, setShowWelcomePopup] = useState(true);
   const [userName, setUserName] = useState('Player');
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const leftDrawerAnimation = useRef(new Animated.Value(-250)).current;
   const rightDrawerAnimation = useRef(new Animated.Value(250)).current;
-  const progress = 75;
+  const soundRef = useRef(null);
 
   // Load user name from AsyncStorage
   useEffect(() => {
@@ -29,10 +31,72 @@ export default function GameScreen({ navigation }) {
       }
     };
 
-    loadUserName();
+    const setupAudio = async () => {
+      try {
+        // Request audio permissions
+        const { status } = await Audio.requestPermissionsAsync();
+        
+        if (status !== 'granted') {
+          console.log('Audio permissions not granted');
+          return;
+        }
+
+        // Set up audio mode for background music
+        await Audio.setAudioModeAsync({
+          staysActiveInBackground: true,
+          shouldDuckAndroid: true,
+        });
+
+        // Load audio 
+        const { sound } = await Audio.Sound.createAsync(
+          { uri: 'http://127.0.0.1:8000/images/78d68446-d5b5-4fa5-aa29-46ed49cc192f.wav' },
+          { 
+            shouldPlay: false, 
+            isLooping: true,
+            volume: 0.5 
+          }
+        );
+        
+        soundRef.current = sound;
+      } catch (error) {
+        console.error('Detailed Error setting up audio:', error);
+        console.log('Error Name:', error.name);
+        console.log('Error Message:', error.message);
+        console.log('Error Stack:', error.stack);
+      }
+
+      loadUserName();
+    };
+
+    setupAudio();
+
+    // Cleanup function to stop audio when component unmounts
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.unloadAsync();
+      }
+    };
   }, []);
 
+  const toggleAudio = async () => {
+    try {
+      if (!soundRef.current) {
+        console.log('Sound not initialized');
+        return;
+      }
 
+      if (isAudioPlaying) {
+        await soundRef.current.pauseAsync();
+      } else {
+        await soundRef.current.playAsync();
+      }
+      setIsAudioPlaying(!isAudioPlaying);
+    } catch (error) {
+      console.error('Error toggling audio:', error);
+      console.log('Error Name:', error.name);
+      console.log('Error Message:', error.message);
+    }
+  };
   const toggleLeftDrawer = () => {
     const toValue = leftDrawerOpen ? -250 : 0;
     Animated.timing(leftDrawerAnimation, {
@@ -59,7 +123,7 @@ export default function GameScreen({ navigation }) {
     { 
       name: 'Hangman', 
       icon: 'body-outline',
-      component: 'Hangman',
+      component: 'Hangman Rules',
       available: true
     },
     { 
@@ -71,21 +135,15 @@ export default function GameScreen({ navigation }) {
     { 
       name: 'Sort', 
       icon: 'swap-vertical-outline',
-      component: 'Sort',
+      component: 'Sort Rules',
       available: true
     },
     { 
       name: 'Quiz', 
       icon: 'clipboard-outline',
-      component: 'Quiz',
+      component: 'Quiz Rules',
       available: true
-    },
-    { 
-      name: 'Simulation', 
-      icon: 'cube-outline',
-      component: 'Simulation',
-      available: true
-    },
+    }
   ];
 
   const rightGameIcons = [
@@ -104,13 +162,13 @@ export default function GameScreen({ navigation }) {
     {
       name: 'Crossword',
       icon: 'grid-outline',
-      component: 'Crossword',
+      component: 'Crossword Rules',
       available: true
     },
     {
-      name: 'Simulation',
+      name: 'Snake And Ladder',
       icon: 'cube-outline',
-      component: 'Simulation',
+      component: 'Snake And Ladder',
       available: true
     }
   ];
@@ -152,8 +210,8 @@ export default function GameScreen({ navigation }) {
           <TouchableOpacity style={styles.navButton}>
             <Text style={styles.navButtonText}>About Us</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.navButtonText}>Events</Text>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("Post")}>
+            <Text style={styles.navButtonText}>Posts</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navButton}>
             <Text style={styles.navButtonText}>Discussion Forum</Text>
@@ -246,6 +304,16 @@ export default function GameScreen({ navigation }) {
         {showWelcomePopup && <WelcomePopup onClose={() => setShowWelcomePopup(false)} />}
 
         <StatusBar style="auto" />
+        <TouchableOpacity 
+          style={styles.audioPlayerButton} 
+          onPress={toggleAudio}
+        >
+          <Ionicons 
+            name={isAudioPlaying ? "volume-high" : "volume-mute"} 
+            size={24} 
+            color="white" 
+          />
+        </TouchableOpacity>
       </View>
     </ImageBackground>
   );
@@ -404,5 +472,17 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: '#03615b',
     fontWeight: 'bold',
+  },
+  audioPlayerButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: '#03615b',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1002,
   },
 });

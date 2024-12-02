@@ -17,58 +17,58 @@ import { ArrowLeft } from 'lucide-react';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const CrosswordGame = ({ navigation }) => {
+const CrosswordGame1 = ({ navigation }) => {
   // Updated puzzle data with new words and positions
   const puzzleData = {
     words: [
       {
         id: 1,
-        word: 'VIOLATION',
-        clue: '1. Across: Act of not following the rules',
+        word: 'STEROIDS',
+        clue: '1. Across: Substance similair to testosterone',
         direction: 'across',
         row: 0,
         col: 0,
       },
       {
         id: 2,
-        word: 'VIAL',
-        clue: '2. Down: Storage device used to store medicinal liquids',
+        word: 'SAMPLE',
+        clue: '2. Down: Process of collecting a small amount of substance for testing',
         direction: 'down',
         row: 0,
         col: 0,
       },
       {
         id: 3,
-        word: 'SCREEN',
-        clue: '3. Across: Process of testing the atheletes if they are clean of drugs',
+        word: 'APPLY',
+        clue: '3. Across: Process of submitting for doping tests',
         direction: 'across',
-        row: 4,
+        row: 2,
         col: 1,
       },
       {
         id: 4,
-        word: 'ABUSE',
-        clue: '4. Down: Process of harming yourseleves with the use of drugs',
+        word: 'DOPE',
+        clue: '4. Down: Process of taking illegal substances',
         direction: 'down',
         row: 0,
-        col: 4,
+        col: 6,
       },
       {
         id: 5,
-        word: 'ETHICS',
-        clue: '5. Across: Moral principles of atheletes',
+        word: 'BLOOD',
+        clue: '5. Across: __ doping that invloves epo',
         direction: 'across',
-        row: 6,
-        col: 2,
+        row: 3,
+        col: 1,
       },
       {
         id: 6,
-        word: 'TAMPERING',
-        clue: '6. Down: Process of modifying or changing a substance constitution ',
+        word: 'REPORT',
+        clue: '6. Down: Process of submitting evidence against illegal doping',
         direction: 'down',
         row: 0,
-        col: 5,
-      },
+        col: 3,
+      }
     ],
     size: 9,
   };
@@ -410,7 +410,7 @@ const CrosswordGame = ({ navigation }) => {
         >
           <ArrowLeft size={24} color="#2c3e50" />
         </TouchableOpacity>
-        <Text style={styles.title}>Anti-Doping Crossword Level 1</Text>
+        <Text style={styles.title}>Anti-Doping Crossword Level 2</Text>
       </View>
       {renderGrid()}
       <ScrollView 
@@ -600,4 +600,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CrosswordGame;
+export default CrosswordGame1;

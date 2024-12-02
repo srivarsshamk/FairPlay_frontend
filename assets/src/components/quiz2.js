@@ -13,258 +13,256 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { Alert } from 'react-native';
 
-
+// Quiz questions database
 const questions = [
-  {
-    id: 1,
-    question: "What is a common psychological pressure that athletes face, leading to doping?",
-    options: [
-      "Desire for fame and recognition",
-      "Fear of injury",
-      "Fear of failing to meet expectations",
-      "Lack of motivation"
-    ],
-    correct: 2
-  },
-  {
-    id: 2,
-    question: "What legal consequence can athletes face if caught doping?",
-    options: [
-      "Jail time",
-      "Financial compensation",
-      "Fines only",
-      "Community service"
-    ],
-    correct: 0
-  },
-  {
-    id: 3,
-    question: "Which of the following professionals plays a significant role in preventing doping?",
-    options: [
-      "Coaches",
-      "Doctors",
-      "Trainers",
-      "All of the above"
-    ],
-    correct: 3
-  },
-  {
-    id: 4,
-    question: "What is the primary legal consequence for trafficking banned substances?",
-    options: [
-      "Disqualification from competitions",
-      "Fines",
-      "Jail time",
-      "Loss of sponsorship"
-    ],
-    correct: 2
-  },
-  {
-    id: 5,
-    question: "What psychological factor often pressures athletes to resort to doping?",
-    options: [
-      "Lack of competition",
-      "Desire to recover from injury quickly",
-      "Emotional support from friends",
-      "Improved self-esteem"
-    ],
-    correct: 1
-  },
-  {
-    id: 6,
-    question: "Which of the following is a key responsibility of coaches in preventing doping?",
-    options: [
-      "Encouraging athletes to push their limits",
-      "Monitoring an athlete's health and well-being",
-      "Ignoring signs of doping for better results",
-      "Providing banned substances"
-    ],
-    correct: 1
-  },
-  {
-    id: 7,
-    question: "Which legal body is responsible for regulating anti-doping measures globally?",
-    options: [
-      "World Anti-Doping Agency (WADA)",
-      "International Olympic Committee (IOC)",
-      "FIFA",
-      "World Health Organization (WHO)"
-    ],
-    correct: 0
-  },
-  {
-    id: 8,
-    question: "What is a psychological effect of doping on an athlete's mental state?",
-    options: [
-      "Increased happiness",
-      "Chronic anxiety and paranoia",
-      "Improved concentration",
-      "Heightened optimism"
-    ],
-    correct: 1
-  },
-  {
-    id: 9,
-    question: "Which of these is a common psychological stressor leading to doping?",
-    options: [
-      "Overconfidence",
-      "Fear of failure",
-      "Inability to perform under pressure",
-      "Lack of sleep"
-    ],
-    correct: 1
-  },
-  {
-    id: 10,
-    question: "What legal punishment can an athlete face for a positive drug test?",
-    options: [
-      "Life ban from competitions",
-      "Suspension and fines",
-      "Probation",
-      "Public apology"
-    ],
-    correct: 1
-  },
-  {
-    id: 11,
-    question: "What role does an athlete’s coach play in the prevention of doping?",
-    options: [
-      "Advising on the use of supplements",
-      "Teaching athletes to avoid substances that could harm their health",
-      "Pressuring athletes to take performance-enhancing drugs",
-      "Pushing athletes to perform beyond their limits"
-    ],
-    correct: 1
-  },
-  {
-    id: 12,
-    question: "Which psychological issue can contribute to an athlete's decision to use doping substances?",
-    options: [
-      "Confidence in their natural ability",
-      "Pressure to win at all costs",
-      "Strong team support",
-      "Enjoyment of the sport"
-    ],
-    correct: 1
-  },
-  {
-    id: 13,
-    question: "What is the maximum legal consequence for an athlete who tests positive for a banned substance?",
-    options: [
-      "Lifetime ban from sports",
-      "Public reprimand",
-      "Temporary suspension",
-      "Requirement to attend therapy sessions"
-    ],
-    correct: 0
-  },
-  {
-    id: 14,
-    question: "What is a critical role of sports doctors in the prevention of doping?",
-    options: [
-      "Administering substances to enhance performance",
-      "Ensuring that athletes are not using banned substances",
-      "Providing athletes with performance-enhancing drugs",
-      "Monitoring athletes for signs of doping"
-    ],
-    correct: 1
-  },
-  {
-    id: 15,
-    question: "What is the legal consequence of an athlete being found guilty of trafficking banned substances?",
-    options: [
-      "Suspension for one year",
-      "Jail time and permanent ban",
-      "A fine only",
-      "Public apology"
-    ],
-    correct: 1
-  },
-  {
-    id: 16,
-    question: "Which of the following is a psychological pressure that athletes might feel leading them to doping?",
-    options: [
-      "Desire to improve performance and success",
-      "Support from the sporting community",
-      "Enjoyment of the competition",
-      "Confidence in their abilities"
-    ],
-    correct: 0
-  },
-  {
-    id: 17,
-    question: "What legal body sets the list of banned substances in sports?",
-    options: [
-      "International Olympic Committee (IOC)",
-      "World Anti-Doping Agency (WADA)",
-      "FIFA",
-      "World Health Organization (WHO)"
-    ],
-    correct: 1
-  },
-  {
-    id: 18,
-    question: "What is a key factor for athletes considering doping, from a psychological perspective?",
-    options: [
-      "The desire to recover from injury quickly",
-      "Pride in natural performance",
-      "Commitment to fair play",
-      "Refusal to compete at a higher level"
-    ],
-    correct: 0
-  },
-  {
-    id: 19,
-    question: "What is the role of a coach in educating athletes about doping?",
-    options: [
-      "Encouraging the use of banned substances for better performance",
-      "Providing education on the dangers of doping",
-      "Ignoring the risk of doping for better results",
-      "Offering athletes substances to help with recovery"
-    ],
-    correct: 1
-  },
-  {
-    id: 20,
-    question: "What psychological effect can the pressure to win have on athletes?",
-    options: [
-      "Increased determination",
-      "Decreased desire to compete",
-      "Increased likelihood of doping",
-      "Stronger mental resilience"
-    ],
-    correct: 2
-  }
-];
-
-// Educational facts for each question
-const facts = [
-  "Psychological pressures such as fear of failure or intense competition often drive athletes to consider doping as a way to improve performance.",
-  "Athletes caught using doping substances may face legal consequences, including jail time, depending on the severity of the offense.",
-  "Coaches, doctors, and trainers have a significant role in preventing doping by educating athletes and monitoring their health.",
-  "Trafficking banned substances can result in serious legal consequences, including potential jail time for the trafficker.",
-  "One of the psychological pressures that leads to doping is the desire to recover from injury quickly and return to competition.",
-  "Coaches are responsible for ensuring that their athletes are not using banned substances and for promoting fair and safe training practices.",
-  "The World Anti-Doping Agency (WADA) is the global organization responsible for setting regulations and ensuring compliance with anti-doping laws.",
-  "Doping can cause psychological effects like anxiety, paranoia, and depression, which often worsen over time with prolonged use.",
-  "Psychological factors such as fear of failure and the need to perform can influence an athlete's decision to use performance-enhancing substances.",
-  "Athletes who test positive for doping face legal consequences, including fines, suspensions, and damage to their career and reputation.",
-  "Coaches must ensure that athletes understand the risks of doping and guide them towards healthier alternatives for performance improvement.",
-  "Pressure to win at all costs and competition anxiety can make athletes more susceptible to doping, as they seek ways to outperform others.",
-  "Athletes caught doping may face a lifetime ban from competitions, especially in high-profile cases where fairness is compromised.",
-  "Sports doctors should prioritize the health and well-being of athletes by ensuring they do not use harmful or banned substances.",
-  "The legal consequences of trafficking banned substances can include jail time and lifelong bans from sports, severely impacting an individual's career.",
-  "Athletes often face intense pressure to improve performance and meet expectations, which can push them toward doping as a quick solution.",
-  "WADA is the governing body that determines which substances are banned in sports, updating the list annually to ensure fairness and safety.",
-  "Athletes may consider doping when faced with the psychological pressure to recover quickly from injuries or improve performance under time constraints.",
-  "Coaches should be role models in educating athletes about the dangers of doping and the importance of natural training methods.",
-  "Psychological pressure, such as the need to win or achieve a specific goal, increases the likelihood that athletes will turn to doping for an edge."
-];
-
+    {
+      id: 1,
+      question: "Which of the following is NOT a method of drug testing for athletes?",
+      options: [
+        "Urine test",
+        "Blood test",
+        "Hair test",
+        "Visual inspection"
+      ],
+      correct: 3
+    },
+    {
+      id: 2,
+      question: "What type of test is most commonly used to detect EPO (Erythropoietin)?",
+      options: [
+        "Urine test",
+        "Hair test",
+        "Blood test",
+        "Saliva test"
+      ],
+      correct: 2
+    },
+    {
+      id: 3,
+      question: "How can masking agents interfere with doping detection?",
+      options: [
+        "They enhance the effects of steroids",
+        "They hide the presence of banned substances in the body",
+        "They improve athletic performance",
+        "They help athletes recover faster"
+      ],
+      correct: 1
+    },
+    {
+      id: 4,
+      question: "What does WADA stand for?",
+      options: [
+        "World Athletic Doping Agency",
+        "World Anti-Doping Association",
+        "World Anti-Doping Agency",
+        "World Athlete Detection Association"
+      ],
+      correct: 2
+    },
+    {
+      id: 5,
+      question: "Which sample is typically used for detecting steroids in athletes?",
+      options: [
+        "Blood sample",
+        "Hair sample",
+        "Urine sample",
+        "Sweat sample"
+      ],
+      correct: 2
+    },
+    {
+      id: 6,
+      question: "What is the primary purpose of a blood test in doping detection?",
+      options: [
+        "To detect banned substances directly",
+        "To monitor an athlete's hydration levels",
+        "To identify performance-enhancing substances like EPO",
+        "To determine mental fatigue levels"
+      ],
+      correct: 2
+    },
+    {
+      id: 7,
+      question: "What is a common substance that is used as a masking agent in doping?",
+      options: [
+        "Caffeine",
+        "Alcohol",
+        "Diuretics",
+        "Creatine"
+      ],
+      correct: 2
+    },
+    {
+      id: 8,
+      question: "How long can hair tests detect drug use after the substance has been ingested?",
+      options: [
+        "Up to 1 week",
+        "Up to 1 month",
+        "Up to 3 months",
+        "Up to 6 months"
+      ],
+      correct: 2
+    },
+    {
+      id: 9,
+      question: "Which of the following is a primary challenge in detecting blood doping?",
+      options: [
+        "Lack of visible symptoms",
+        "No blood tests available",
+        "Blood volume testing issues",
+        "Detection window is too short"
+      ],
+      correct: 0
+    },
+    {
+      id: 10,
+      question: "Which organization is responsible for creating and maintaining the banned substance list for athletes?",
+      options: [
+        "FIFA",
+        "IOC",
+        "WADA",
+        "NFL"
+      ],
+      correct: 2
+    },
+    {
+      id: 11,
+      question: "Which of these substances is NOT typically detectable in a urine test?",
+      options: [
+        "Anabolic steroids",
+        "Cocaine",
+        "Human growth hormone (HGH)",
+        "Blood doping agents"
+      ],
+      correct: 3
+    },
+    {
+      id: 12,
+      question: "What is the role of the Athlete Biological Passport?",
+      options: [
+        "To track drug use history",
+        "To monitor an athlete's health and biological markers over time",
+        "To track training sessions",
+        "To ensure an athlete's eligibility"
+      ],
+      correct: 1
+    },
+    {
+      id: 13,
+      question: "Which of the following can cause a false positive result in a doping test?",
+      options: [
+        "Consuming caffeine",
+        "Taking legal supplements",
+        "Eating certain foods like poppy seeds",
+        "Not eating before the test"
+      ],
+      correct: 2
+    },
+    {
+      id: 14,
+      question: "Which type of drug is most commonly associated with masking agents?",
+      options: [
+        "Stimulants",
+        "Narcotics",
+        "Diuretics",
+        "Anabolic steroids"
+      ],
+      correct: 2
+    },
+    {
+      id: 15,
+      question: "What happens during the B sample analysis in doping tests?",
+      options: [
+        "The B sample is discarded",
+        "A second test is performed on the B sample to confirm results",
+        "A completely new sample is taken from the athlete",
+        "The sample is sent to a different lab"
+      ],
+      correct: 1
+    },
+    {
+      id: 16,
+      question: "How does WADA ensure fairness in the testing process?",
+      options: [
+        "By only testing athletes during competitions",
+        "By guaranteeing that all tests are anonymous",
+        "By offering financial rewards for passing tests",
+        "By keeping test results confidential until the event"
+      ],
+      correct: 1
+    },
+    {
+      id: 17,
+      question: "Which of the following substances is often used in blood doping?",
+      options: [
+        "Anabolic steroids",
+        "Erythropoietin (EPO)",
+        "Caffeine",
+        "Nicotine"
+      ],
+      correct: 1
+    },
+    {
+      id: 18,
+      question: "What is one of the main challenges of detecting gene doping?",
+      options: [
+        "No standard testing method yet",
+        "Gene doping is only detectable in hair samples",
+        "Gene doping does not enhance performance",
+        "Gene doping is only detectable after long periods"
+      ],
+      correct: 0
+    },
+    {
+      id: 19,
+      question: "What is the typical duration for a ban after an athlete is caught doping?",
+      options: [
+        "6 months",
+        "1 year",
+        "2-4 years",
+        "Lifetime ban"
+      ],
+      correct: 2
+    },
+    {
+      id: 20,
+      question: "What is the minimum age for an athlete to be tested for doping?",
+      options: [
+        "14",
+        "16",
+        "18",
+        "21"
+      ],
+      correct: 2
+    }
+  ];
+  
+  const facts = [
+    "Blood, urine, and hair tests are the most common methods for detecting doping substances in athletes.",
+    "Masking agents like diuretics can hide the presence of banned substances, but they can be detected through specialized tests.",
+    "WADA (World Anti-Doping Agency) regularly updates the banned substance list based on scientific evidence and feedback.",
+    "EPO (Erythropoietin) is a hormone used to boost red blood cell production and is commonly detected through blood tests.",
+    "Athletes can be tested both in-competition and out-of-competition at any time and location.",
+    "Urine tests are the most commonly used method to detect banned substances like anabolic steroids and stimulants.",
+    "Hair tests can detect drug use for up to three months, offering a longer detection window than urine or blood tests.",
+    "The Athlete Biological Passport tracks an athlete's biological data over time, making it harder to hide doping over long periods.",
+    "While blood doping enhances athletic performance, it is difficult to detect without specialized blood tests.",
+    "Diuretics, used to mask other drugs, are also banned by WADA and can be detected in both blood and urine samples.",
+    "False positives in doping tests can occur due to factors like medication or contaminated supplements.",
+    "Gene doping, which involves altering an athlete's genetic material, is a growing concern but lacks reliable detection methods.",
+    "The B sample is a backup sample that allows for a second test to confirm the results of the initial test.",
+    "A typical doping ban can range from 2 to 4 years depending on the severity of the violation and the type of drug involved.",
+    "WADA testing procedures ensure fairness by maintaining rigorous standards and transparency in the testing process.",
+    "Athletes are responsible for any banned substance found in their bodies, even if they unknowingly consumed it.",
+    "Blood doping is illegal in sports and often involves the use of EPO or blood transfusions to improve oxygen capacity.",
+    "Athletes are subject to out-of-competition testing, which can occur at any location and time to catch doping violations.",
+    "A typical therapeutic use exemption (TUE) allows athletes to use banned substances for legitimate medical reasons under strict supervision.",
+    "Gene doping involves introducing synthetic genes to enhance physical capabilities, but it remains challenging to detect with current methods."
+  ];
 
 const TIME_PER_QUESTION = 30; // 30 seconds per question
 
-const Quiz = ({ navigation }) => {
+const Quiz2 = ({ navigation }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -613,4 +611,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Quiz;
+export default Quiz2;

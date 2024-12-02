@@ -17,254 +17,254 @@ import { Alert } from 'react-native';
 const questions = [
   {
     id: 1,
-    question: "What is a common psychological pressure that athletes face, leading to doping?",
+    question: "Which of these substances is considered a stimulant?",
     options: [
-      "Desire for fame and recognition",
-      "Fear of injury",
-      "Fear of failing to meet expectations",
-      "Lack of motivation"
-    ],
-    correct: 2
-  },
-  {
-    id: 2,
-    question: "What legal consequence can athletes face if caught doping?",
-    options: [
-      "Jail time",
-      "Financial compensation",
-      "Fines only",
-      "Community service"
+      "Caffeine",
+      "Creatine",
+      "Glutamine",
+      "Vitamin C"
     ],
     correct: 0
   },
   {
-    id: 3,
-    question: "Which of the following professionals plays a significant role in preventing doping?",
+    id: 2,
+    question: "Which substance is commonly used to enhance muscle mass?",
     options: [
-      "Coaches",
-      "Doctors",
-      "Trainers",
-      "All of the above"
+      "Alcohol",
+      "Caffeine",
+      "Anabolic steroids",
+      "Carbohydrates"
+    ],
+    correct: 2
+  },
+  {
+    id: 3,
+    question: "Which of these substances can increase red blood cell production?",
+    options: [
+      "Insulin",
+      "Caffeine",
+      "Creatine",
+      "Erythropoietin (EPO)"
     ],
     correct: 3
   },
   {
     id: 4,
-    question: "What is the primary legal consequence for trafficking banned substances?",
+    question: "Which substance is most commonly found in pre-workout supplements?",
     options: [
-      "Disqualification from competitions",
-      "Fines",
-      "Jail time",
-      "Loss of sponsorship"
+      "Beta-Alanine",
+      "Caffeine",
+      "Vitamin D",
+      "Zinc"
     ],
-    correct: 2
+    correct: 1
   },
   {
     id: 5,
-    question: "What psychological factor often pressures athletes to resort to doping?",
+    question: "What is a common health risk of using anabolic steroids?",
     options: [
-      "Lack of competition",
-      "Desire to recover from injury quickly",
-      "Emotional support from friends",
-      "Improved self-esteem"
+      "High blood pressure",
+      "Hair loss",
+      "Liver damage",
+      "All of the above"
     ],
-    correct: 1
+    correct: 3
   },
   {
     id: 6,
-    question: "Which of the following is a key responsibility of coaches in preventing doping?",
+    question: "Which of these substances is banned for athletes due to its performance-enhancing effects?",
     options: [
-      "Encouraging athletes to push their limits",
-      "Monitoring an athlete's health and well-being",
-      "Ignoring signs of doping for better results",
-      "Providing banned substances"
-    ],
-    correct: 1
-  },
-  {
-    id: 7,
-    question: "Which legal body is responsible for regulating anti-doping measures globally?",
-    options: [
-      "World Anti-Doping Agency (WADA)",
-      "International Olympic Committee (IOC)",
-      "FIFA",
-      "World Health Organization (WHO)"
+      "EPO",
+      "Omega-3 fatty acids",
+      "Vitamin C",
+      "Zinc"
     ],
     correct: 0
   },
   {
-    id: 8,
-    question: "What is a psychological effect of doping on an athlete's mental state?",
+    id: 7,
+    question: "What is the primary function of diuretics in doping?",
     options: [
-      "Increased happiness",
-      "Chronic anxiety and paranoia",
-      "Improved concentration",
-      "Heightened optimism"
+      "Reducing body fat",
+      "Increasing muscle mass",
+      "Enhancing endurance",
+      "Masking drugs"
     ],
-    correct: 1
+    correct: 3
+  },
+  {
+    id: 8,
+    question: "Which substance is used to increase the oxygen-carrying capacity of the blood?",
+    options: [
+      "Erythropoietin (EPO)",
+      "Testosterone",
+      "Caffeine",
+      "Insulin"
+    ],
+    correct: 0
   },
   {
     id: 9,
-    question: "Which of these is a common psychological stressor leading to doping?",
+    question: "Which drug is a common stimulant that can improve focus and reaction time?",
     options: [
-      "Overconfidence",
-      "Fear of failure",
-      "Inability to perform under pressure",
-      "Lack of sleep"
+      "Amphetamines",
+      "EPO",
+      "Caffeine",
+      "Anabolic steroids"
     ],
-    correct: 1
+    correct: 0
   },
   {
     id: 10,
-    question: "What legal punishment can an athlete face for a positive drug test?",
+    question: "Which of these is considered a corticosteroid?",
     options: [
-      "Life ban from competitions",
-      "Suspension and fines",
-      "Probation",
-      "Public apology"
+      "Testosterone",
+      "Prednisone",
+      "Creatine",
+      "Caffeine"
     ],
     correct: 1
   },
   {
     id: 11,
-    question: "What role does an athlete’s coach play in the prevention of doping?",
+    question: "Which substance is often used by athletes to improve recovery time?",
     options: [
-      "Advising on the use of supplements",
-      "Teaching athletes to avoid substances that could harm their health",
-      "Pressuring athletes to take performance-enhancing drugs",
-      "Pushing athletes to perform beyond their limits"
+      "Magnesium",
+      "Vitamin D",
+      "Human Growth Hormone (HGH)",
+      "Protein"
     ],
-    correct: 1
+    correct: 2
   },
   {
     id: 12,
-    question: "Which psychological issue can contribute to an athlete's decision to use doping substances?",
+    question: "Which of these substances is banned for its potential to enhance muscle growth?",
     options: [
-      "Confidence in their natural ability",
-      "Pressure to win at all costs",
-      "Strong team support",
-      "Enjoyment of the sport"
+      "Creatine",
+      "Caffeine",
+      "Protein powder",
+      "Anabolic steroids"
     ],
-    correct: 1
+    correct: 3
   },
   {
     id: 13,
-    question: "What is the maximum legal consequence for an athlete who tests positive for a banned substance?",
+    question: "What is a common use of human growth hormone (HGH) in sports?",
     options: [
-      "Lifetime ban from sports",
-      "Public reprimand",
-      "Temporary suspension",
-      "Requirement to attend therapy sessions"
+      "Enhancing muscle recovery",
+      "Boosting energy levels",
+      "Increasing endurance",
+      "Masking other drugs"
     ],
     correct: 0
   },
   {
     id: 14,
-    question: "What is a critical role of sports doctors in the prevention of doping?",
+    question: "Which substance is typically used in blood doping?",
     options: [
-      "Administering substances to enhance performance",
-      "Ensuring that athletes are not using banned substances",
-      "Providing athletes with performance-enhancing drugs",
-      "Monitoring athletes for signs of doping"
+      "Erythropoietin (EPO)",
+      "Caffeine",
+      "Alcohol",
+      "Steroids"
     ],
-    correct: 1
+    correct: 0
   },
   {
     id: 15,
-    question: "What is the legal consequence of an athlete being found guilty of trafficking banned substances?",
+    question: "Which drug is banned for its ability to increase alertness and reduce fatigue?",
     options: [
-      "Suspension for one year",
-      "Jail time and permanent ban",
-      "A fine only",
-      "Public apology"
+      "Creatine",
+      "Steroids",
+      "Amphetamines",
+      "Beta-blockers"
     ],
-    correct: 1
+    correct: 2
   },
   {
     id: 16,
-    question: "Which of the following is a psychological pressure that athletes might feel leading them to doping?",
+    question: "What is the purpose of using insulin in doping?",
     options: [
-      "Desire to improve performance and success",
-      "Support from the sporting community",
-      "Enjoyment of the competition",
-      "Confidence in their abilities"
+      "Improving sleep quality",
+      "Enhancing muscle mass",
+      "Reducing body fat",
+      "Increasing blood sugar levels"
     ],
-    correct: 0
+    correct: 1
   },
   {
     id: 17,
-    question: "What legal body sets the list of banned substances in sports?",
+    question: "Which of these substances is a common component in fat burners?",
     options: [
-      "International Olympic Committee (IOC)",
-      "World Anti-Doping Agency (WADA)",
-      "FIFA",
-      "World Health Organization (WHO)"
-    ],
-    correct: 1
-  },
-  {
-    id: 18,
-    question: "What is a key factor for athletes considering doping, from a psychological perspective?",
-    options: [
-      "The desire to recover from injury quickly",
-      "Pride in natural performance",
-      "Commitment to fair play",
-      "Refusal to compete at a higher level"
+      "Ephedrine",
+      "Caffeine",
+      "L-carnitine",
+      "Creatine"
     ],
     correct: 0
   },
   {
-    id: 19,
-    question: "What is the role of a coach in educating athletes about doping?",
+    id: 18,
+    question: "What is a potential side effect of using diuretics in sports?",
     options: [
-      "Encouraging the use of banned substances for better performance",
-      "Providing education on the dangers of doping",
-      "Ignoring the risk of doping for better results",
-      "Offering athletes substances to help with recovery"
+      "Heart palpitations",
+      "Increased muscle mass",
+      "Improved endurance",
+      "Dehydration"
     ],
-    correct: 1
+    correct: 3
+  },
+  {
+    id: 19,
+    question: "Which of the following is NOT an example of a banned stimulant?",
+    options: [
+      "Caffeine",
+      "Erythropoietin (EPO)",
+      "Methamphetamine",
+      "Cocaine"
+    ],
+    correct: 0
   },
   {
     id: 20,
-    question: "What psychological effect can the pressure to win have on athletes?",
+    question: "What is one of the main purposes of using blood transfusions in blood doping?",
     options: [
-      "Increased determination",
-      "Decreased desire to compete",
-      "Increased likelihood of doping",
-      "Stronger mental resilience"
+      "To reduce recovery time",
+      "To improve muscle function",
+      "To increase red blood cells",
+      "To boost energy levels"
     ],
     correct: 2
   }
 ];
 
-// Educational facts for each question
+// Educational facts related to substances in sports
 const facts = [
-  "Psychological pressures such as fear of failure or intense competition often drive athletes to consider doping as a way to improve performance.",
-  "Athletes caught using doping substances may face legal consequences, including jail time, depending on the severity of the offense.",
-  "Coaches, doctors, and trainers have a significant role in preventing doping by educating athletes and monitoring their health.",
-  "Trafficking banned substances can result in serious legal consequences, including potential jail time for the trafficker.",
-  "One of the psychological pressures that leads to doping is the desire to recover from injury quickly and return to competition.",
-  "Coaches are responsible for ensuring that their athletes are not using banned substances and for promoting fair and safe training practices.",
-  "The World Anti-Doping Agency (WADA) is the global organization responsible for setting regulations and ensuring compliance with anti-doping laws.",
-  "Doping can cause psychological effects like anxiety, paranoia, and depression, which often worsen over time with prolonged use.",
-  "Psychological factors such as fear of failure and the need to perform can influence an athlete's decision to use performance-enhancing substances.",
-  "Athletes who test positive for doping face legal consequences, including fines, suspensions, and damage to their career and reputation.",
-  "Coaches must ensure that athletes understand the risks of doping and guide them towards healthier alternatives for performance improvement.",
-  "Pressure to win at all costs and competition anxiety can make athletes more susceptible to doping, as they seek ways to outperform others.",
-  "Athletes caught doping may face a lifetime ban from competitions, especially in high-profile cases where fairness is compromised.",
-  "Sports doctors should prioritize the health and well-being of athletes by ensuring they do not use harmful or banned substances.",
-  "The legal consequences of trafficking banned substances can include jail time and lifelong bans from sports, severely impacting an individual's career.",
-  "Athletes often face intense pressure to improve performance and meet expectations, which can push them toward doping as a quick solution.",
-  "WADA is the governing body that determines which substances are banned in sports, updating the list annually to ensure fairness and safety.",
-  "Athletes may consider doping when faced with the psychological pressure to recover quickly from injuries or improve performance under time constraints.",
-  "Coaches should be role models in educating athletes about the dangers of doping and the importance of natural training methods.",
-  "Psychological pressure, such as the need to win or achieve a specific goal, increases the likelihood that athletes will turn to doping for an edge."
+  "Anabolic steroids can cause severe health effects, including liver damage, high blood pressure, and psychiatric issues like aggression.",
+  "Erythropoietin (EPO) is used in doping to increase the production of red blood cells, thereby improving oxygen transport and endurance.",
+  "Creatine is a legal supplement that helps enhance short bursts of high-intensity exercise by improving energy production in muscles.",
+  "Caffeine, when consumed in large amounts, can be considered a stimulant and may be banned in certain quantities by sports organizations.",
+  "Human Growth Hormone (HGH) is used for muscle recovery and to promote muscle growth, but it is banned in most sports due to its performance-enhancing effects.",
+  "Diuretics are banned because they can be used to mask the presence of other banned substances by flushing them out of the body.",
+  "Testosterone is a banned substance in sports because it significantly enhances muscle growth and recovery.",
+  "Beta-alanine, often found in pre-workout supplements, helps buffer acid build-up in muscles during high-intensity exercise, improving endurance.",
+  "Amphetamines are used in sports for their stimulant properties, enhancing focus and reaction time, but they are banned due to potential health risks.",
+  "Caffeine, when used in moderation, is legal in sports, but excessive intake may lead to disqualification due to its stimulant effects.",
+  "Erythropoietin (EPO) is banned because it increases the body's red blood cell count, improving endurance, and is often associated with blood doping.",
+  "Steroids are used to promote muscle mass and reduce recovery time but can lead to serious health issues, including cardiovascular problems.",
+  "Insulin misuse can lead to dangerously low blood sugar levels, posing severe health risks for athletes.",
+  "The use of blood transfusions in doping is intended to increase the number of red blood cells, improving oxygen transport and stamina.",
+  "Diuretics are banned for masking other drugs in the system and increasing the risk of dehydration.",
+  "The use of methamphetamine in sports is banned because it is a potent stimulant with significant health risks, including heart problems.",
+  "Ephedrine is a stimulant found in many fat-burning supplements but is banned due to its potential to cause heart issues and dehydration.",
+  "Caffeine is a common stimulant in sports but can only be used in certain amounts, beyond which it is considered a doping substance.",
+  "Methamphetamine is a banned substance because of its stimulant effects, which can lead to severe psychological and physical health consequences.",
+  "Steroids can have long-term health consequences, including liver damage, cardiovascular issues, and psychological problems.",
+  "Blood doping is a form of performance enhancement that involves increasing the number of red blood cells to improve athletic performance by enhancing oxygen delivery."
 ];
-
 
 const TIME_PER_QUESTION = 30; // 30 seconds per question
 
-const Quiz = ({ navigation }) => {
+const Quiz1 = ({ navigation }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -613,4 +613,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Quiz;
+export default Quiz1;

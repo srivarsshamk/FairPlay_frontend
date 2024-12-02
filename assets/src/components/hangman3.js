@@ -8,62 +8,62 @@ import axios from 'axios';
 
 
 const wordBank = [
-  { 
-    word: 'LIVER_DAMAGE', 
-    clue: 'Harm to the liver caused by anabolic steroid use', 
-    fact: 'Long-term use of anabolic steroids can cause liver tumors and a condition called peliosis hepatis, where blood-filled cysts form in the liver.'
-  },
-  { 
-    word: 'HEART_DISEASE', 
-    clue: 'Cardiovascular issues from stimulant or steroid use', 
-    fact: 'Substances like anabolic steroids and EPO can increase the risk of heart attacks, strokes, and high blood pressure.'
-  },
-  { 
-    word: 'HORMONAL_IMBALANCE', 
-    clue: 'Disruption of natural hormone production', 
-    fact: 'Doping substances like testosterone can suppress natural hormone production, leading to infertility and other endocrine disorders.'
-  },
-  { 
-    word: 'PSYCHOLOGICAL_DEPENDENCE', 
-    clue: 'Addiction to performance-enhancing drugs', 
-    fact: 'Some substances, such as stimulants and anabolic steroids, can lead to psychological addiction and withdrawal symptoms.'
-  },
-  { 
-    word: 'IMMUNE_SYSTEM_DAMAGE', 
-    clue: 'Weakened immune defenses due to doping', 
-    fact: 'Prolonged use of glucocorticoids can suppress the immune system, making athletes more susceptible to infections.'
-  },
-  { 
-    word: 'BONE_DENSITY_LOSS', 
-    clue: 'Weakened bones caused by glucocorticoid misuse', 
-    fact: 'Long-term glucocorticoid use can lead to osteoporosis, making bones brittle and more prone to fractures.'
-  },
-  { 
-    word: 'KIDNEY_FAILURE', 
-    clue: 'Damage to the kidneys from excessive substance use', 
-    fact: 'Misuse of EPO and diuretics can strain the kidneys, leading to dehydration and, in severe cases, kidney failure.'
-  },
-  { 
-    word: 'PSYCHOSIS', 
-    clue: 'Severe mental health issues linked to doping substances', 
-    fact: 'Excessive use of stimulants like amphetamines can cause hallucinations, paranoia, and even psychosis in athletes.'
-  },
-  { 
-    word: 'CANCER_RISK', 
-    clue: 'Increased likelihood of developing cancer', 
-    fact: 'Certain substances, such as unregulated hormone supplements, have been linked to an elevated risk of cancers like liver or prostate cancer.'
-  },
-  { 
-    word: 'SKIN_CONDITIONS', 
-    clue: 'Acne and skin infections from doping', 
-    fact: 'Anabolic steroid misuse can cause severe acne, cyst formation, and increased risk of skin infections due to weakened immunity.'
-  }
-];
+    { 
+      word: 'MENTAL_STRESS', 
+      clue: 'Psychological strain that may lead athletes to doping', 
+      fact: 'High-performance sports demand can lead to anxiety, depression, and burnout, pushing athletes toward shortcuts like doping for relief.'
+    },
+    { 
+      word: 'PEER_PRESSURE', 
+      clue: 'Influence from teammates or competitors to enhance performance', 
+      fact: 'Athletes often face pressure to match or exceed the performance of peers, which can lead to unethical choices like doping.'
+    },
+    { 
+      word: 'ROLE_MODELS', 
+      clue: 'Influence of sports icons on doping behavior', 
+      fact: 'When high-profile athletes are caught doping, it can erode trust and encourage imitation among younger players.'
+    },
+    { 
+      word: 'JAIL_TIME', 
+      clue: 'Legal punishment for trafficking banned substances', 
+      fact: 'In many countries, trafficking anabolic steroids or other banned drugs can lead to severe legal penalties, including imprisonment.'
+    },
+    { 
+      word: 'FINE', 
+      clue: 'Financial penalty for doping violations', 
+      fact: 'Doping violations often result in hefty fines imposed by sports governing bodies or legal authorities.'
+    },
+    { 
+      word: 'COACHES_ROLE', 
+      clue: 'Influence of coaches in preventing or enabling doping', 
+      fact: 'Coaches play a vital role in educating athletes about the risks of doping and fostering a culture of fair play.'
+    },
+    { 
+      word: 'PSYCHOLOGICAL_SUPPORT', 
+      clue: 'Mental health interventions for athletes', 
+      fact: 'Access to sports psychologists and counselors can help athletes manage stress and resist the temptation to dope.'
+    },
+    { 
+      word: 'WHISTLEBLOWERS', 
+      clue: 'Individuals who expose doping practices', 
+      fact: 'Whistleblowers like former athletes or team insiders have been pivotal in uncovering major doping scandals.'
+    },
+    { 
+      word: 'ANTI_DOPING_LAWS', 
+      clue: 'Legal frameworks to combat doping in sports', 
+      fact: 'Countries like Germany and Italy have enacted specific anti-doping laws that criminalize possession or trafficking of banned substances.'
+    },
+    { 
+      word: 'STIGMA', 
+      clue: 'Social consequences of being caught doping', 
+      fact: 'Athletes caught doping face long-term reputational damage, loss of endorsements, and public disgrace.'
+    }
+  ];
 
 
 const MAX_TRIES = 6;
 
-const Hangman = ({ navigation }) => {
+const Hangman3 = ({ navigation }) => {
   const [currentWord, setCurrentWord] = useState('');
   const [currentClue, setCurrentClue] = useState('');
   const [currentFact, setCurrentFact] = useState('');
@@ -498,4 +498,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Hangman;
+export default Hangman3;

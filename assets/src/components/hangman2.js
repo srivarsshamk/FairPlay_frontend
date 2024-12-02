@@ -9,61 +9,61 @@ import axios from 'axios';
 
 const wordBank = [
   { 
-    word: 'LIVER_DAMAGE', 
-    clue: 'Harm to the liver caused by anabolic steroid use', 
-    fact: 'Long-term use of anabolic steroids can cause liver tumors and a condition called peliosis hepatis, where blood-filled cysts form in the liver.'
+    word: 'URINE TESTING', 
+    clue: 'Common method for detecting banned substances', 
+    fact: 'Urine testing has been a cornerstone of anti-doping efforts since the 1960s, being non-invasive and reliable for detecting metabolites.'
   },
   { 
-    word: 'HEART_DISEASE', 
-    clue: 'Cardiovascular issues from stimulant or steroid use', 
-    fact: 'Substances like anabolic steroids and EPO can increase the risk of heart attacks, strokes, and high blood pressure.'
+    word: 'BLOOD TESTING', 
+    clue: 'Procedure to detect substances and methods affecting the blood', 
+    fact: 'Blood testing is crucial for identifying blood doping practices such as EPO use and transfusions.'
   },
   { 
-    word: 'HORMONAL_IMBALANCE', 
-    clue: 'Disruption of natural hormone production', 
-    fact: 'Doping substances like testosterone can suppress natural hormone production, leading to infertility and other endocrine disorders.'
+    word: 'WADA CODE', 
+    clue: 'Set of rules and standards for anti-doping testing', 
+    fact: 'The WADA Code, established in 2004, harmonizes anti-doping policies and testing procedures across sports worldwide.'
   },
   { 
-    word: 'PSYCHOLOGICAL_DEPENDENCE', 
-    clue: 'Addiction to performance-enhancing drugs', 
-    fact: 'Some substances, such as stimulants and anabolic steroids, can lead to psychological addiction and withdrawal symptoms.'
+    word: 'THERAPEUTIC USE EXEMPTION', 
+    clue: 'Permission to use banned substances for medical reasons', 
+    fact: 'Athletes with legitimate medical conditions can apply for a Therapeutic Use Exemption (TUE) to use otherwise banned substances.'
   },
   { 
-    word: 'IMMUNE_SYSTEM_DAMAGE', 
-    clue: 'Weakened immune defenses due to doping', 
-    fact: 'Prolonged use of glucocorticoids can suppress the immune system, making athletes more susceptible to infections.'
+    word: 'RANDOM TESTING', 
+    clue: 'Unscheduled drug tests conducted on athletes', 
+    fact: 'Random testing is used to deter athletes from using performance-enhancing drugs by creating an element of surprise.'
   },
   { 
-    word: 'BONE_DENSITY_LOSS', 
-    clue: 'Weakened bones caused by glucocorticoid misuse', 
-    fact: 'Long-term glucocorticoid use can lead to osteoporosis, making bones brittle and more prone to fractures.'
+    word: 'OUT OF COMPETITION TESTING', 
+    clue: 'Testing conducted outside of competition periods', 
+    fact: 'Out-of-competition testing targets drugs that improve training outcomes but may not be detectable during competition.'
   },
   { 
-    word: 'KIDNEY_FAILURE', 
-    clue: 'Damage to the kidneys from excessive substance use', 
-    fact: 'Misuse of EPO and diuretics can strain the kidneys, leading to dehydration and, in severe cases, kidney failure.'
+    word: 'BIOLOGICAL PASSPORT', 
+    clue: 'Record of an athlete’s biological markers over time', 
+    fact: 'The Athlete Biological Passport (ABP) monitors variables like hemoglobin levels to detect doping indirectly.'
   },
   { 
-    word: 'PSYCHOSIS', 
-    clue: 'Severe mental health issues linked to doping substances', 
-    fact: 'Excessive use of stimulants like amphetamines can cause hallucinations, paranoia, and even psychosis in athletes.'
+    word: 'ISOTOPE RATIO TESTING', 
+    clue: 'Technique to distinguish natural from synthetic hormones', 
+    fact: 'Isotope ratio mass spectrometry (IRMS) is used to detect synthetic testosterone by analyzing carbon isotope ratios.'
   },
   { 
-    word: 'CANCER_RISK', 
-    clue: 'Increased likelihood of developing cancer', 
-    fact: 'Certain substances, such as unregulated hormone supplements, have been linked to an elevated risk of cancers like liver or prostate cancer.'
+    word: 'CHAIN OF CUSTODY', 
+    clue: 'Documentation process ensuring test sample integrity', 
+    fact: 'The chain of custody ensures that collected samples are securely handled and not tampered with throughout testing.'
   },
   { 
-    word: 'SKIN_CONDITIONS', 
-    clue: 'Acne and skin infections from doping', 
-    fact: 'Anabolic steroid misuse can cause severe acne, cyst formation, and increased risk of skin infections due to weakened immunity.'
+    word: 'GAS CHROMATOGRAPHY', 
+    clue: 'Analytical method for identifying banned substances', 
+    fact: 'Gas chromatography-mass spectrometry (GC-MS) is a gold-standard technique for detecting specific metabolites in samples.'
   }
 ];
 
 
 const MAX_TRIES = 6;
 
-const Hangman = ({ navigation }) => {
+const Hangman2 = ({ navigation }) => {
   const [currentWord, setCurrentWord] = useState('');
   const [currentClue, setCurrentClue] = useState('');
   const [currentFact, setCurrentFact] = useState('');
@@ -498,4 +498,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Hangman;
+export default Hangman2;

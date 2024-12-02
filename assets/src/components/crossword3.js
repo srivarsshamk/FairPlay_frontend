@@ -17,7 +17,7 @@ import { ArrowLeft } from 'lucide-react';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const CrosswordGame = ({ navigation }) => {
+const CrosswordGame3 = ({ navigation }) => {
   // Updated puzzle data with new words and positions
   const puzzleData = {
     words: [
@@ -410,7 +410,7 @@ const CrosswordGame = ({ navigation }) => {
         >
           <ArrowLeft size={24} color="#2c3e50" />
         </TouchableOpacity>
-        <Text style={styles.title}>Anti-Doping Crossword Level 1</Text>
+        <Text style={styles.title}>Anti-Doping Crossword Level 4</Text>
       </View>
       {renderGrid()}
       <ScrollView 
@@ -600,4 +600,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CrosswordGame;
+export default CrosswordGame3;

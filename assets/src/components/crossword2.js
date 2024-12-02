@@ -17,56 +17,56 @@ import { ArrowLeft } from 'lucide-react';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const CrosswordGame = ({ navigation }) => {
+const CrosswordGame2 = ({ navigation }) => {
   // Updated puzzle data with new words and positions
   const puzzleData = {
     words: [
       {
         id: 1,
-        word: 'VIOLATION',
-        clue: '1. Across: Act of not following the rules',
+        word: 'FAIRPLAY',
+        clue: '1. Across: Act of playing without using prohibited substances',
         direction: 'across',
         row: 0,
         col: 0,
       },
       {
         id: 2,
-        word: 'VIAL',
-        clue: '2. Down: Storage device used to store medicinal liquids',
+        word: 'FINE',
+        clue: '2. Down: Penalty in the form of cash',
         direction: 'down',
         row: 0,
         col: 0,
       },
       {
         id: 3,
-        word: 'SCREEN',
-        clue: '3. Across: Process of testing the atheletes if they are clean of drugs',
+        word: 'MASKING',
+        clue: '3. Across: Use of a substance to hide the presence of another substance',
         direction: 'across',
-        row: 4,
-        col: 1,
-      },
-      {
-        id: 4,
-        word: 'ABUSE',
-        clue: '4. Down: Process of harming yourseleves with the use of drugs',
-        direction: 'down',
-        row: 0,
-        col: 4,
-      },
-      {
-        id: 5,
-        word: 'ETHICS',
-        clue: '5. Across: Moral principles of atheletes',
-        direction: 'across',
-        row: 6,
+        row: 2,
         col: 2,
       },
       {
-        id: 6,
-        word: 'TAMPERING',
-        clue: '6. Down: Process of modifying or changing a substance constitution ',
+        id: 4,
+        word: 'APPLY',
+        clue: '4. Down: Process of putting out application for doping tests',
         direction: 'down',
         row: 0,
+        col: 1,
+      },
+      {
+        id: 5,
+        word: 'ELIGIBLE',
+        clue: '5. Across: Status of atheletes who have passed the doping test',
+        direction: 'across',
+        row: 3,
+        col: 0,
+      },
+      {
+        id: 6,
+        word: 'BAN',
+        clue: '6. Down: Process of preventing a athelete from playing ',
+        direction: 'down',
+        row: 3,
         col: 5,
       },
     ],
@@ -410,7 +410,7 @@ const CrosswordGame = ({ navigation }) => {
         >
           <ArrowLeft size={24} color="#2c3e50" />
         </TouchableOpacity>
-        <Text style={styles.title}>Anti-Doping Crossword Level 1</Text>
+        <Text style={styles.title}>Anti-Doping Crossword Level 3</Text>
       </View>
       {renderGrid()}
       <ScrollView 
@@ -600,4 +600,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CrosswordGame;
+export default CrosswordGame2;
