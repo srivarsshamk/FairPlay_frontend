@@ -8,17 +8,19 @@ import axios from 'axios';
 import { ArrowLeft } from 'lucide-react-native';
 
 const substances = [
-  { id: 1, name: 'Anabolic Steroids', category: 'Banned' },
-  { id: 2, name: 'Caffeine', category: 'Permitted' },
-  { id: 3, name: 'Erythropoietin (EPO)', category: 'Banned' },
-  { id: 4, name: 'Creatine', category: 'Permitted' },
-  { id: 5, name: 'Testosterone', category: 'Banned' },
-  { id: 6, name: 'Hydrocortisone', category: 'Requires Medical Exception' },
-  { id: 7, name: 'Hydration Tablets', category: 'Permitted' },
-  { id: 8, name: 'Human Growth Hormone', category: 'Banned' },
-  { id: 9, name: 'Adrenaline', category: 'Permitted' },
-  { id: 10, name: 'Cannabis', category: 'Requires Medical Exception' }
-];
+    { id: 1, name: 'Stanozolol', category: 'Banned' },
+    { id: 2, name: 'Protein Powder', category: 'Permitted' },
+    { id: 3, name: 'Salbutamol', category: 'Banned' },
+    { id: 4, name: 'L-Arginine', category: 'Permitted' },
+    { id: 5, name: 'Nandrolone', category: 'Banned' },
+    { id: 6, name: 'Morphine', category: 'Requires Medical Exception' },
+    { id: 7, name: 'Multivitamins', category: 'Permitted' },
+    { id: 8, name: 'Synthetic Erythropoiesis-Stimulating Agents', category: 'Banned' },
+    { id: 9, name: 'Ashwagandha', category: 'Permitted' },
+    { id: 10, name: 'Dextroamphetamine', category: 'Requires Medical Exception' }
+  ];
+  
+  
 
 const ItemTypes = {
   SUBSTANCE: 'substance',
@@ -75,7 +77,7 @@ const SubstanceDropTarget = ({ category, items, onDrop }) => {
   );
 };
 
-const SubstanceSortGame = () => {
+const SubstanceSortGame2 = () => {
   const navigation = useNavigation();
   const [bannedItems, setBannedItems] = useState([]);
   const [permittedItems, setPermittedItems] = useState([]);
@@ -356,4 +358,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SubstanceSortGame;
+export default SubstanceSortGame2;

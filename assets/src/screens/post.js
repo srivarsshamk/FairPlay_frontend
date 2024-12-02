@@ -9,35 +9,47 @@ import {
   StyleSheet,
   Platform,
   Modal,
-  FlatList,
   Alert,
   ImageBackground,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Feather } from '@expo/vector-icons';
+import { Feather, FontAwesome5 } from '@expo/vector-icons';
 import { Video } from 'expo-av';
 
 export default function PostsScreen({ navigation }) {
   const [posts, setPosts] = useState([]);
+  const [usernames, setUsernames] = useState({});
   const [isCreateModalVisible, setCreateModalVisible] = useState(false);
-  const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [userId, setUserId] = useState(null);
   const [mediaType, setMediaType] = useState(null); // 'image' or 'video'
+  const [postComments, setPostComments] = useState({});
 
   // Post Creation State
   const [image, setImage] = useState(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [hashtags, setHashtags] = useState('');
-  const [selectedPost, setSelectedPost] = useState(null);
+  const [commentText, setCommentText] = useState('');
+
   const fileInputRef = useRef(null);
 
   useEffect(() => {
     loadUserData();
     fetchPosts();
   }, []);
+
+  const fetchUserFirstName = async (userId) => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/users/${userId}`);
+      return response.data.first_name;
+    } catch (error) {
+      console.error(`Error fetching user for ID ${userId}:`, error);
+      return 'Anonymous User';
+    }
+  };
+
 
   const loadUserData = async () => {
     try {
@@ -54,12 +66,128 @@ export default function PostsScreen({ navigation }) {
   const fetchPosts = async () => {
     try {
       const response = await axios.get('http://127.0.0.1:8000/posts');
-      setPosts(response.data.data);
+      const postsData = response.data.data;
+      setPosts(postsData);
+
+      // Fetch usernames for all posts concurrently
+      const usernamePromises = postsData.map(async (post) => {
+        const firstName = await fetchUserFirstName(post.user_id);
+        return { [post.user_id]: firstName };
+      });
+
+      const usernameResults = await Promise.all(usernamePromises);
+      const usernamesMap = usernameResults.reduce((acc, curr) => ({...acc, ...curr}), {});
+      setUsernames(usernamesMap);
     } catch (error) {
       console.error('Error fetching posts:', error);
       Alert.alert('Error', 'Could not fetch posts');
     }
   };
+
+  const fetchPostComments = async (postId) => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/comments/post/${postId}`);
+      setPostComments(prev => ({
+        ...prev,
+        [postId]: response.data.data
+      }));
+    } catch (error) {
+      console.error(`Error fetching comments for post ${postId}:`, error);
+    }
+  };
+
+  const addComment = async (postId) => {
+    if (!commentText.trim()) {
+      Alert.alert('Error', 'Comment cannot be empty');
+      return;
+    }
+  
+    try {
+      const commentData = {
+        like_count: 0,
+        comment: commentText,
+        user_id: userId,
+        post_id: postId
+      };
+  
+      await axios.post('http://127.0.0.1:8000/comments', commentData);
+      
+      // Refresh comments for this post
+      await fetchPostComments(postId);
+      
+      setCommentText('');
+    } catch (error) {
+      console.error('Comment addition error:', error);
+      Alert.alert('Error', 'Could not add comment');
+    }
+  };
+
+  const toggleLike = async (postId, isLiked) => {
+    try {
+      const likeEndpoint = isLiked 
+        ? `http://127.0.0.1:8000/posts/${postId}/unlike`
+        : `http://127.0.0.1:8000/posts/${postId}/like`;
+  
+      // Send the like/unlike request and get the updated post data
+      const response = await axios.post(likeEndpoint, {
+        user_id: userId,  // Include user ID in the request
+        post_id: postId
+      });
+  
+      const updatedPost = response.data; // Assuming the response contains the updated post object
+  
+      setPosts(prevPosts =>
+        prevPosts.map(post =>
+          post.id === postId
+            ? {
+                ...post,
+                is_liked: !isLiked, // Toggle the like status
+                likes_count: updatedPost.like_count // Update like_count from the response
+              }
+            : post
+        )
+      );
+    } catch (error) {
+      console.error('Like/Unlike error:', error);
+      Alert.alert(
+        'Error',
+        error.response?.data?.detail || 'Could not update like status'
+      );
+    }
+  }; 
+
+  const handleConnect = async (postUserId) => {
+    try {
+      // Retrieve the logged-in user's data
+      const userData = await AsyncStorage.getItem('userData');
+      if (!userData) {
+        Alert.alert('Error', 'Please log in first');
+        return;
+      }
+  
+      const currentUser = JSON.parse(userData);
+      const currentUserId = currentUser.id;
+  
+      // Fetch the username of the user you're connecting with
+      const receiverUsername = usernames[postUserId] || 'Anonymous User';
+  
+      // Store sender (current user) and receiver (post user) IDs in AsyncStorage
+      await AsyncStorage.setItem('messageSenderId', currentUserId);
+      await AsyncStorage.setItem('messageReceiverId', postUserId);
+      await AsyncStorage.setItem('receiverUsername', receiverUsername);
+  
+      // Navigate to Message screen
+      navigation.navigate("Message", { 
+        senderId: currentUserId,
+        receiverId: postUserId, 
+        receiverName: receiverUsername
+      });
+    } catch (error) {
+      console.error('Connect error:', error);
+      Alert.alert('Error', 'Could not establish connection');
+    }
+  };
+
 
   const pickMedia = async (type) => {
     try {
@@ -177,164 +305,13 @@ export default function PostsScreen({ navigation }) {
     }
   };
 
-  const updatePost = async () => {
-    if (!title || !description) {
-      Alert.alert('Validation Error', 'Title and description are required');
-      return;
-    }
-  
-    try {
-      const postData = {
-        title,
-        description,
-        hashtag: hashtags,
-        image_url: image || null
-      };
-  
-      await axios.patch(`http://127.0.0.1:8000/posts/${selectedPost.id}`, postData);
-      
-      resetPostForm();
-      setEditModalVisible(false);
-      fetchPosts();
-    } catch (error) {
-      console.error('Post update error:', error.response?.data || error.message);
-      Alert.alert(
-        'Error', 
-        error.response?.data?.detail || 
-        'Could not update post. Please check your input and try again.'
-      );
-    }
-  };
-
   const resetPostForm = () => {
     setTitle('');
     setDescription('');
     setHashtags('');
     setImage(null);
-    setSelectedPost(null);
   };
 
-  const deletePost = async (postId) => {
-    try {
-      await axios.delete(`http://127.0.0.1:8000/posts/${postId}`);
-      fetchPosts();
-    } catch (error) {
-      console.error('Delete post error:', error);
-      Alert.alert('Error', 'Could not delete post');
-    }
-  };
-
-  const prepareEditPost = (post) => {
-    setSelectedPost(post);
-    setTitle(post.title);
-    setDescription(post.description);
-    setHashtags(post.hashtag || '');
-    setImage(post.image_url);
-    setEditModalVisible(true);
-  };
-
-  const renderPostItem = ({ item }) => {
-    const mediaUrl = `http://127.0.0.1:8000/images/${item.image_url.split('/').pop()}`;
-    const isVideo = item.image_url.match(/\.(mp4|mov|avi|wmv)$/i);
-
-    return (
-      <View style={styles.postContainer}>
-        <Text style={styles.postTitle}>{item.title}</Text>
-        
-        <View style={styles.mediaContainer}>
-          {isVideo ? (
-            <Video
-              source={{ uri: mediaUrl }}
-              style={styles.media}
-              useNativeControls
-              resizeMode="contain"
-              isLooping
-            />
-          ) : (
-            <Image 
-              source={{ uri: mediaUrl }} 
-              style={styles.media}
-              resizeMode="contain"
-            />
-          )}
-        </View>
-
-        <Text style={styles.postDescription}>{item.description}</Text>
-        {item.hashtag && <Text style={styles.postHashtags}>{item.hashtag}</Text>}
-        
-        <View style={styles.postActions}>
-          <TouchableOpacity onPress={() => prepareEditPost(item)}>
-            <Feather name="edit" size={24} color="#00A86B" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => deletePost(item.id)}>
-            <Feather name="trash-2" size={24} color="red" />
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  };
-
-  const renderMediaPicker = (isEditMode) => (
-    <View style={styles.mediaPickerContainer}>
-      {Platform.OS === 'web' && (
-        <input
-          type="file"
-          ref={fileInputRef}
-          accept="image/*,video/*"
-          onChange={handleWebMediaPick}
-          style={{ display: 'none' }}
-        />
-      )}
-      
-      {image ? (
-        <View style={styles.imagePreviewContainer}>
-          {mediaType === 'video' ? (
-            <Video
-              source={{ uri: image }}
-              style={styles.imagePreview}
-              useNativeControls
-              resizeMode="contain"
-              isLooping
-            />
-          ) : (
-            <Image 
-              source={{ 
-                uri: image.startsWith('http') 
-                  ? `http://127.0.0.1:8000/images/${image.split('/').pop()}` 
-                  : image 
-              }} 
-              style={styles.imagePreview} 
-              resizeMode="cover"
-            />
-          )}
-          <TouchableOpacity 
-            style={styles.removeImageButton} 
-            onPress={removeImage}
-          >
-            <Feather name="x" size={20} color="white" />
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <View style={styles.mediaButtons}>
-          <TouchableOpacity 
-            style={styles.mediaButton} 
-            onPress={() => pickMedia('image')}
-          >
-            <Feather name="image" size={24} color="#00A86B" />
-            <Text style={styles.mediaButtonText}>Select Image</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.mediaButton} 
-            onPress={() => pickMedia('video')}
-          >
-            <Feather name="video" size={24} color="#00A86B" />
-            <Text style={styles.mediaButtonText}>Select Video</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
-  );
 
   return (
     <ImageBackground 
@@ -360,61 +337,120 @@ export default function PostsScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-       {/* Posts Container with ScrollView */}
-       <ScrollView 
-  style={styles.scrollContainer}
-  contentContainerStyle={styles.contentContainer}
-  showsVerticalScrollIndicator={true}
-  persistentScrollbar={true}
-  nestedScrollEnabled={true} // Add this for Android
-  scrollEnabled={true} // Explicitly enable scrolling
->
-  {posts.length === 0 ? (
-    <Text style={styles.emptyListText}>No posts yet. Create one!</Text>
-  ) : (
-    posts.map((item) => {
-      const mediaUrl = `http://127.0.0.1:8000/images/${item.image_url.split('/').pop()}`;
-      const isVideo = item.image_url.match(/\.(mp4|mov|avi|wmv)$/i);
-
+      {/* Posts Container with ScrollView */}
+      <ScrollView 
+        style={styles.scrollContainer}
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={true}
+        persistentScrollbar={true}
+        nestedScrollEnabled={true}
+        scrollEnabled={true}
+      >
+        {posts.length === 0 ? (
+          <Text style={styles.emptyListText}>No posts yet. Create one!</Text>
+        ) : (
+          posts.map((item) => {
+            const mediaUrl = `http://127.0.0.1:8000/images/${item.image_url.split('/').pop()}`;
+            const isVideo = item.image_url.match(/\.(mp4|mov|avi|wmv)$/i);
+            const username = usernames[item.user_id] || 'Anonymous User';
+            const postCommentsList = postComments[item.id] || [];
 
             return (
               <View key={item.id} style={styles.postContainer}>
-                <Text style={styles.postTitle}>{item.title}</Text>
-                
-                <View style={styles.mediaContainer}>
-                  {isVideo ? (
-                    <Video
-                      source={{ uri: mediaUrl }}
-                      style={styles.media}
-                      useNativeControls
-                      resizeMode="contain"
-                      isLooping
-                    />
-                  ) : (
+                {/* User Profile Header */}
+                <View style={styles.postHeader}>
+                  <View style={styles.userProfileContainer}>
                     <Image 
-                      source={{ uri: mediaUrl }} 
-                      style={styles.media}
-                      resizeMode="contain"
+                      source={{ uri: 'https://via.placeholder.com/50' }} 
+                      style={styles.userProfileImage} 
                     />
-                  )}
+                    <View style={styles.userInfoContainer}>
+                      <Text style={styles.userName}>{username}</Text>
+                      <Text style={styles.userLocation}>San Francisco, CA</Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity style={styles.connectButton} onPress={() => handleConnect((item.user_id))}>
+                    <FontAwesome5 name="user-plus" size={20} color="#00A86B" />
+                    <Text style={styles.connectButtonText}>Connect</Text>
+                  </TouchableOpacity>
                 </View>
 
-                <Text style={styles.postDescription}>{item.description}</Text>
-                {item.hashtag && <Text style={styles.postHashtags}>{item.hashtag}</Text>}
-                
-                <View style={styles.postActions}>
+                {/* Post Content */}
+                <View style={styles.postContentContainer}>
+                  <View style={styles.mediaContainer}>
+                    {isVideo ? (
+                      <Video
+                        source={{ uri: mediaUrl }}
+                        style={styles.media}
+                        useNativeControls
+                        resizeMode="contain"
+                        isLooping
+                      />
+                    ) : (
+                      <Image 
+                        source={{ uri: mediaUrl }} 
+                        style={styles.media}
+                        resizeMode="contain"
+                      />
+                    )}
+                  </View>
+
+                  <View style={styles.postTextContainer}>
+                    <Text style={styles.postHashtags}>{item.hashtag || ''}</Text>
+                    <Text style={styles.postDescription}>{item.description}</Text>
+                  </View>
+                </View>
+
+                {/* Post Interactions */}
+                <View style={styles.postInteractions}>
                   <TouchableOpacity 
-                    style={styles.actionButton} 
-                    onPress={() => prepareEditPost(item)}
+                    style={styles.likeButton}
+                    onPress={() => toggleLike(item.id, item.is_liked)}
                   >
-                    <Feather name="edit-2" size={20} color="#00A86B" />
+                    <FontAwesome5 
+                      name="heart" 
+                      size={20} 
+                      color={item.is_liked ? "#FF6B6B" : "#CCCCCC"} 
+                    />
+                    <Text style={styles.likeButtonText}>
+                      {item.likes_count || 0} Likes
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity 
-                    style={styles.actionButton} 
-                    onPress={() => deletePost(item.id)}
-                  >
-                    <Feather name="trash-2" size={20} color="#FF4444" />
-                  </TouchableOpacity>
+                  
+                  {/* Comments Section */}
+                  <View style={styles.commentsSection}>
+                    {postCommentsList.length > 0 && (
+                      <ScrollView 
+                        horizontal 
+                        showsHorizontalScrollIndicator={false}
+                        style={styles.commentsScrollView}
+                      >
+                        {postCommentsList.map(comment => (
+                          <View key={comment.id} style={styles.commentBubble}>
+                            <Text style={styles.commentText}>{comment.comment}</Text>
+                          </View>
+                        ))}
+                      </ScrollView>
+                    )}
+                  </View>
+
+                  <View style={styles.commentInputContainer}>
+                    <TextInput
+                      style={styles.commentInput}
+                      placeholder="Add a comment..."
+                      value={commentText}
+                      onChangeText={setCommentText}
+                    />
+                    <TouchableOpacity 
+                      style={styles.sendCommentButton}
+                      onPress={() => {
+                        addComment(item.id);
+                        fetchPostComments(item.id);
+                      }}
+                    >
+                      <Feather name="send" size={20} color="#00A86B" />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
             );
@@ -468,7 +504,65 @@ export default function PostsScreen({ navigation }) {
               onChangeText={setHashtags}
             />
 
-            {renderMediaPicker(false)}
+            <View style={styles.mediaPickerContainer}>
+              {Platform.OS === 'web' && (
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/*,video/*"
+                  onChange={handleWebMediaPick}
+                  style={{ display: 'none' }}
+                />
+              )}
+              
+              {image ? (
+                <View style={styles.imagePreviewContainer}>
+                  {mediaType === 'video' ? (
+                    <Video
+                      source={{ uri: image }}
+                      style={styles.imagePreview}
+                      useNativeControls
+                      resizeMode="contain"
+                      isLooping
+                    />
+                  ) : (
+                    <Image 
+                      source={{ 
+                        uri: image.startsWith('http') 
+                          ? `http://127.0.0.1:8000/images/${image.split('/').pop()}` 
+                          : image 
+                      }} 
+                      style={styles.imagePreview} 
+                      resizeMode="cover"
+                    />
+                  )}
+                  <TouchableOpacity 
+                    style={styles.removeImageButton} 
+                    onPress={removeImage}
+                  >
+                    <Feather name="x" size={20} color="white" />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View style={styles.mediaButtons}>
+                  <TouchableOpacity 
+                    style={styles.mediaButton} 
+                    onPress={() => pickMedia('image')}
+                  >
+                    <Feather name="image" size={24} color="#00A86B" />
+                    <Text style={styles.mediaButtonText}>Select Image</Text>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity 
+                    style={styles.mediaButton} 
+                    onPress={() => pickMedia('video')}
+                  >
+                    <Feather name="video" size={24} color="#00A86B" />
+                    <Text style={styles.mediaButtonText}>Select Video</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
 
             <TouchableOpacity 
               style={styles.submitButton}
@@ -479,66 +573,14 @@ export default function PostsScreen({ navigation }) {
           </View>
         </View>
       </Modal>
-
-      {/* Edit Post Modal */}
-      <Modal 
-        visible={isEditModalVisible}
-        animationType="slide"
-        transparent={true}
-      >
-        <View style={styles.modalContainer}>
-          <View style={[styles.modalContent, styles.verticalContainer]}>
-            <TouchableOpacity 
-              style={styles.closeButton}
-              onPress={() => setEditModalVisible(false)}
-            >
-              <Feather name="x" size={24} color="black" />
-            </TouchableOpacity>
-
-            <Text style={styles.modalTitle}>Edit Post</Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="Title"
-              value={title}
-              onChangeText={setTitle}
-            />
-
-            <TextInput
-              style={[styles.input, styles.multilineInput]}
-              placeholder="Description"
-              value={description}
-              onChangeText={setDescription}
-              multiline
-            />
-
-            <TextInput
-              style={styles.input}
-              placeholder="Hashtags"
-              value={hashtags}
-              onChangeText={setHashtags}
-            />
-
-            {renderMediaPicker(true)}
-
-            <TouchableOpacity 
-              style={styles.submitButton}
-              onPress={updatePost}
-            >
-              <Text style={styles.submitButtonText}>Update Post</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </ImageBackground>
   );
 }
 
-
 const styles = StyleSheet.create({
   mediaContainer: {
     width: '100%',
-    height: 250, // Increased height for better visibility
+    height: 250,
     borderRadius: 8,
     overflow: 'hidden',
     marginBottom: 12,
@@ -548,7 +590,7 @@ const styles = StyleSheet.create({
   media: {
     width: '100%',
     height: '100%',
-    resizeMode: 'contain', // Changed to 'contain' to fit entire image/video
+    resizeMode: 'contain',
   },
   mediaButtons: {
     flexDirection: 'row',
@@ -570,17 +612,17 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
-    marginTop: 100, // Space for navigation bar
+    marginTop: 100,
     marginBottom: 20,
     paddingHorizontal: 16,
     ...(Platform.OS === 'web' ? {
-      height: 'calc(100vh - 200px)', // Explicit height for web
-      overflowY: 'auto', // Changed from 'scroll' to 'auto'
+      height: 'calc(100vh - 200px)',
+      overflowY: 'auto',
     } : {}),
   },
   contentContainer: {
-    paddingBottom: 80, // Space for create post button
-    flexGrow: 1, // Ensure content can grow
+    paddingBottom: 80,
+    flexGrow: 1,
   },
   backgroundImage: {
     flex: 1,
@@ -618,10 +660,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
-  listContainer: {
-    paddingTop: 100, // Space for navigation bar
-    paddingBottom: 80, // Space for create post button
-  },
   postContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderRadius: 12,
@@ -639,15 +677,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     color: '#333',
   },
-  postImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-    marginRight: 10,
-  },
-  postDetails: {
-    flex: 1,
-  },
   postDescription: {
     fontSize: 14,
     color: '#666',
@@ -663,17 +692,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     gap: 12,
-  },
-  imagePickerPlaceholder: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 15,
-  },
-  imagePickerText: {
-    marginLeft: 10,
-    color: '#00A86B',
-    fontWeight: '500',
   },
   createPostButton: {
     position: 'absolute',
@@ -708,13 +726,6 @@ const styles = StyleSheet.create({
   },
   multilineInput: {
     height: 100,
-  },
-  imagePicker: {
-    borderWidth: 1,
-    borderColor: '#00A86B',
-    borderRadius: 5,
-    padding: 10,
-    alignItems: 'center',
   },
   verticalContainer: {
     flexDirection: 'column',
@@ -762,6 +773,23 @@ const styles = StyleSheet.create({
     marginTop: 50,
     fontSize: 16,
     color: 'gray',
+  },
+  postHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+    paddingHorizontal: 8,
+  },
+  userProfileContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  userProfileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
   },
   ...(Platform.OS === 'web' && {
     '@global': {

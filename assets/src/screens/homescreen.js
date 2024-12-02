@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, ScrollView, 
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
+import SortLevelSelectorScreen from "../components/sortlevel";
 
 // Import your social media icons statically
 const socialMediaIcons = {
@@ -155,7 +156,7 @@ export default function HomeScreen() {
 
       <TouchableOpacity
         style={styles.scanButton}
-        onPress={() => console.log("Scan Button Pressed")}
+        onPress={() => navigation.navigate("TUE")}
       >
         <Animated.View style={[scanButtonStyle]}>
           <Ionicons name="scan-outline" size={30} color="white" />

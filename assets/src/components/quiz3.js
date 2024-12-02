@@ -13,258 +13,257 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { Alert } from 'react-native';
 
-
+// Quiz questions database
 const questions = [
-  {
-    id: 1,
-    question: "What is a common psychological pressure that athletes face, leading to doping?",
-    options: [
-      "Desire for fame and recognition",
-      "Fear of injury",
-      "Fear of failing to meet expectations",
-      "Lack of motivation"
-    ],
-    correct: 2
-  },
-  {
-    id: 2,
-    question: "What legal consequence can athletes face if caught doping?",
-    options: [
-      "Jail time",
-      "Financial compensation",
-      "Fines only",
-      "Community service"
-    ],
-    correct: 0
-  },
-  {
-    id: 3,
-    question: "Which of the following professionals plays a significant role in preventing doping?",
-    options: [
-      "Coaches",
-      "Doctors",
-      "Trainers",
-      "All of the above"
-    ],
-    correct: 3
-  },
-  {
-    id: 4,
-    question: "What is the primary legal consequence for trafficking banned substances?",
-    options: [
-      "Disqualification from competitions",
-      "Fines",
-      "Jail time",
-      "Loss of sponsorship"
-    ],
-    correct: 2
-  },
-  {
-    id: 5,
-    question: "What psychological factor often pressures athletes to resort to doping?",
-    options: [
-      "Lack of competition",
-      "Desire to recover from injury quickly",
-      "Emotional support from friends",
-      "Improved self-esteem"
-    ],
-    correct: 1
-  },
-  {
-    id: 6,
-    question: "Which of the following is a key responsibility of coaches in preventing doping?",
-    options: [
-      "Encouraging athletes to push their limits",
-      "Monitoring an athlete's health and well-being",
-      "Ignoring signs of doping for better results",
-      "Providing banned substances"
-    ],
-    correct: 1
-  },
-  {
-    id: 7,
-    question: "Which legal body is responsible for regulating anti-doping measures globally?",
-    options: [
-      "World Anti-Doping Agency (WADA)",
-      "International Olympic Committee (IOC)",
-      "FIFA",
-      "World Health Organization (WHO)"
-    ],
-    correct: 0
-  },
-  {
-    id: 8,
-    question: "What is a psychological effect of doping on an athlete's mental state?",
-    options: [
-      "Increased happiness",
-      "Chronic anxiety and paranoia",
-      "Improved concentration",
-      "Heightened optimism"
-    ],
-    correct: 1
-  },
-  {
-    id: 9,
-    question: "Which of these is a common psychological stressor leading to doping?",
-    options: [
-      "Overconfidence",
-      "Fear of failure",
-      "Inability to perform under pressure",
-      "Lack of sleep"
-    ],
-    correct: 1
-  },
-  {
-    id: 10,
-    question: "What legal punishment can an athlete face for a positive drug test?",
-    options: [
-      "Life ban from competitions",
-      "Suspension and fines",
-      "Probation",
-      "Public apology"
-    ],
-    correct: 1
-  },
-  {
-    id: 11,
-    question: "What role does an athlete’s coach play in the prevention of doping?",
-    options: [
-      "Advising on the use of supplements",
-      "Teaching athletes to avoid substances that could harm their health",
-      "Pressuring athletes to take performance-enhancing drugs",
-      "Pushing athletes to perform beyond their limits"
-    ],
-    correct: 1
-  },
-  {
-    id: 12,
-    question: "Which psychological issue can contribute to an athlete's decision to use doping substances?",
-    options: [
-      "Confidence in their natural ability",
-      "Pressure to win at all costs",
-      "Strong team support",
-      "Enjoyment of the sport"
-    ],
-    correct: 1
-  },
-  {
-    id: 13,
-    question: "What is the maximum legal consequence for an athlete who tests positive for a banned substance?",
-    options: [
-      "Lifetime ban from sports",
-      "Public reprimand",
-      "Temporary suspension",
-      "Requirement to attend therapy sessions"
-    ],
-    correct: 0
-  },
-  {
-    id: 14,
-    question: "What is a critical role of sports doctors in the prevention of doping?",
-    options: [
-      "Administering substances to enhance performance",
-      "Ensuring that athletes are not using banned substances",
-      "Providing athletes with performance-enhancing drugs",
-      "Monitoring athletes for signs of doping"
-    ],
-    correct: 1
-  },
-  {
-    id: 15,
-    question: "What is the legal consequence of an athlete being found guilty of trafficking banned substances?",
-    options: [
-      "Suspension for one year",
-      "Jail time and permanent ban",
-      "A fine only",
-      "Public apology"
-    ],
-    correct: 1
-  },
-  {
-    id: 16,
-    question: "Which of the following is a psychological pressure that athletes might feel leading them to doping?",
-    options: [
-      "Desire to improve performance and success",
-      "Support from the sporting community",
-      "Enjoyment of the competition",
-      "Confidence in their abilities"
-    ],
-    correct: 0
-  },
-  {
-    id: 17,
-    question: "What legal body sets the list of banned substances in sports?",
-    options: [
-      "International Olympic Committee (IOC)",
-      "World Anti-Doping Agency (WADA)",
-      "FIFA",
-      "World Health Organization (WHO)"
-    ],
-    correct: 1
-  },
-  {
-    id: 18,
-    question: "What is a key factor for athletes considering doping, from a psychological perspective?",
-    options: [
-      "The desire to recover from injury quickly",
-      "Pride in natural performance",
-      "Commitment to fair play",
-      "Refusal to compete at a higher level"
-    ],
-    correct: 0
-  },
-  {
-    id: 19,
-    question: "What is the role of a coach in educating athletes about doping?",
-    options: [
-      "Encouraging the use of banned substances for better performance",
-      "Providing education on the dangers of doping",
-      "Ignoring the risk of doping for better results",
-      "Offering athletes substances to help with recovery"
-    ],
-    correct: 1
-  },
-  {
-    id: 20,
-    question: "What psychological effect can the pressure to win have on athletes?",
-    options: [
-      "Increased determination",
-      "Decreased desire to compete",
-      "Increased likelihood of doping",
-      "Stronger mental resilience"
-    ],
-    correct: 2
-  }
-];
-
-// Educational facts for each question
-const facts = [
-  "Psychological pressures such as fear of failure or intense competition often drive athletes to consider doping as a way to improve performance.",
-  "Athletes caught using doping substances may face legal consequences, including jail time, depending on the severity of the offense.",
-  "Coaches, doctors, and trainers have a significant role in preventing doping by educating athletes and monitoring their health.",
-  "Trafficking banned substances can result in serious legal consequences, including potential jail time for the trafficker.",
-  "One of the psychological pressures that leads to doping is the desire to recover from injury quickly and return to competition.",
-  "Coaches are responsible for ensuring that their athletes are not using banned substances and for promoting fair and safe training practices.",
-  "The World Anti-Doping Agency (WADA) is the global organization responsible for setting regulations and ensuring compliance with anti-doping laws.",
-  "Doping can cause psychological effects like anxiety, paranoia, and depression, which often worsen over time with prolonged use.",
-  "Psychological factors such as fear of failure and the need to perform can influence an athlete's decision to use performance-enhancing substances.",
-  "Athletes who test positive for doping face legal consequences, including fines, suspensions, and damage to their career and reputation.",
-  "Coaches must ensure that athletes understand the risks of doping and guide them towards healthier alternatives for performance improvement.",
-  "Pressure to win at all costs and competition anxiety can make athletes more susceptible to doping, as they seek ways to outperform others.",
-  "Athletes caught doping may face a lifetime ban from competitions, especially in high-profile cases where fairness is compromised.",
-  "Sports doctors should prioritize the health and well-being of athletes by ensuring they do not use harmful or banned substances.",
-  "The legal consequences of trafficking banned substances can include jail time and lifelong bans from sports, severely impacting an individual's career.",
-  "Athletes often face intense pressure to improve performance and meet expectations, which can push them toward doping as a quick solution.",
-  "WADA is the governing body that determines which substances are banned in sports, updating the list annually to ensure fairness and safety.",
-  "Athletes may consider doping when faced with the psychological pressure to recover quickly from injuries or improve performance under time constraints.",
-  "Coaches should be role models in educating athletes about the dangers of doping and the importance of natural training methods.",
-  "Psychological pressure, such as the need to win or achieve a specific goal, increases the likelihood that athletes will turn to doping for an edge."
-];
-
+    {
+      id: 1,
+      question: "Which of the following is a short-term health risk of doping?",
+      options: [
+        "Liver damage",
+        "Dehydration",
+        "Infertility",
+        "Chronic heart disease"
+      ],
+      correct: 1
+    },
+    {
+      id: 2,
+      question: "Which of the following is a long-term health risk associated with anabolic steroid use?",
+      options: [
+        "Increased muscle strength",
+        "Liver damage",
+        "Increased bone density",
+        "Enhanced cardiovascular health"
+      ],
+      correct: 1
+    },
+    {
+      id: 3,
+      question: "Which of these substances can cause high blood pressure as a short-term effect?",
+      options: [
+        "Anabolic steroids",
+        "Erythropoietin (EPO)",
+        "Caffeine",
+        "Insulin"
+      ],
+      correct: 0
+    },
+    {
+      id: 4,
+      question: "What is a potential mental health effect of long-term steroid use?",
+      options: [
+        "Improved mood",
+        "Aggression and irritability",
+        "Increased creativity",
+        "Improved cognitive function"
+      ],
+      correct: 1
+    },
+    {
+      id: 5,
+      question: "Which of the following is a psychological side effect of doping?",
+      options: [
+        "Calmness",
+        "Improved sleep",
+        "Depression and anxiety",
+        "Enhanced empathy"
+      ],
+      correct: 2
+    },
+    {
+      id: 6,
+      question: "What long-term effect can anabolic steroids have on the liver?",
+      options: [
+        "Liver regeneration",
+        "Liver damage and failure",
+        "No effect on the liver",
+        "Increased liver size"
+      ],
+      correct: 1
+    },
+    {
+      id: 7,
+      question: "Which of these is a short-term health risk of Erythropoietin (EPO) use?",
+      options: [
+        "Fatigue",
+        "Blood clotting",
+        "Dehydration",
+        "Impaired liver function"
+      ],
+      correct: 1
+    },
+    {
+      id: 8,
+      question: "What effect does long-term steroid use have on fertility?",
+      options: [
+        "Improves sperm count",
+        "Decreases testosterone levels",
+        "Increases fertility",
+        "Has no effect on fertility"
+      ],
+      correct: 1
+    },
+    {
+      id: 9,
+      question: "Which of the following is a long-term effect of steroid abuse?",
+      options: [
+        "Reduced risk of cancer",
+        "Enlarged heart and cardiovascular issues",
+        "Improved cardiovascular health",
+        "Faster muscle recovery"
+      ],
+      correct: 1
+    },
+    {
+      id: 10,
+      question: "Which of the following is NOT a potential psychological effect of doping?",
+      options: [
+        "Mood swings",
+        "Increased aggression",
+        "Hallucinations",
+        "Improved social interactions"
+      ],
+      correct: 3
+    },
+    {
+      id: 11,
+      question: "What is the term for the withdrawal symptoms caused by long-term doping substance use?",
+      options: [
+        "Addiction",
+        "Overtraining syndrome",
+        "Doping-induced psychosis",
+        "Doping fatigue"
+      ],
+      correct: 0
+    },
+    {
+      id: 12,
+      question: "Which of the following is a risk of using growth hormone as a doping substance?",
+      options: [
+        "Increased bone density",
+        "Diabetes and joint pain",
+        "Improved vision",
+        "Cardiovascular health improvement"
+      ],
+      correct: 1
+    },
+    {
+      id: 13,
+      question: "How can anabolic steroids affect the cardiovascular system?",
+      options: [
+        "Increases heart rate and blood pressure",
+        "Improves blood flow",
+        "Decreases the risk of heart attack",
+        "Strengthens the heart muscle"
+      ],
+      correct: 0
+    },
+    {
+      id: 14,
+      question: "What long-term effect can steroid use have on the mental state of an athlete?",
+      options: [
+        "Enhanced relaxation",
+        "Increased risk of depression",
+        "Improved social bonds",
+        "Reduced anxiety"
+      ],
+      correct: 1
+    },
+    {
+      id: 15,
+      question: "Which of the following is a potential health risk of EPO use?",
+      options: [
+        "Increased red blood cell count",
+        "Liver damage",
+        "Higher risk of stroke and heart attack",
+        "Reduced blood clotting"
+      ],
+      correct: 2
+    },
+    {
+      id: 16,
+      question: "What is a side effect of stimulants like amphetamines used in sports doping?",
+      options: [
+        "Decreased heart rate",
+        "Increased aggression and anxiety",
+        "Improved sleep",
+        "Increased bone density"
+      ],
+      correct: 1
+    },
+    {
+      id: 17,
+      question: "What can the use of insulin as a performance-enhancing drug lead to?",
+      options: [
+        "Low blood sugar and hypoglycemia",
+        "Improved cardiovascular health",
+        "Enhanced digestion",
+        "Increased muscle mass without side effects"
+      ],
+      correct: 0
+    },
+    {
+      id: 18,
+      question: "Which of these substances can contribute to heart disease over time?",
+      options: [
+        "Anabolic steroids",
+        "Erythropoietin (EPO)",
+        "Testosterone boosters",
+        "All of the above"
+      ],
+      correct: 3
+    },
+    {
+      id: 19,
+      question: "What psychological effect is often associated with long-term steroid abuse?",
+      options: [
+        "Increased motivation",
+        "Paranoia and hallucinations",
+        "Improved cognitive function",
+        "Increased energy and positivity"
+      ],
+      correct: 1
+    },
+    {
+      id: 20,
+      question: "What is a potential side effect of long-term stimulant use?",
+      options: [
+        "Increased muscle growth",
+        "Decreased appetite and insomnia",
+        "Improved joint flexibility",
+        "Increased bone strength"
+      ],
+      correct: 1
+    }
+  ];
+  
+  // Educational facts for each question
+  const facts = [
+    "Anabolic steroids can cause short-term effects such as dehydration, high blood pressure, and increased heart rate.",
+    "Chronic steroid use can lead to liver damage, cardiovascular problems, infertility, and mental health issues like depression.",
+    "Substances like EPO can cause blood clotting, leading to increased risk of strokes and heart attacks.",
+    "Long-term use of anabolic steroids can cause severe psychological effects, including aggression, paranoia, and depression.",
+    "Psychological effects of doping can include mood swings, depression, and anxiety, as well as increased irritability and aggression.",
+    "Steroid abuse can lead to liver damage, which may result in conditions like liver failure, jaundice, or cirrhosis.",
+    "Using EPO can cause blood clotting and dehydration, which can lead to serious cardiovascular complications like heart attacks.",
+    "Steroid use can result in reduced testosterone levels, which may lead to infertility, reduced libido, and erectile dysfunction.",
+    "Chronic steroid use can lead to heart disease, including enlarged heart and artery blockages.",
+    "Psychological issues like depression, mood swings, and increased aggression are common side effects of doping.",
+    "Doping substances can cause withdrawal symptoms, including depression, anxiety, and physical discomfort when an athlete stops using them.",
+    "Growth hormone abuse can lead to joint pain, diabetes, and cardiovascular issues due to an abnormal increase in insulin-like growth factors.",
+    "Anabolic steroids can increase heart rate and blood pressure, raising the risk of heart attacks and strokes.",
+    "Steroid abuse has been linked to increased risks of depression and mental instability, especially after prolonged use.",
+    "EPO use can increase the risk of stroke and heart attack due to blood clot formation and thickening of the blood.",
+    "Amphetamines and other stimulants can lead to anxiety, aggression, and behavioral changes due to their stimulating effects on the central nervous system.",
+    "Insulin use as a doping agent can cause hypoglycemia (low blood sugar), which can be life-threatening without proper management.",
+    "Long-term use of substances like anabolic steroids, EPO, and testosterone boosters can contribute to cardiovascular diseases, including heart attacks and strokes.",
+    "Steroid abuse can cause paranoia, mood swings, and hallucinations, which are major psychological effects that impact an athlete's mental health.",
+    "Stimulant abuse can result in decreased appetite, insomnia, and jitteriness, all of which are side effects of performance-enhancing drugs."
+  ];
 
 const TIME_PER_QUESTION = 30; // 30 seconds per question
 
-const Quiz = ({ navigation }) => {
+const Quiz3 = ({ navigation }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -613,4 +612,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Quiz;
+export default Quiz3;

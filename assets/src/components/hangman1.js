@@ -9,61 +9,61 @@ import axios from 'axios';
 
 const wordBank = [
   { 
-    word: 'LIVER_DAMAGE', 
-    clue: 'Harm to the liver caused by anabolic steroid use', 
-    fact: 'Long-term use of anabolic steroids can cause liver tumors and a condition called peliosis hepatis, where blood-filled cysts form in the liver.'
+    word: 'DIURETICS', 
+    clue: 'Substances that increase urine production to mask other drugs', 
+    fact: 'Diuretics are often misused in sports to dilute urine, making it harder to detect banned substances in drug tests.'
   },
   { 
-    word: 'HEART_DISEASE', 
-    clue: 'Cardiovascular issues from stimulant or steroid use', 
-    fact: 'Substances like anabolic steroids and EPO can increase the risk of heart attacks, strokes, and high blood pressure.'
+    word: 'STIMULANTS', 
+    clue: 'Substances that enhance alertness and energy', 
+    fact: 'Stimulants such as amphetamines were widely used during World War II to keep soldiers awake and alert.'
   },
   { 
-    word: 'HORMONAL_IMBALANCE', 
-    clue: 'Disruption of natural hormone production', 
-    fact: 'Doping substances like testosterone can suppress natural hormone production, leading to infertility and other endocrine disorders.'
+    word: 'EPO', 
+    clue: 'Hormone that boosts red blood cell production', 
+    fact: 'Erythropoietin (EPO) gained infamy in the 1990s for its misuse in endurance sports like cycling and distance running.'
   },
   { 
-    word: 'PSYCHOLOGICAL_DEPENDENCE', 
-    clue: 'Addiction to performance-enhancing drugs', 
-    fact: 'Some substances, such as stimulants and anabolic steroids, can lead to psychological addiction and withdrawal symptoms.'
+    word: 'BETABLOCKERS', 
+    clue: 'Drugs that reduce blood pressure and tremors', 
+    fact: 'Beta blockers are banned in sports like archery and shooting due to their calming effects on nerves and hands.'
   },
   { 
-    word: 'IMMUNE_SYSTEM_DAMAGE', 
-    clue: 'Weakened immune defenses due to doping', 
-    fact: 'Prolonged use of glucocorticoids can suppress the immune system, making athletes more susceptible to infections.'
+    word: 'CANNABIS', 
+    clue: 'A psychoactive drug derived from the cannabis plant', 
+    fact: 'Cannabis was added to the World Anti-Doping Agency’s prohibited list in 1999 due to its potential to impair performance and safety.'
   },
   { 
-    word: 'BONE_DENSITY_LOSS', 
-    clue: 'Weakened bones caused by glucocorticoid misuse', 
-    fact: 'Long-term glucocorticoid use can lead to osteoporosis, making bones brittle and more prone to fractures.'
+    word: 'GLUCOCORTICOIDS', 
+    clue: 'Anti-inflammatory steroids often misused to enhance recovery', 
+    fact: 'While therapeutic use of glucocorticoids is permitted, their misuse can lead to serious health issues like bone loss and weakened immunity.'
   },
   { 
-    word: 'KIDNEY_FAILURE', 
-    clue: 'Damage to the kidneys from excessive substance use', 
-    fact: 'Misuse of EPO and diuretics can strain the kidneys, leading to dehydration and, in severe cases, kidney failure.'
+    word: 'CERA', 
+    clue: 'A synthetic variant of erythropoietin (EPO)', 
+    fact: 'CERA, also known as Continuous Erythropoietin Receptor Activator, was a significant issue in doping scandals in cycling.'
   },
   { 
-    word: 'PSYCHOSIS', 
-    clue: 'Severe mental health issues linked to doping substances', 
-    fact: 'Excessive use of stimulants like amphetamines can cause hallucinations, paranoia, and even psychosis in athletes.'
+    word: 'ANDROGENS', 
+    clue: 'Hormones that regulate the development of male characteristics', 
+    fact: 'Androgens like testosterone are commonly abused in sports for their anabolic effects, promoting muscle growth and strength.'
   },
   { 
-    word: 'CANCER_RISK', 
-    clue: 'Increased likelihood of developing cancer', 
-    fact: 'Certain substances, such as unregulated hormone supplements, have been linked to an elevated risk of cancers like liver or prostate cancer.'
+    word: 'HGH', 
+    clue: 'Human Growth Hormone used to stimulate growth and cell reproduction', 
+    fact: 'HGH abuse in sports became prevalent due to its anabolic effects and ability to enhance recovery times.'
   },
   { 
-    word: 'SKIN_CONDITIONS', 
-    clue: 'Acne and skin infections from doping', 
-    fact: 'Anabolic steroid misuse can cause severe acne, cyst formation, and increased risk of skin infections due to weakened immunity.'
+    word: 'MASKINGAGENTS', 
+    clue: 'Substances that hide the presence of banned drugs', 
+    fact: 'Masking agents like probenecid can interfere with the detection of prohibited substances in doping tests.'
   }
 ];
 
 
 const MAX_TRIES = 6;
 
-const Hangman = ({ navigation }) => {
+const Hangman1 = ({ navigation }) => {
   const [currentWord, setCurrentWord] = useState('');
   const [currentClue, setCurrentClue] = useState('');
   const [currentFact, setCurrentFact] = useState('');
@@ -140,10 +140,7 @@ const Hangman = ({ navigation }) => {
     const newGuessedLetters = [...guessedLetters, letter];
     setGuessedLetters(newGuessedLetters);
 
-    // Remove spaces from the current word for checking
-    const wordWithoutSpaces = currentWord.replace(/\s/g, '');
-
-    if (!wordWithoutSpaces.includes(letter)) {
+    if (!currentWord.includes(letter)) {
       const newWrongGuesses = wrongGuesses + 1;
       setWrongGuesses(newWrongGuesses);
       if (newWrongGuesses >= MAX_TRIES) {
@@ -157,9 +154,8 @@ const Hangman = ({ navigation }) => {
       animateCorrectGuess();
       
       const isWordComplete = currentWord.split('').every(char => 
-        char === ' ' || newGuessedLetters.includes(char)
+        newGuessedLetters.includes(char)
       );
-      
       if (isWordComplete) {
         setGameStatus('won');
         setShowGameOver(true);
@@ -247,13 +243,9 @@ const Hangman = ({ navigation }) => {
         
         <View style={styles.wordContainer}>
           {currentWord.split('').map((letter, index) => (
-            letter === ' ' ? (
-              <View key={`space-${index}`} style={styles.spaceContainer} />
-            ) : (
-              <Text key={index} style={styles.letterSpace}>
-                {guessedLetters.includes(letter) ? letter : '_'}
-              </Text>
-            )
+            <Text key={index} style={styles.letterSpace}>
+              {guessedLetters.includes(letter) ? letter : '_'}
+            </Text>
           ))}
         </View>
         
@@ -264,7 +256,7 @@ const Hangman = ({ navigation }) => {
               style={[
                 styles.letterButton,
                 guessedLetters.includes(letter) && (
-                  currentWord.replace(/\s/g, '').includes(letter) ? styles.correctButton : styles.wrongButton
+                  currentWord.includes(letter) ? styles.correctButton : styles.wrongButton
                 )
               ]}
               onPress={() => handleLetterPress(letter)}
@@ -498,4 +490,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Hangman;
+export default Hangman1;

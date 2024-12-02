@@ -123,7 +123,7 @@ export default function GameScreen({ navigation }) {
     { 
       name: 'Hangman', 
       icon: 'body-outline',
-      component: 'Hangman',
+      component: 'Hangman Rules',
       available: true
     },
     { 
@@ -135,21 +135,15 @@ export default function GameScreen({ navigation }) {
     { 
       name: 'Sort', 
       icon: 'swap-vertical-outline',
-      component: 'Sort',
+      component: 'Sort Rules',
       available: true
     },
     { 
       name: 'Quiz', 
       icon: 'clipboard-outline',
-      component: 'Quiz',
+      component: 'Quiz Rules',
       available: true
-    },
-    { 
-      name: 'Simulation', 
-      icon: 'cube-outline',
-      component: 'Simulation',
-      available: true
-    },
+    }
   ];
 
   const rightGameIcons = [
@@ -172,9 +166,9 @@ export default function GameScreen({ navigation }) {
       available: true
     },
     {
-      name: 'Simulation',
+      name: 'Snake And Ladder',
       icon: 'cube-outline',
-      component: 'Simulation',
+      component: 'Snake And Ladder',
       available: true
     }
   ];
