@@ -21,7 +21,7 @@ import {
   Italic
 } from 'lucide-react';
 import { useNavigation } from '@react-navigation/native';
-
+import SpaceBackground from '../components/SpaceBackground';
 
 // Import Social Media Icons
 import InstagramIcon from '../../images/socialmedia/instagram.png';
@@ -36,6 +36,23 @@ const LandingPage = ({ navigation }) => {
   const scrollViewRef = useRef(null);
   const featureCarouselRef = useRef(null);
   const scrollX = useRef(new Animated.Value(0)).current;
+  const imageOpacity = useRef(new Animated.Value(0)).current; // For fading effect
+  const imageSlide = useRef(new Animated.Value(100)).current; // For sliding effect
+  useEffect(() => {
+    // Fade in the images and slide them in when the component mounts
+    Animated.parallel([
+      Animated.timing(imageOpacity, {
+        toValue: 1,
+        duration: 2000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(imageSlide, {
+        toValue: 0,
+        duration: 5000,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [imageOpacity, imageSlide]);
 
   const features = [
     {
@@ -43,35 +60,35 @@ const LandingPage = ({ navigation }) => {
       title: "Supplement Verification",
       description: "Advanced AI-powered analysis of supplement safety and WADA compliance, ensuring athletes' health and fair competition.",
       details: "Our cutting-edge verification system cross-references global databases, providing instant, comprehensive supplement safety assessments.",
-      background: require('../../images/image5.jpg')
+      background: require('../../images/nebula.jpg')
     },
     {
       icon: <MessageCircle color="#00A86B" size={64} />,
       title: "Professional Network",
       description: "Exclusive community platform connecting athletes, coaches, and anti-doping experts worldwide.",
       details: "Secure, moderated forums for sharing experiences, seeking advice, and building a transparent athletic community.",
-      background: require('../../images/image5.jpg')
+      background: require('../../images/nebula.jpg')
     },
     {
       icon: <Bot color="#00A86B" size={64} />,
       title: "Compliance Intelligence",
       description: "AI-driven personal guidance navigating complex anti-doping regulations with precision.",
       details: "Personalized consultations, real-time regulatory updates, and contextual recommendations tailored to your athletic profile.",
-      background: require('../../images/image5.jpg')
+      background: require('../../images/nebula.jpg')
     },
     {
       icon: <BookOpen color="#00A86B" size={64} />,
       title: "Knowledge Ecosystem",
       description: "Comprehensive, continually updated educational resources on anti-doping standards.",
       details: "Interactive learning modules, expert-curated content, and multimedia resources exploring ethical sporting practices.",
-      background: require('../../images/image5.jpg')
+      background: require('../../images/nebula.jpg')
     },
     {
       icon: <Scale color="#00A86B" size={64} />,
       title: "Regulatory Intelligence",
       description: "Sophisticated tracking and analysis of evolving global anti-doping legislation.",
       details: "Comprehensive monitoring of international sports governance, providing athletes with authoritative legal insights.",
-      background: require('../../images/image5.jpg')
+      background: require('../../images/nebula.jpg')
     }
   ];
 
@@ -83,6 +100,12 @@ const LandingPage = ({ navigation }) => {
           animated: true
         });
         break;
+        case 'about':
+      scrollViewRef.current?.scrollTo({
+        y: height * 2, // Adjust based on your layout
+        animated: true
+      });
+      break;
       // Add more sections as needed
     }
   };
@@ -128,7 +151,7 @@ const LandingPage = ({ navigation }) => {
                   {feature.description}
                 </Text>
                 <TouchableOpacity style={styles.learnMoreButton}>
-                  <Text style={styles.learnMoreButtonText}>Learn More</Text>
+                  <Text style={styles.learnMoreButtonText} onPress={() => navigation.push('Login')} >Learn More</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -187,7 +210,7 @@ const LandingPage = ({ navigation }) => {
           <TouchableOpacity onPress={() => scrollToSection('solutions')}>
             <Text style={styles.navItem}>Features</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.loginButton} onPress={() => navigation.push('Welcome')}>
+          <TouchableOpacity style={styles.loginButton} onPress={() => navigation.push('Login')}>
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.signupButton} onPress={() => navigation.push('SignUp')}>
@@ -210,7 +233,7 @@ const LandingPage = ({ navigation }) => {
               Empowering <Text style={styles.greenText}>Integrity</Text>
             </Text>
             <Text style={styles.heroSubtitle}>
-              Advanced Anti-Doping Solutions for Modern Athletes
+              Your journey to clean sports starts here
             </Text>
             <TouchableOpacity 
               style={styles.heroButton}
@@ -229,33 +252,29 @@ const LandingPage = ({ navigation }) => {
         </View>
 
         {/* About Section */}
+       {/* About Section */}
         <View style={styles.aboutSection}>
-  <Text style={styles.sectionTitle}>About <Text style={styles.greenText}>FairPlay</Text></Text>
-  <View style={styles.aboutContent}>
-    <View style={styles.aboutTextContainer}>
-      <Text style={styles.aboutDescription}>
-        FairPlay is dedicated to maintaining integrity in sports through cutting-edge technology and comprehensive support for athletes worldwide. 
-        Our mission is to empower athletes with advanced tools, educational resources, and a supportive community that champions fair play and ethical sporting practices.
-      </Text>
-      <View style={styles.heroImageContainer}>
-            <Image 
-              source={require('../../images/image2.jpeg')}
-              style={styles.heroImage}
-            
-            />
-          </View>
-    </View>
+          <Animated.Image 
+            source={require('../../images/aboutus.png')}
+            style={[styles.image, { opacity: imageOpacity, transform: [{ translateY: imageSlide }] }]}
+            resizeMode="contain"
+          />
+        </View>
+     
+       {/* About Doping Section */}
+<View style={styles.aboutdSection}>
+  <Animated.Image 
+    source={{ uri: 'https://www.dropbox.com/scl/fi/o31rq1ghfxfdywma18l3n/AboutDoping.png?rlkey=wx0zgu5oyphy9sdozzf52jkvn&st=s5yd0z21&raw=1' }}
+    style={[styles.image, { opacity: imageOpacity, transform: [{ translateY: imageSlide }] }]}
+    resizeMode="contain"
+  />
+</View>
+
     
-      
-    </View>
-  </View>
-
-
-
         {/* Solutions Carousel */}
         <View style={styles.solutionsContainer}>
           <Text style={styles.sectionTitle}>
-            Our <Text style={styles.greenText}>Solutions</Text>
+            Our <Text style={styles.greenText}>Features</Text>
           </Text>
           <FeatureCarousel />
         </View>
@@ -285,7 +304,10 @@ const LandingPage = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
+
+        <View style={styles.greenBorderLine} />
         {/* Connect Section */}
+        
         <View style={styles.connectSection}>
           <Text style={styles.sectionTitle}>
             <Text style={styles.greenText}>Connect</Text> With Us
@@ -342,7 +364,7 @@ const styles = StyleSheet.create({
   },
   navItem: {
     color: '#C9D1D9',
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: '500',
     marginHorizontal: 15,
     letterSpacing: 0.5,
@@ -385,7 +407,7 @@ const styles = StyleSheet.create({
   heroImage: {
     width: '100%',
     height: '100%',
-    opacity: 0.1,
+    opacity: 0.5,
     zIndex: -1,
   },
   heroContent: {
@@ -399,9 +421,17 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     marginBottom: 15,
+    textDecoration: 'underline',
+  textDecorationColor: 'white',  // White underline
+  textDecorationThickness: 3,     // Thickness of the underline
+  textDecorationOffset: 4,       // Gap between text and underline
   },
   greenText: {
     color: '#00A86B',
+    textDecoration: 'underline',
+  textDecorationColor: 'white',  // White underline
+  textDecorationThickness: 3,     // Thickness of the underline
+  textDecorationOffset: 4,       // Gap between text and underline
   },
   heroSubtitle: {
     fontSize: 18,
@@ -423,49 +453,40 @@ const styles = StyleSheet.create({
   aboutSection: {
     backgroundColor: '#000000',
     paddingVertical: 50,
-    paddingHorizontal: 20,
+    paddingHorizontal: 40,
+    justifyContent: 'center', // Vertically centers the image
+    alignItems: 'left', // Horizontally centers the image
+    flex: 1, // Ensures the container takes up the full screen height
+  },
+  aboutdSection: {
+    backgroundColor: '#000000',
+    paddingVertical: 40,
+    paddingHorizontal: 40,
+    marginBottom: 10, 
+    justifyContent: 'flex-end',  // Aligns horizontally to the right
+  alignItems: 'flex-end',  // Aligns vertically to the right
+  flex: 1,  // Ensures the container takes up the full screen height
+  },
+  image: {
+    width: '65%', // Adjust this as needed
+    height: undefined, // Keeps aspect ratio intact
+    aspectRatio: 1, // You can adjust this ratio if the image needs a different width-to-height ratio
   },
   sectionTitle: {
-    fontSize: 30,
+    fontSize: 35,
     fontWeight: '700',
     color: 'white',
     textAlign: 'center',
     marginBottom: 30,
-    textDecorationLine: 'underline', // Add underline
-    textDecorationColor: 'white',    // Make underline white
-    textDecorationStyle: 'solid',    // Solid underline style
+    marginTop: 1,
     paddingTop: 10,    
-    paddingVertical: 10,            // Optional: add some space below the underline
+    paddingVertical: 10,
+    textDecoration: 'underline',
+  textDecorationColor: 'white',  // White underline
+  textDecorationThickness: 3,     // Thickness of the underline
+  textDecorationOffset: 4,       // Gap between text and underline            // Optional: add some space below the underline
   },
 
-  aboutContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: 'transparent',
-    height: 300,
-  },
-  aboutTextContainer: {
-    flex: 1,
-    marginRight: 20,
-    borderWidth: 2,
-    borderColor: '#00A86B', 
-    borderRadius: 15,
-    padding: 18,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)', 
-    shadowColor: '#00A86B',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 5,
-  },
-  aboutDescription: {
-    color: '#C9D1D9',
-    fontSize: 20, 
-    lineHeight: 28,
-    textAlign: 'justify',
-    letterSpacing: 0.5,
-  },
   
   aboutImage: {
     width: '100%',
@@ -476,7 +497,7 @@ const styles = StyleSheet.create({
   solutionsContainer: {
     backgroundColor: '#000000',
     paddingVertical: 5,
-   
+    marginTop: 10,
   
   },
   featureCarouselContainer: {
@@ -499,7 +520,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    opacity: 0.3,
+    opacity: 0.6,
   },
   featureOverlay: {
     position: 'absolute',
@@ -589,10 +610,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   newsletterTitle: {
-    fontSize: 32,
+    fontSize: 34,
     fontWeight: '700',
     color: 'white',
     marginBottom: 15,
+    textDecoration: 'underline',
+  textDecorationColor: 'white',  // White underline
+  textDecorationThickness: 3,     // Thickness of the underline
+  textDecorationOffset: 4,       // Gap between text and underline
   },
   newsletterSubtitle: {
     color: '#C9D1D9',
@@ -630,6 +655,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  greenBorderLine: {
+    height: 2, // Height of the green line
+    
+    backgroundColor: '#002D04', // Green color
+    marginVertical: 5, // Margin to space out the sections
   },
 });
 
