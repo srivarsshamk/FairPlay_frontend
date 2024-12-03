@@ -12,13 +12,16 @@ import {
   SafeAreaView,
   Dimensions,
   RefreshControl,
+  StatusBar,
 } from 'react-native';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
+import { ArrowLeft } from 'lucide-react-native';
 
-const { width } = Dimensions.get('window');
-const COLUMN_WIDTH = width / 2 - 16;
+const { width, height } = Dimensions.get('window');
 
-const HomeScreen = () => {
+const News = () => {
+  const navigation = useNavigation();
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -52,15 +55,15 @@ const HomeScreen = () => {
     fetchNews();
   }, []);
 
-  const handleLoadMore = () => {
+  const handleLoadMore = async () => {
     if (!loading && hasMore) {
-      setPage(prev => {
-        const nextPage = prev + 1;
-        fetchNews(nextPage, true);
-        return nextPage;
-      });
+      const nextPage = page + 1; // Calculate next page
+      console.log('Loading more, page:', nextPage);
+      await fetchNews(nextPage, true); // Append new articles
+      setPage(nextPage); // Update state after fetch
     }
   };
+  
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -73,47 +76,60 @@ const HomeScreen = () => {
     setModalVisible(true);
   };
 
-  const renderNewsItem = (item) => {
-    if (!item) return null;
-    
-    return (
-      <TouchableOpacity 
-        key={item.url}
-        style={[styles.newsItem, { width: COLUMN_WIDTH }]}
-        onPress={() => handleArticlePress(item)}
-      >
-        <View style={styles.newsImageContainer}>
-          {item.urlToImage ? (
-            <Image
-              source={{ uri: item.urlToImage }}
-              style={styles.newsImage}
-              resizeMode="cover"
-            />
-          ) : (
-            <View style={[styles.newsImage, styles.placeholderImage]}>
-              <Text style={styles.placeholderText}>No Image</Text>
-            </View>
-          )}
-        </View>
-        <Text style={styles.newsTitle} numberOfLines={2}>
-          {item.title}
-        </Text>
-      </TouchableOpacity>
-    );
+  const handleBackNavigation = () => {
+    navigation.navigate('Home');
   };
 
-  const renderNewsItems = () => {
-    const rows = [];
-    for (let i = 0; i < news.length; i += 2) {
-      const row = (
-        <View key={i} style={styles.row}>
-          {renderNewsItem(news[i])}
-          {i + 1 < news.length && renderNewsItem(news[i + 1])}
-        </View>
-      );
-      rows.push(row);
-    }
-    return rows;
+  const NewsCarousel = ({ title, articles }) => {
+    const handleReadMore = (url) => {
+      if (url) {
+        Linking.openURL(url);
+      }
+    };
+
+    return (
+      <View style={styles.carouselContainer}>
+        <Text style={styles.carouselSectionTitle}>{title}</Text>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.carouselScrollContainer}
+        >
+          {articles.map((article, index) => (
+            <View key={index} style={styles.carouselNewsCard}>
+              {article.urlToImage ? (
+                <Image 
+                  source={{ uri: article.urlToImage }}
+                  style={styles.carouselNewsImage}
+                  resizeMode="cover"
+                />
+              ) : (
+                <View style={styles.carouselPlaceholderImage}>
+                  <Text style={styles.carouselPlaceholderText}>No Image</Text>
+                </View>
+              )}
+              
+              <View style={styles.carouselNewsContent}>
+                <Text style={styles.carouselNewsTitle} numberOfLines={2}>
+                  {article.title}
+                </Text>
+                
+                <Text style={styles.carouselNewsDescription} numberOfLines={3}>
+                  {article.description}
+                </Text>
+                
+                <TouchableOpacity 
+                  style={styles.carouselLearnMoreButton}
+                  onPress={() => handleReadMore(article.url)}
+                >
+                  <Text style={styles.carouselLearnMoreText}>Learn More</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
+    );
   };
 
   const ArticleDetailModal = () => (
@@ -124,14 +140,15 @@ const HomeScreen = () => {
       onRequestClose={() => setModalVisible(false)}
     >
       <SafeAreaView style={styles.modalContainer}>
-        <ScrollView style={styles.detailContainer}>
-          <TouchableOpacity 
-            style={styles.closeButton}
-            onPress={() => setModalVisible(false)}
-          >
-            <Text style={styles.closeButtonText}>✕</Text>
-          </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => setModalVisible(false)}
+        >
+          <ArrowLeft color="#00e676" size={24} />
+          <Text style={styles.backButtonText}>Back</Text>
+        </TouchableOpacity>
 
+        <ScrollView style={styles.detailContainer}>
           {selectedArticle?.urlToImage && (
             <Image
               source={{ uri: selectedArticle.urlToImage }}
@@ -161,41 +178,32 @@ const HomeScreen = () => {
               {selectedArticle?.content}
             </Text>
             
-            {selectedArticle?.url && (
-              <TouchableOpacity
-                style={styles.readMoreButton}
-                onPress={() => Linking.openURL(selectedArticle.url)}
-              >
-                <Text style={styles.readMoreButtonText}>
-                  Read Full Article
-                </Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              style={styles.readMoreButton}
+              onPress={() => selectedArticle?.url && Linking.openURL(selectedArticle.url)}
+            >
+              <Text style={styles.readMoreButtonText}>
+                Learn More
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </SafeAreaView>
     </Modal>
   );
 
-  if (error && news.length === 0) {
-    return (
-      <View style={styles.centerContainer}>
-        <Text style={styles.errorText}>{error}</Text>
-        <TouchableOpacity 
-          style={styles.retryButton} 
-          onPress={handleRefresh}
-        >
-          <Text style={styles.retryButtonText}>Retry</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.mainContainer}>
+      <StatusBar barStyle="light-content" backgroundColor="#006400" />
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Anti-Doping News</Text>
+          <TouchableOpacity 
+            style={styles.backHeaderButton}
+            onPress={handleBackNavigation}
+          >
+            <ArrowLeft color="#fff" size={24} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>News Updates</Text>
         </View>
 
         <ScrollView
@@ -203,30 +211,32 @@ const HomeScreen = () => {
           contentContainerStyle={styles.scrollContentContainer}
           showsVerticalScrollIndicator={true}
           scrollEventThrottle={16}
-          onScroll={({ nativeEvent }) => {
-            const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
-            const paddingToBottom = 20;
-            if (layoutMeasurement.height + contentOffset.y >=
-                contentSize.height - paddingToBottom) {
-              handleLoadMore();
-            }
-          }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
               onRefresh={handleRefresh}
-              colors={['#0066cc']}
+              colors={['#00e676']}
             />
           }
         >
-          <View style={styles.content}>
-            {renderNewsItems()}
-            {loading && !refreshing && (
-              <View style={styles.loadingMore}>
-                <ActivityIndicator size="small" color="#0066cc" />
-              </View>
-            )}
-          </View>
+          <NewsCarousel title="Breaking News" articles={news.slice(0, 6)} />
+          <NewsCarousel title="Latest Updates" articles={news.slice(6, 12)} />
+          <NewsCarousel title="More Stories" articles={news.slice(12)} />
+
+          {loading && !refreshing && (
+            <View style={styles.loadingMore}>
+              <ActivityIndicator size="small" color="#00e676" />
+            </View>
+          )}
+          
+          {hasMore && !loading && (
+            <TouchableOpacity
+              style={styles.loadMoreButton}
+              onPress={handleLoadMore}
+            >
+              <Text style={styles.loadMoreText}>Load More</Text>
+            </TouchableOpacity>
+          )}
         </ScrollView>
 
         <ArticleDetailModal />
@@ -238,7 +248,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#000000',
   },
   container: {
     flex: 1,
@@ -250,13 +260,10 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: 20,
   },
-  content: {
-    padding: 8,
-    paddingRight: 12,
-  },
   header: {
-    backgroundColor: 'rgba(0, 128, 0, 0.7)',
+    backgroundColor: '#000000',
     padding: 16,
+    flexDirection: 'row',
     alignItems: 'center',
     elevation: 4,
     shadowColor: '#000',
@@ -264,90 +271,115 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
+  backHeaderButton: {
+    marginRight: 16,
+  },
   headerTitle: {
     color: '#fff',
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
   },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  carouselContainer: {
+    backgroundColor: '#000000',
+    paddingVertical: 16,
     marginBottom: 16,
   },
-  centerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
+  carouselSectionTitle: {
+    color: '#00e676',
+    fontSize: 24,
+    fontWeight: 'bold',
+    paddingHorizontal: 16,
+    marginBottom: 16,
   },
-  newsItem: {
-    backgroundColor: '#fff',
+  carouselScrollContainer: {
+    paddingHorizontal: 16,
+  },
+  carouselNewsCard: {
+    width: width * 0.3, // Reduced from 0.8
+    backgroundColor: '#000000',
     borderRadius: 12,
+    marginRight: 16,
     overflow: 'hidden',
-    elevation: 3,
+    elevation: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.3,
     shadowRadius: 4,
   },
-  newsImageContainer: {
+  carouselNewsImage: {
     width: '100%',
-    height: 150,
+    height: 250, // Increased from 200
   },
-  newsImage: {
+  carouselPlaceholderImage: {
     width: '100%',
-    height: '100%',
-  },
-  placeholderImage: {
+    height: 250, // Increased from 200
+    backgroundColor: '#333',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#e0e0e0',
   },
-  placeholderText: {
-    color: '#666',
-    fontSize: 14,
+  carouselPlaceholderText: {
+    color: '#888',
+    fontSize: 16,
   },
-  newsTitle: {
+  carouselNewsContent: {
+    padding: 16,
+  },
+  carouselNewsTitle: {
+    color: '#00e676',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  carouselNewsDescription: {
+    color: '#ffffff',
     fontSize: 14,
-    fontWeight: '600',
-    padding: 12,
+    marginBottom: 16,
     lineHeight: 20,
+  },
+  carouselLearnMoreButton: {
+    backgroundColor: '#006400',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    alignSelf: 'flex-start',
+  },
+  carouselLearnMoreText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#121212',
   },
-  closeButton: {
-    position: 'absolute',
-    right: 16,
-    top: 16,
-    zIndex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    justifyContent: 'center',
+  backButton: {
+    flexDirection: 'row',
     alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#1e1e1e',
   },
-  closeButtonText: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
+  backButtonText: {
+    color: '#00e676',
+    marginLeft: 10,
+    fontSize: 16,
   },
   detailContainer: {
     flex: 1,
+    padding: 16,
   },
   detailImage: {
     width: '100%',
-    height: 250,
+    height: 300, // Increased from 250
+    borderRadius: 10,
   },
   detailContent: {
-    padding: 16,
+    marginTop: 16,
   },
   detailTitle: {
+    color: '#00e676',
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginBottom: 8,
   },
   detailMeta: {
     flexDirection: 'row',
@@ -355,56 +387,57 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   detailSource: {
+    color: '#888',
     fontSize: 14,
-    color: '#0066cc',
-    fontWeight: '500',
   },
   detailDate: {
+    color: '#888',
     fontSize: 14,
-    color: '#666',
   },
   detailDescription: {
+    color: '#ffffff',
     fontSize: 16,
+    marginBottom: 16,
+    lineHeight: 24,
+  },
+  detailBody: {
+    color: '#ffffff',
+    fontSize: 15,
     lineHeight: 24,
     marginBottom: 16,
   },
-  detailBody: {
-    fontSize: 16,
-    lineHeight: 24,
-    marginBottom: 24,
-  },
   readMoreButton: {
-    backgroundColor: '#0066cc',
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
+    backgroundColor: '#006400',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 25,
+    alignSelf: 'center',
+    marginTop: 16,
   },
   readMoreButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: 'bold',
   },
   loadingMore: {
     paddingVertical: 20,
     alignItems: 'center',
   },
-  errorText: {
-    fontSize: 16,
-    color: '#ff3b30',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  retryButton: {
-    backgroundColor: '#0066cc',
+  loadMoreButton: {
+    backgroundColor: '#1e1e1e',
+    paddingVertical: 15,
     paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 25,
+    alignSelf: 'center',
+    marginTop: 16,
+    borderWidth: 1,
+    borderColor: '#00e676',
   },
-  retryButtonText: {
-    color: '#fff',
+  loadMoreText: {
+    color: '#00e676',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: 'bold',
   },
 });
 
-export default HomeScreen;
+export default News;

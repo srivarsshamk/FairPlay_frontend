@@ -1,7 +1,7 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import WelcomeScreen from "./assets/src/screens/welcomescreen";
+import LoginScreen from "./assets/src/screens/LoginScreen";
 import HomeScreen from "./assets/src/screens/homescreen";
 import GameScreen from "./assets/src/screens/gamescreen";
 import Hangman from "./assets/src/components/hangman";
@@ -41,17 +41,24 @@ import DiscussionForumScreen from "./assets/src/screens/forum";
 import CreateForumModal from "./assets/src/components/createforum";
 import ForumDetailScreen from "./assets/src/components/forummsg";
 import ChatListScreen from "./assets/src/screens/chatlist";
-
+import CaseStudies from './assets/src/screens/CaseStudies';
+import DopingScandals from './assets/src/components/DopingScandalsTimeline';
+import ImageTextExtractor from './assets/src/screens/ImageTextExtractor';
+import Podcastcomp from './assets/src/components/Podcastcomp';
+import NewsDisplay from "./assets/src/components/News";
+import CaseStud from './assets/src/screens/StatsPage';
+import Journals from "./assets/src/components/Journals";
+import LandingPage from "./assets/src/screens/LandingPage";
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Welcome">
+      <Stack.Navigator initialRouteName="LandingPage" screenOptions={{ cardStyle: { height: "100%" } }}>
         {/* Welcome Screen */}
         <Stack.Screen
-          name="Welcome"
-          component={WelcomeScreen}
+          name="Login"
+          component={LoginScreen}
           options={{ headerShown: false }}
         />
         {/* Home Screen */}
@@ -249,6 +256,46 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Chat List"
           component={ChatListScreen}
+          options={{ headerShown: false }}
+        />
+         <Stack.Screen
+          name="DopingScandals"
+          component={DopingScandals}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CaseStudies"
+          component={CaseStudies}
+          options={{ headerShown: false }}
+        />
+         <Stack.Screen
+          name="NewsDisplay"
+          component={NewsDisplay}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CaseStud"
+          component={CaseStud}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ImageTextExtractor"
+          component={ImageTextExtractor}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Podcast"
+          component={Podcastcomp}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Journals"
+          component={Journals}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="LandingPage"
+          component={LandingPage}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
