@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { Mail, Lock, User, Phone } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
+import SpaceBackground from '../components/SpaceBackground';
 
 const SignupScreen = () => {
   const [firstName, setFirstName] = useState('');
@@ -36,15 +37,15 @@ const SignupScreen = () => {
         email,
         password,
         phone_number: phoneNumber,
-        age: null,
-        bio: null
+        age:null,
+        bio:null
       };
 
       const response = await fetch('http://127.0.0.1:8000/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
         body: JSON.stringify(requestBody),
       });
@@ -53,18 +54,18 @@ const SignupScreen = () => {
 
       if (response.ok) {
         Alert.alert('Success', 'Account created successfully', [
-          { 
-            text: 'Login', 
-            onPress: () => navigation.navigate('Login') 
-          }
+          {
+            text: 'Login',
+            onPress: () => navigation.navigate('Login'),
+          },
         ]);
       } else {
-        const errorMessage = responseData.detail 
+        const errorMessage = responseData.detail
           ? Array.isArray(responseData.detail)
-            ? responseData.detail.map(error => `${error.loc.join('.')}: ${error.msg}`).join('\n')
+            ? responseData.detail.map((error) => `${error.loc.join('.')}: ${error.msg}`).join('\n')
             : responseData.detail
           : 'Registration failed. Please try again.';
-        
+
         Alert.alert('Registration Error', errorMessage);
       }
     } catch (error) {
@@ -76,151 +77,190 @@ const SignupScreen = () => {
   };
 
   const navigateToLogin = () => {
-    navigation.navigate('Welcome');
+    navigation.navigate('Login');
   };
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === "ios" ? "padding" : "height"} 
-      style={styles.container}
-    >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.formContainer}>
-          <Text style={styles.title}>Create Account</Text>
-
-          <View style={styles.inputWrapper}>
-            <User width={20} height={20} color="#666" style={styles.icon} />
-            <TextInput
-              style={styles.input}
-              placeholder="First Name"
-              value={firstName}
-              onChangeText={setFirstName}
-              editable={!loading}
-            />
-          </View>
-
-          <View style={styles.inputWrapper}>
-            <User width={20} height={20} color="#666" style={styles.icon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Last Name"
-              value={lastName}
-              onChangeText={setLastName}
-              editable={!loading}
-            />
-          </View>
-
-          <View style={styles.inputWrapper}>
-            <Mail width={20} height={20} color="#666" style={styles.icon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              value={email}
-              onChangeText={setEmail}
-              editable={!loading}
-            />
-          </View>
-
-          <View style={styles.inputWrapper}>
-            <Phone width={20} height={20} color="#666" style={styles.icon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Phone Number"
-              keyboardType="phone-pad"
-              value={phoneNumber}
-              onChangeText={setPhoneNumber}
-              editable={!loading}
-            />
-          </View>
-
-          <View style={styles.inputWrapper}>
-            <Lock width={20} height={20} color="#666" style={styles.icon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-              editable={!loading}
-            />
-          </View>
-
-          <TouchableOpacity
-            style={[styles.signupButton, loading && styles.signupButtonDisabled]}
-            onPress={handleSignup}
-            disabled={loading}
+    <View style={styles.mainContainer}>
+      <SpaceBackground />
+      <View style={styles.container}>
+        <View style={styles.signupContainer}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.formContainer}
           >
-            <Text style={styles.signupButtonText}>
-              {loading ? 'Creating Account...' : 'Sign Up'}
-            </Text>
-          </TouchableOpacity>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+              <Text style={styles.title}>Create Account</Text>
 
-          <TouchableOpacity onPress={navigateToLogin} style={styles.loginLink}>
-            <Text style={styles.loginText}>Already have an account? Login</Text>
-          </TouchableOpacity>
+              <View style={styles.inputWrapper}>
+                <User width={20} height={20} color="#00A86B" style={styles.icon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="First Name"
+                  value={firstName}
+                  onChangeText={setFirstName}
+                  editable={!loading}
+                />
+              </View>
+
+              <View style={styles.inputWrapper}>
+                <User width={20} height={20} color="#00A86B" style={styles.icon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Last Name"
+                  value={lastName}
+                  onChangeText={setLastName}
+                  editable={!loading}
+                />
+              </View>
+
+              <View style={styles.inputWrapper}>
+                <Mail width={20} height={20} color="#00A86B" style={styles.icon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Email"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  value={email}
+                  onChangeText={setEmail}
+                  editable={!loading}
+                />
+              </View>
+
+              <View style={styles.inputWrapper}>
+                <Phone width={20} height={20} color="#00A86B" style={styles.icon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Phone Number"
+                  keyboardType="phone-pad"
+                  value={phoneNumber}
+                  onChangeText={setPhoneNumber}
+                  editable={!loading}
+                />
+              </View>
+
+              <View style={styles.inputWrapper}>
+                <Lock width={20} height={20} color="#00A86B" style={styles.icon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Password"
+                  secureTextEntry
+                  value={password}
+                  onChangeText={setPassword}
+                  editable={!loading}
+                />
+              </View>
+
+              <TouchableOpacity
+                style={[styles.signupButton, loading && styles.signupButtonDisabled]}
+                onPress={handleSignup}
+                disabled={loading}
+              >
+                <Text style={styles.signupButtonText}>
+                  {loading ? 'Creating Account...' : 'Sign Up'}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={navigateToLogin} style={styles.loginLink}>
+                <Text style={styles.loginText}>
+                  Already have an account?{' '}
+                  <Text style={styles.signupText}>Login</Text>
+                </Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </KeyboardAvoidingView>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#e8f4f8' },
-  scrollContainer: { 
-    flexGrow: 1, 
-    justifyContent: 'center', 
-    paddingVertical: 20 
+  mainContainer: {
+    flex: 1,
   },
-  formContainer: { 
-    paddingHorizontal: 20 
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  title: { 
-    fontSize: 28, 
-    fontWeight: 'bold', 
-    color: '#333', 
-    marginBottom: 30, 
-    textAlign: 'center' 
+  signupContainer: {
+    width: '20%',
+    height: '80%',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  inputWrapper: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    backgroundColor: '#fff', 
-    borderRadius: 15, 
-    marginBottom: 15, 
-    paddingHorizontal: 15, 
-    height: 50 
+  formContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom:30,
   },
-  icon: { marginRight: 10 },
-  input: { 
-    flex: 1, 
-    fontSize: 16, 
-    color: '#333' 
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    width: '100%',
   },
-  signupButton: { 
-    backgroundColor: '#4a90e2', 
-    borderRadius: 15, 
-    height: 50, 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    marginTop: 20 
+  title: {
+    fontSize: 27,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 40,
+    marginTop: 40,
+    textAlign: 'center',
   },
-  signupButtonDisabled: { 
-    backgroundColor: '#a0c4e7' 
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(26,26,26,0.8)',
+    borderWidth: 2,
+    borderColor: '#999',
+    borderRadius: 8,
+    marginBottom: 16,
+    paddingHorizontal: 16,
+    height: 48,
+    width: '100%',
   },
-  signupButtonText: { 
-    color: '#fff', 
-    fontSize: 16, 
-    fontWeight: 'bold' 
+  icon: {
+    marginRight: 8,
   },
-  loginLink: { 
-    marginTop: 15, 
-    alignItems: 'center' 
+  input: {
+    flex: 1,
+    fontSize: 16,
+    color: '#FFFFFF',
   },
-  loginText: { 
-    color: '#4a90e2', 
-    fontSize: 16 
+  signupButton: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    height: 50,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 24,
+  },
+  signupButtonDisabled: {
+    backgroundColor: '#666666',
+  },
+  signupButtonText: {
+    color: '#000000',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  loginLink: {
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  loginText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+  },
+  signupText: {
+    color: '#00A86B',
+    fontSize: 16,
   },
 });
 
