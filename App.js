@@ -37,6 +37,10 @@ import SubstanceSortRulesScreen from "./assets/src/components/sortrules";
 import SortLevelSelectorScreen from "./assets/src/components/sortlevel";
 import TUEAssistant from "./assets/src/components/tue";
 import Message from "./assets/src/components/message";
+import DiscussionForumScreen from "./assets/src/screens/forum";
+import CreateForumModal from "./assets/src/components/createforum";
+import ForumDetailScreen from "./assets/src/components/forummsg";
+import ChatListScreen from "./assets/src/screens/chatlist";
 
 const Stack = createStackNavigator();
 
@@ -225,6 +229,26 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Message"
           component={Message}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Forum"
+          component={DiscussionForumScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Create Forum"
+          component={CreateForumModal}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Forum msg"
+          component={ForumDetailScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Chat List"
+          component={ChatListScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

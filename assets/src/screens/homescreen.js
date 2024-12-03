@@ -97,8 +97,8 @@ export default function HomeScreen() {
           <TouchableOpacity style={styles.navButton}>
             <Text style={styles.navButtonText}>Home</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.navButtonText}>About Us</Text>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("Chat List")}>
+            <Text style={styles.navButtonText}>Chat</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             style={styles.navButton}
@@ -106,7 +106,9 @@ export default function HomeScreen() {
             >
             <Text style={styles.navButtonText}>Post</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}>
+          <TouchableOpacity style={styles.navButton}
+          onPress={() => navigation.navigate("Forum")}
+          >
             <Text style={styles.navButtonText}>Discussion Forum</Text>
           </TouchableOpacity>
           <TouchableOpacity
