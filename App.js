@@ -54,7 +54,7 @@ import ChaptersScreen from './assets/src/screens/ChapterScreen';
 import VideoScreen from './assets/src/screens/VideoScreen';
 import QuizScreen from './assets/src/screens/QuizScreen';
 import ModuleQuizScreen from './assets/src/screens/ModuleQuizScreen';
-import ChatbotScreen from "./assets/src/screens/ChatbotScreen";
+
 
 
 const Stack = createStackNavigator();
@@ -62,7 +62,7 @@ const Stack = createStackNavigator();
 export default function AppNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="ModuleScreen" screenOptions={{ cardStyle: { height: "100%" } }}>
+      <Stack.Navigator initialRouteName="LandingPage" screenOptions={{ cardStyle: { height: "100%" } }}>
         {/* Welcome Screen */}
         <Stack.Screen
           name="Login"
@@ -304,11 +304,6 @@ export default function AppNavigator() {
         <Stack.Screen
           name="LandingPage"
           component={LandingPage}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Chatbot"
-          component={ChatbotScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen name="ModuleScreen" component={ModulesScreen} />

@@ -155,13 +155,6 @@ export default function HomeScreen() {
           </Animated.View>
         </TouchableOpacity>
 
-        {/* New Floating Action Button for Chat */}
-        <TouchableOpacity
-          style={styles.chatFab}
-          onPress={() => navigation.navigate("Chatbot")} // Navigate to a chat screen
-        >
-          <Ionicons name="chatbubble-ellipses" size={30} color="#fff" />
-        </TouchableOpacity>
       </View>
     </View>
   );
