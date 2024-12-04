@@ -18,7 +18,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather, FontAwesome5 } from '@expo/vector-icons';
 import { Video } from 'expo-av';
 
+const BASE_URL = 'http://127.0.0.1:8000';
+
 export default function PostsScreen({ navigation }) {
+  // User Data State
+  const [userData, setUserData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone_number: "",
+    id: null,
+    dp_url: null,
+    bio: ""
+  });
+  
   const [posts, setPosts] = useState([]);
   const [usernames, setUsernames] = useState({});
   const [isCreateModalVisible, setCreateModalVisible] = useState(false);
@@ -36,13 +49,46 @@ export default function PostsScreen({ navigation }) {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    loadUserData();
-    fetchPosts();
+    const loadUserDataAndProfile = async () => {
+      try {
+        // Retrieve user data from AsyncStorage
+        const storedUserData = await AsyncStorage.getItem('userData');
+        if (storedUserData) {
+          // Parse and set user data
+          const parsedData = JSON.parse(storedUserData);
+          setUserData(parsedData);
+          setUserId(parsedData.id);
+
+          // Fetch additional user profile details
+          await fetchUserProfile(parsedData.id);
+        }
+
+        // Fetch posts
+        await fetchPosts();
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        Alert.alert('Error', 'Failed to load user profile');
+      }
+    };
+
+    loadUserDataAndProfile();
   }, []);
+
+  const fetchUserProfile = async (userId) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/users/${userId}`);
+      setUserData(prevData => ({
+        ...prevData,
+        ...response.data
+      }));
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
 
   const fetchUserFirstName = async (userId) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/users/${userId}`);
+      const response = await axios.get(`${BASE_URL}/users/${userId}`);
       return response.data.first_name;
     } catch (error) {
       console.error(`Error fetching user for ID ${userId}:`, error);
@@ -50,22 +96,9 @@ export default function PostsScreen({ navigation }) {
     }
   };
 
-
-  const loadUserData = async () => {
-    try {
-      const userData = await AsyncStorage.getItem('userData');
-      if (userData) {
-        const parsedData = JSON.parse(userData);
-        setUserId(parsedData.id);
-      }
-    } catch (error) {
-      console.error('Error loading user data:', error);
-    }
-  };
-
   const fetchPosts = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/posts');
+      const response = await axios.get(`${BASE_URL}/posts`);
       const postsData = response.data.data;
       setPosts(postsData);
 
@@ -86,7 +119,7 @@ export default function PostsScreen({ navigation }) {
 
   const fetchPostComments = async (postId) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/comments/post/${postId}`);
+      const response = await axios.get(`${BASE_URL}/comments/post/${postId}`);
       setPostComments(prev => ({
         ...prev,
         [postId]: response.data.data
@@ -110,7 +143,7 @@ export default function PostsScreen({ navigation }) {
         post_id: postId
       };
   
-      await axios.post('http://127.0.0.1:8000/comments', commentData);
+      await axios.post(`${BASE_URL}/comments`, commentData);
       
       // Refresh comments for this post
       await fetchPostComments(postId);
@@ -125,24 +158,23 @@ export default function PostsScreen({ navigation }) {
   const toggleLike = async (postId, isLiked) => {
     try {
       const likeEndpoint = isLiked 
-        ? `http://127.0.0.1:8000/posts/${postId}/unlike`
-        : `http://127.0.0.1:8000/posts/${postId}/like`;
+        ? `${BASE_URL}/posts/${postId}/unlike`
+        : `${BASE_URL}/posts/${postId}/like`;
   
-      // Send the like/unlike request and get the updated post data
       const response = await axios.post(likeEndpoint, {
-        user_id: userId,  // Include user ID in the request
+        user_id: userId,
         post_id: postId
       });
   
-      const updatedPost = response.data; // Assuming the response contains the updated post object
+      const updatedPost = response.data;
   
       setPosts(prevPosts =>
         prevPosts.map(post =>
           post.id === postId
             ? {
                 ...post,
-                is_liked: !isLiked, // Toggle the like status
-                likes_count: updatedPost.like_count // Update like_count from the response
+                is_liked: !isLiked,
+                likes_count: updatedPost.like_count
               }
             : post
         )
@@ -158,7 +190,6 @@ export default function PostsScreen({ navigation }) {
 
   const handleConnect = async (postUserId) => {
     try {
-      // Retrieve the logged-in user's data
       const userData = await AsyncStorage.getItem('userData');
       if (!userData) {
         Alert.alert('Error', 'Please log in first');
@@ -168,15 +199,12 @@ export default function PostsScreen({ navigation }) {
       const currentUser = JSON.parse(userData);
       const currentUserId = currentUser.id;
   
-      // Fetch the username of the user you're connecting with
       const receiverUsername = usernames[postUserId] || 'Anonymous User';
   
-      // Store sender (current user) and receiver (post user) IDs in AsyncStorage
       await AsyncStorage.setItem('messageSenderId', currentUserId);
       await AsyncStorage.setItem('messageReceiverId', postUserId);
       await AsyncStorage.setItem('receiverUsername', receiverUsername);
   
-      // Navigate to Message screen
       navigation.navigate("Message", { 
         senderId: currentUserId,
         receiverId: postUserId, 
@@ -187,7 +215,6 @@ export default function PostsScreen({ navigation }) {
       Alert.alert('Error', 'Could not establish connection');
     }
   };
-
 
   const pickMedia = async (type) => {
     try {
@@ -254,7 +281,7 @@ export default function PostsScreen({ navigation }) {
         });
       }
   
-      const response = await axios.post('http://127.0.0.1:8000/uploads', formData, {
+      const response = await axios.post(`${BASE_URL}/uploads`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         }
@@ -290,7 +317,7 @@ export default function PostsScreen({ navigation }) {
         image_url: image || null
       };
   
-      await axios.post('http://127.0.0.1:8000/posts', postData);
+      await axios.post(`${BASE_URL}/posts`, postData);
       
       resetPostForm();
       setCreateModalVisible(false);
@@ -311,7 +338,6 @@ export default function PostsScreen({ navigation }) {
     setHashtags('');
     setImage(null);
   };
-
 
   return (
     <ImageBackground 
@@ -337,6 +363,28 @@ export default function PostsScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
+      
+
+      <View style={styles.experiencePromptContainer}>
+        <View style={styles.experienceTextInputWrapper}>
+          <TextInput 
+            style={styles.experienceTextInput} 
+            placeholder="Tell us about your recent experience or discovery"
+            placeholderTextColor="#00A86B"
+            multiline 
+            numberOfLines={2} 
+            onFocus={() => setCreateModalVisible(true)} 
+          />
+        </View>
+        <TouchableOpacity 
+          style={styles.createPostButton} 
+          onPress={() => setCreateModalVisible(true)}
+        >
+          <Text style={styles.createPostButtonText}>Create Post</Text>
+          <Feather name="plus" size={20} color="white" />
+        </TouchableOpacity>
+      </View>
+
       {/* Posts Container with ScrollView */}
       <ScrollView 
         style={styles.scrollContainer}
@@ -349,121 +397,119 @@ export default function PostsScreen({ navigation }) {
         {posts.length === 0 ? (
           <Text style={styles.emptyListText}>No posts yet. Create one!</Text>
         ) : (
-          posts.map((item) => {
-            const mediaUrl = `http://127.0.0.1:8000/images/${item.image_url.split('/').pop()}`;
-            const isVideo = item.image_url.match(/\.(mp4|mov|avi|wmv)$/i);
-            const username = usernames[item.user_id] || 'Anonymous User';
-            const postCommentsList = postComments[item.id] || [];
+          <View style={styles.postsGridContainer}>
+            {posts.map((item) => {
+              const mediaUrl = `${BASE_URL}/images/${item.image_url.split('/').pop()}`;
+              const isVideo = item.image_url.match(/\.(mp4|mov|avi|wmv)$/i);
+              const username = usernames[item.user_id] || 'Anonymous User';
+              const postCommentsList = postComments[item.id] || [];
 
-            return (
-              <View key={item.id} style={styles.postContainer}>
-                {/* User Profile Header */}
-                <View style={styles.postHeader}>
-                  <View style={styles.userProfileContainer}>
-                    <Image 
-                      source={{ uri: 'https://via.placeholder.com/50' }} 
-                      style={styles.userProfileImage} 
-                    />
-                    <View style={styles.userInfoContainer}>
-                      <Text style={styles.userName}>{username}</Text>
-                      <Text style={styles.userLocation}>San Francisco, CA</Text>
-                    </View>
-                  </View>
-                  <TouchableOpacity style={styles.connectButton} onPress={() => handleConnect((item.user_id))}>
-                    <FontAwesome5 name="user-plus" size={20} color="#00A86B" />
-                    <Text style={styles.connectButtonText}>Connect</Text>
-                  </TouchableOpacity>
-                </View>
-
-                {/* Post Content */}
-                <View style={styles.postContentContainer}>
-                  <View style={styles.mediaContainer}>
-                    {isVideo ? (
-                      <Video
-                        source={{ uri: mediaUrl }}
-                        style={styles.media}
-                        useNativeControls
-                        resizeMode="contain"
-                        isLooping
-                      />
-                    ) : (
+              return (
+                <View key={item.id} style={styles.postGridItem}>
+                  {/* User Profile Header */}
+                  <View style={styles.postHeader}>
+                    <View style={styles.userProfileContainer}>
                       <Image 
-                        source={{ uri: mediaUrl }} 
-                        style={styles.media}
-                        resizeMode="contain"
+                         source={{ 
+                          uri: userData.dp_url 
+                            ? `http://127.0.0.1:8000/images/${userData.dp_url.split('/').pop()}` 
+                            : 'https://via.placeholder.com/100' 
+                        }} 
+                        style={styles.userProfileImage} 
                       />
-                    )}
-                  </View>
-
-                  <View style={styles.postTextContainer}>
-                    <Text style={styles.postHashtags}>{item.hashtag || ''}</Text>
-                    <Text style={styles.postDescription}>{item.description}</Text>
-                  </View>
-                </View>
-
-                {/* Post Interactions */}
-                <View style={styles.postInteractions}>
-                  <TouchableOpacity 
-                    style={styles.likeButton}
-                    onPress={() => toggleLike(item.id, item.is_liked)}
-                  >
-                    <FontAwesome5 
-                      name="heart" 
-                      size={20} 
-                      color={item.is_liked ? "#FF6B6B" : "#CCCCCC"} 
-                    />
-                    <Text style={styles.likeButtonText}>
-                      {item.likes_count || 0} Likes
-                    </Text>
-                  </TouchableOpacity>
-                  
-                  {/* Comments Section */}
-                  <View style={styles.commentsSection}>
-                    {postCommentsList.length > 0 && (
-                      <ScrollView 
-                        horizontal 
-                        showsHorizontalScrollIndicator={false}
-                        style={styles.commentsScrollView}
-                      >
-                        {postCommentsList.map(comment => (
-                          <View key={comment.id} style={styles.commentBubble}>
-                            <Text style={styles.commentText}>{comment.comment}</Text>
-                          </View>
-                        ))}
-                      </ScrollView>
-                    )}
-                  </View>
-
-                  <View style={styles.commentInputContainer}>
-                    <TextInput
-                      style={styles.commentInput}
-                      placeholder="Add a comment..."
-                      value={commentText}
-                      onChangeText={setCommentText}
-                    />
-                    <TouchableOpacity 
-                      style={styles.sendCommentButton}
-                      onPress={() => {
-                        addComment(item.id);
-                        fetchPostComments(item.id);
-                      }}
-                    >
-                      <Feather name="send" size={20} color="#00A86B" />
+                      <View style={styles.userInfoContainer}>
+                        <Text style={styles.userName}>{username}</Text>
+                        <Text style={styles.userBio}>{userData.bio || "No bio available"}</Text>
+                      </View>
+                    </View>
+                    <TouchableOpacity style={styles.connectButton} onPress={() => handleConnect(item.user_id)}>
+                      <FontAwesome5 name="user-plus" size={16} color="#00A86B" />
+                      <Text style={styles.connectButtonText}>Connect</Text>
                     </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            );
-          })
-        )}
-      </ScrollView>
+            </View>
 
-      <TouchableOpacity 
-        style={styles.createPostButton}
-        onPress={() => setCreateModalVisible(true)}
-      >
-        <Feather name="plus" size={24} color="white" />
-      </TouchableOpacity>
+            {/* Post Content */}
+            <View style={styles.postContentContainer}>
+              <View style={styles.postTextContainer}>
+                <Text style={[styles.postTitle, { color: '#C9D1D9' }]}><Text style={{fontWeight: 'bold'}}>{item.title}</Text></Text>
+                <Text style={styles.postDescription} numberOfLines={3}>{item.description}</Text>
+                
+                <View style={styles.mediaContainer}>
+                  {isVideo ? (
+                    <Video
+                      source={{ uri: mediaUrl }}
+                      style={styles.media}
+                      useNativeControls
+                      resizeMode="cover"
+                      isLooping
+                    />
+                  ) : (
+                    <Image 
+                      source={{ uri: mediaUrl }} 
+                      style={styles.media}
+                      resizeMode="cover"
+                    />
+                  )}
+                </View>
+
+                {item.hashtag && <Text style={styles.postHashtags}>{item.hashtag}</Text>}
+              </View>
+            </View>
+
+            {/* Post Interactions */}
+            <View style={styles.postInteractions}>
+              <TouchableOpacity 
+                style={styles.likeButton}
+                onPress={() => toggleLike(item.id, item.is_liked)}
+              >
+                <FontAwesome5 
+                  name="heart" 
+                  size={16} 
+                  color={item.is_liked ? "#FF6B6B" : "#CCCCCC"} 
+                />
+                <Text style={styles.likeButtonText}>
+                  {item.likes_count || 0} Likes
+                </Text>
+              </TouchableOpacity>
+              
+              {/* Compact Comments Section */}
+              <View style={styles.commentsSection}>
+                {postCommentsList.slice(0, 2).map(comment => (
+                  <View key={comment.id} style={styles.commentBubble}>
+                    <Text style={styles.commentText} numberOfLines={1}>
+                      {userData.first_name} :{comment.comment}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+
+              <View style={styles.commentInputContainer}>
+                <TextInput
+                  style={styles.commentInput}
+                  placeholder="Comment..."
+                  value={commentText}
+                  onChangeText={setCommentText}
+                  placeholderTextColor="#888"
+                />
+                <TouchableOpacity 
+                  style={styles.sendCommentButton}
+                  onPress={() => {
+                    addComment(item.id);
+                    fetchPostComments(item.id);
+                  }}
+                >
+                  <Feather name="send" size={16} color="#00A86B" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        );
+      })}
+    </View>
+  )}
+</ScrollView>
+
+      
 
       {/* Create Post Modal */}
       <Modal 
@@ -578,19 +624,361 @@ export default function PostsScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  userProfileContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 15,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  userProfileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginRight: 15,
+  },
+  userInfoContainer: {
+    flex: 1,
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  userBio: {
+    fontSize: 14,
+    color: '#cccccc',
+    marginTop: 5,
+  },
+  postsGridContainer: {
+    flexDirection: 'row', 
+    flexWrap: 'wrap', 
+    justifyContent: 'space-between', // This ensures even spacing
+    paddingHorizontal: 8, // Add some horizontal padding
+  },
+  postGridItem: {
+    width: '49%', // Slightly less than 50% to allow for spacing
+    marginBottom: 16,
+    backgroundColor: '#161B22',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#00A86B',
+    shadowColor: '#00A86B',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    overflow: 'hidden',
+    padding: 10,
+  },
+  postHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  postContentContainer: {
+    marginBottom: 10,
+  },
+  postInteractions: {
+    backgroundColor: '#010409',
+    borderRadius: 8,
+    padding: 8,
+  },
   mediaContainer: {
     width: '100%',
-    height: 250,
+    aspectRatio: 1, // Keeps the square shape
+    height: 180, // Reduced height
+    
+    
     borderRadius: 8,
     overflow: 'hidden',
-    marginBottom: 12,
+    marginVertical: 10,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#161B22',
   },
   media: {
     width: '100%',
     height: '100%',
-    resizeMode: 'contain',
+     // Ensures image covers the entire container
+  },
+  experiencePromptContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#000000',
+    borderRadius: 20,
+    marginHorizontal: 15,
+    marginRight: 20,
+    marginTop: 100,
+    marginBottom: -80,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    borderWidth: 2,
+    borderColor: '#00A86B',
+  },
+  experienceTextInputWrapper: {
+    flex: 1,
+    marginRight: 10,
+    
+  },
+  experienceTextInput: {
+    height: 50,
+    backgroundColor: "#1f2227",
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    fontSize: 16,
+    color: '#333',
+    
+  },
+  createPostButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#00A86B',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderWidth: 2,
+    borderColor: '#00A86B',
+    color: '#00A86B'
+  },
+  createPostButtonText: {
+    color: '#FFFFFF',  // Explicit white color
+    fontWeight: 'bold',
+    marginRight: 8,
+  },
+
+
+  postTitle: {
+    fontSize: 16,
+    marginBottom: 5,
+    color:'White'
+  },
+  postDescription: {
+    fontSize: 14,
+    marginBottom: 10,
+  },
+  // Background and Container Styles
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#010409',
+  },
+  scrollContainer: {
+    flex: 1,
+    marginTop: 100,
+    marginBottom: 20,
+    paddingHorizontal: 16,
+    backgroundColor: '#010409',
+    ...(Platform.OS === 'web' ? {
+      height: 'calc(100vh - 200px)',
+      overflowY: 'auto',
+    } : {}),
+  },
+  contentContainer: {
+    paddingBottom: 80,
+    flexGrow: 1,
+  },
+
+  // Navigation Bar Styles
+  navBar: {
+    position: "absolute",
+    top: 30,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    width: "80%",
+    left: "10%",
+    padding: 10,
+    backgroundColor: "#002D04",
+    borderRadius: 20,
+    elevation: 5,
+    shadowColor: "#00A86B",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    zIndex: 1000,
+  },
+  navButton: {
+    padding: 8,
+  },
+  navButtonText: {
+    color: '#C9D1D9',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+
+  // Post Container Styles
+  postContainer: {
+    backgroundColor: '#161B22',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#00A86B',
+    shadowColor: '#00A86B',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+
+  // Post Header Styles
+  
+  userProfileContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  userProfileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  userName: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  userLocation: {
+    color: '#00A86B',
+    fontSize: 12,
+  },
+
+  // Connect Button Styles
+  connectButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#002D04',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  connectButtonText: {
+    color: '#00A86B',
+    marginLeft: 8,
+  },
+
+  // Media Container Styles
+  
+  
+
+  // Post Content Styles
+ 
+  postTextContainer: {
+    paddingHorizontal: 8,
+  },
+  postHashtags: {
+    fontSize: 14,
+    color: '#00A86B',
+    marginBottom: 8,
+  },
+  postDescription: {
+    fontSize: 14,
+    color: '#C9D1D9',
+    lineHeight: 20,
+  },
+
+  // Post Interactions Styles
+  postInteractions: {
+    backgroundColor: '#010409',
+    borderRadius: 8,
+    padding: 12,
+  },
+  likeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  likeButtonText: {
+    color: '#C9D1D9',
+    marginLeft: 8,
+  },
+
+  // Comments Styles
+  commentsSection: {
+    marginBottom: 12,
+  },
+  commentsScrollView: {
+    maxHeight: 100,
+  },
+  commentBubble: {
+    backgroundColor: '#161B22',
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginHorizontal: 4,
+  },
+  commentText: {
+    color: '#C9D1D9',
+  },
+  commentInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#161B22',
+    borderRadius: 20,
+    paddingHorizontal: 12,
+  },
+  commentInput: {
+    flex: 1,
+    color: '#C9D1D9',
+    paddingVertical: 8,
+  },
+  sendCommentButton: {
+    padding: 8,
+  },
+
+  // Create Post Button Styles
+  
+  // Modal Styles
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(1, 4, 9, 0.8)',
+  },
+  modalContent: {
+    width: '90%',
+    backgroundColor: '#161B22',
+    borderRadius: 10,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#00A86B',
+  },
+  modalTitle: {
+    color: '#C9D1D9',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  closeButton: {
+    alignSelf: 'flex-end',
+    marginBottom: 10,
+  },
+
+  // Input Styles
+  input: {
+    borderWidth: 1,
+    borderColor: '#00A86B',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    backgroundColor: '#010409',
+    color: '#C9D1D9',
+  },
+  multilineInput: {
+    height: 100,
+  },
+
+  // Media Picker Styles
+  mediaPickerContainer: {
+    width: '100%',
+    marginVertical: 10,
   },
   mediaButtons: {
     flexDirection: 'row',
@@ -601,134 +989,12 @@ const styles = StyleSheet.create({
   mediaButton: {
     alignItems: 'center',
     padding: 10,
+    backgroundColor: '#161B22',
+    borderRadius: 8,
   },
   mediaButtonText: {
     color: '#00A86B',
     marginTop: 5,
-  },
-  mediaPickerContainer: {
-    width: '100%',
-    marginVertical: 10,
-  },
-  scrollContainer: {
-    flex: 1,
-    marginTop: 100,
-    marginBottom: 20,
-    paddingHorizontal: 16,
-    ...(Platform.OS === 'web' ? {
-      height: 'calc(100vh - 200px)',
-      overflowY: 'auto',
-    } : {}),
-  },
-  contentContainer: {
-    paddingBottom: 80,
-    flexGrow: 1,
-  },
-  backgroundImage: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-  navBar: {
-    position: "absolute",
-    top: 30,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    width: "80%",
-    left: "10%",
-    padding: 10,
-    backgroundColor: "#03615b",
-    borderRadius: 20,
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    zIndex: 1000,
-  },
-  navButton: {
-    padding: 8,
-  },
-  actionButton: {
-    padding: 8,
-    borderRadius: 6,
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
-  },
-  navButtonText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  postContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  postTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    color: '#333',
-  },
-  postDescription: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 8,
-    lineHeight: 20,
-  },
-  postHashtags: {
-    fontSize: 14,
-    color: '#00A86B',
-    marginBottom: 12,
-  },
-  postActions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 12,
-  },
-  createPostButton: {
-    position: 'absolute',
-    bottom: 20,
-    alignSelf: 'center',
-    backgroundColor: '#00A86B',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContent: {
-    width: '90%',
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#00A86B',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-  },
-  multilineInput: {
-    height: 100,
-  },
-  verticalContainer: {
-    flexDirection: 'column',
   },
   imagePreviewContainer: {
     position: 'relative',
@@ -736,6 +1002,8 @@ const styles = StyleSheet.create({
     height: 200,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 8,
+    overflow: 'hidden',
   },
   imagePreview: {
     width: '100%',
@@ -753,6 +1021,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
+  // Submit Button Styles
   submitButton: {
     backgroundColor: '#00A86B',
     padding: 15,
@@ -764,40 +1034,23 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
-  closeButton: {
-    alignSelf: 'flex-end',
-    marginBottom: 10,
-  },
+
+  // Empty List Styles
   emptyListText: {
     textAlign: 'center',
     marginTop: 50,
     fontSize: 16,
-    color: 'gray',
+    color: '#C9D1D9',
   },
-  postHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-    paddingHorizontal: 8,
-  },
-  userProfileContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  userProfileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
+
+  // Web-specific Scrollbar Styles
   ...(Platform.OS === 'web' && {
     '@global': {
       '::-webkit-scrollbar': {
         width: '10px',
       },
       '::-webkit-scrollbar-track': {
-        background: '#F0F0F0',
+        background: '#010409',
         borderRadius: '10px',
       },
       '::-webkit-scrollbar-thumb': {
@@ -805,7 +1058,7 @@ const styles = StyleSheet.create({
         borderRadius: '10px',
       },
       '::-webkit-scrollbar-thumb:hover': {
-        background: '#03615b',
+        background: '#002D04',
       }
     }
   })

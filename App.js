@@ -49,6 +49,8 @@ import NewsDisplay from "./assets/src/components/News";
 import CaseStud from './assets/src/screens/StatsPage';
 import Journals from "./assets/src/components/Journals";
 import LandingPage from "./assets/src/screens/LandingPage";
+import allactivity from "./assets/src/components/profile/allactivity";
+import EditProfile from "./assets/src/components/profile/EditProfile";
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -65,6 +67,18 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+        {/* Profile Screens */}
+        <Stack.Screen
+          name="EditProfile"
+          component={EditProfile}
+          options={{ headerShown: false }}
+        />
+        
+        <Stack.Screen
+          name="allactivity"
+          component={allactivity}
           options={{ headerShown: false }}
         />
         {/* Other Screens */}
