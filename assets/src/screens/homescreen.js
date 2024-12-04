@@ -82,8 +82,8 @@ export default function HomeScreen() {
             <TouchableOpacity style={styles.navButton}>
               <Text style={styles.navButtonText}>Home</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.navButton}>
-              <Text style={styles.navButtonText}>About Us</Text>
+            <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("ModuleScreen")}>
+              <Text style={styles.navButtonText}>Infographics</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.navButton} 

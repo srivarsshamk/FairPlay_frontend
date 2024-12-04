@@ -49,6 +49,13 @@ import NewsDisplay from "./assets/src/components/News";
 import CaseStud from './assets/src/screens/StatsPage';
 import Journals from "./assets/src/components/Journals";
 import LandingPage from "./assets/src/screens/LandingPage";
+import ModulesScreen from './assets/src/screens/ModuleScreen'; 
+import ChaptersScreen from './assets/src/screens/ChapterScreen';
+import VideoScreen from './assets/src/screens/VideoScreen';
+import QuizScreen from './assets/src/screens/QuizScreen';
+import ModuleQuizScreen from './assets/src/screens/ModuleQuizScreen';
+
+
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -298,6 +305,11 @@ export default function AppNavigator() {
           component={LandingPage}
           options={{ headerShown: false }}
         />
+        <Stack.Screen name="ModuleScreen" component={ModulesScreen} />
+        <Stack.Screen name="ChaptersScreen" component={ChaptersScreen} options={{ title: 'Chapters' }} />
+        <Stack.Screen name="VideoScreen" component={VideoScreen} options={{ title: 'Video' }} />
+        <Stack.Screen name="QuizScreen" component={QuizScreen} options={{ title: 'Chapter Quiz' }} />
+        <Stack.Screen name="ModuleQuizScreen" component={ModuleQuizScreen} options={{ title: 'Module Quiz' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
