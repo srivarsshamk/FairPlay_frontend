@@ -1,9 +1,25 @@
-import React from 'react';
-import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 export default function ModulesScreen() {
   const navigation = useNavigation();
+  const [userId, setUserId] = useState(null);
+  const [totalProgress, setTotalProgress] = useState(0);
+  const [totalCompleted, setTotalCompleted] = useState(0);
+  const loadUserData = async () => {
+    try {
+      const userData = await AsyncStorage.getItem('userData');
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        setUserId(parsedData.id);
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
+  };
 
   const modules = [
     {
@@ -64,8 +80,54 @@ export default function ModulesScreen() {
     },
   ];
 
-  const handleModulePress = (module) => {
-    navigation.navigate('ChaptersScreen', { module });
+  useEffect(() => {
+    loadUserData();
+  }, []);
+
+  useEffect(() => {
+    if (userId) {
+      fetchModuleProgress();
+    }
+  }, [userId]);
+
+
+  const fetchModuleProgress = async () => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/module-quizzes/users/${userId}/module-progress`);
+      setTotalProgress(response.data.total_progress);
+      setTotalCompleted(response.data.total_completed);
+    } catch (error) {
+      console.error('Error fetching module progress:', error);
+    }
+  };
+
+  const handleModulePress = async (module) => {
+    if (!userId) {
+      Alert.alert('Error', 'User ID not found. Please log in again.');
+      return;
+    }
+
+    try {
+      const postResponse = await axios.post('http://127.0.0.1:8000/module-quizzes', {
+        module_name: module.title,
+        module_progress: 0,
+        module_completed: 0,
+        m_quizscore: 0,
+        user_id: userId
+      });
+
+      const moduleId = postResponse.data.id;
+
+      await axios.patch(`http://127.0.0.1:8000/module-quizzes/${moduleId}/progress`, {
+        module_progress: 0
+      });
+
+      navigation.navigate('ChaptersScreen', { module, moduleId });
+
+    } catch (error) {
+      console.error('Error processing module:', error);
+      Alert.alert('Error', 'Failed to process module. Please try again.');
+    }
   };
 
   const renderModuleCard = (module, index) => (
@@ -81,6 +143,11 @@ export default function ModulesScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.progressContainer}>
+        <Text style={styles.progressText}>
+          Progress: {totalProgress}/6 Modules Completed: {totalCompleted}/6
+        </Text>
+      </View>
       <ScrollView contentContainerStyle={styles.scrollView}>
         <Text style={styles.header}>Anti-Doping Modules</Text>
         <View style={styles.modulesContainer}>
@@ -90,6 +157,7 @@ export default function ModulesScreen() {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -112,6 +180,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+  },
+  progressContainer: {
+    backgroundColor: '#f0f0f0',
+    padding: 10,
+    alignItems: 'center',
+  },
+  progressText: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   moduleCard: {
     width: '45%',

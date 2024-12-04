@@ -1,24 +1,83 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ChaptersScreen() {
   const route = useRoute();
   const navigation = useNavigation();
-  const { module } = route.params;
+  const { module, moduleId } = route.params;
+  const [userId, setUserId] = useState(null);
 
-  const handleChapterPress = (chapter) => {
-    navigation.navigate('VideoScreen', { chapter });
+  useEffect(() => {
+    loadUserId();
+  }, []);
+
+  const loadUserId = async () => {
+    try {
+      const userData = await AsyncStorage.getItem('userData');
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        setUserId(parsedData.id);
+      }
+    } catch (error) {
+      console.error('Error loading user ID:', error);
+    }
   };
 
-  const handleQuizPress = (chapter) => {
-    navigation.navigate('QuizScreen', { chapter });
+  const handleChapterPress = async (chapter) => {
+    try {
+      // Post request to create lesson quiz entry
+      await axios.post('http://127.0.0.1:8000/lesson-quizzes', {
+        lesson_name: chapter,
+        l_quizscore: 0,
+        user_id: userId
+      });
+      const lessonId = response.data.id;
+
+      // Navigate to video screen
+      navigation.navigate('VideoScreen', { chapter });
+    } catch (error) {
+      console.error('Error creating lesson quiz entry:', error);
+      // Optionally show an error to the user
+      Alert.alert('Error', 'Unable to start lesson. Please try again.');
+    }
   };
 
-  const handleModuleQuizPress = () => {
-    navigation.navigate('ModuleQuizScreen', { module });
+  const handleQuizPress = async (chapter) => {
+    try {
+      // Post request to create lesson quiz entry
+      const response = await axios.post('http://127.0.0.1:8000/lesson-quizzes', {
+        lesson_name: chapter,
+        l_quizscore: 0,
+        user_id: userId
+      });
+
+      // Extract lessonId from the response body
+      const lessonId = response.data.id; // Assuming the backend returns the created lesson quiz ID
+
+      // Navigate to quiz screen with chapter and lessonId
+      navigation.navigate('QuizScreen', {
+        chapter: chapter,
+        lessonId: lessonId
+      });
+    } catch (error) {
+      console.error('Error creating lesson quiz entry:', error);
+      Alert.alert('Error', 'Unable to start quiz. Please try again.');
+    }
   };
 
+  const handleModuleQuizPress = async () => {
+    try {
+      await axios.patch(`http://127.0.0.1:8000/module-quizzes/${moduleId}/completed`);
+      navigation.navigate('ModuleQuizScreen', { module, moduleId });
+    } catch (error) {
+      console.error('Error completing module quiz:', error);
+    }
+  };
+
+  // Rest of the component remains the same as in the original code
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollView}>
@@ -34,7 +93,7 @@ export default function ChaptersScreen() {
         {module.chapters.map((chapter, index) => (
           <View key={index} style={styles.chapterCard}>
             <Image
-              source={module.thumbnail} // Use the same module thumbnail for simplicity
+              source={module.thumbnail}
               style={styles.chapterImage}
             />
             <View style={styles.chapterContent}>
@@ -68,6 +127,7 @@ export default function ChaptersScreen() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

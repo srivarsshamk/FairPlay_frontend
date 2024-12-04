@@ -1,166 +1,191 @@
-import React, { useState, useRef } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
-  Dimensions 
-} from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Dimensions, Alert, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import Video from 'react-native-video';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import axios from 'axios';
 
-export default function VideoScreen() {
-  const route = useRoute();
-  const navigation = useNavigation();
+const videoContent = {
+  'Physical and Psychological Effects of Doping': {
+    filename: 'doping.mp4',
+    description: 'Doping can have profound impacts on both physical and mental health. It alters body chemistry, potentially causing long-term damage to organs, hormonal balance, and psychological well-being. Athletes may experience increased aggression, mood swings, and dependency issues.'
+  },
+  'Types of Performance-Enhancing Drugs and Their Uses': {
+    filename: 'drugtypes.mp4',
+    description: 'Performance-enhancing drugs include anabolic steroids, stimulants, hormones, and blood doping agents. Each type targets different physiological systems to improve athletic performance, but they come with significant health risks and ethical concerns.'
+  },
+  'Techniques of Blood Doping and Gene Doping': {
+    filename: 'blooddoping.mp4',
+    description: 'Blood doping involves increasing oxygen-carrying capacity through artificial means, such as blood transfusions or EPO injections. Gene doping represents a cutting-edge and highly unethical method of genetic manipulation to enhance athletic performance.'
+  },
+  'Short-Term and Long-Term Health Risks of Doping': {
+    filename: 'health.pdf',
+    description: 'Doping can lead to immediate health complications like cardiovascular stress, liver damage, and psychological disorders. Long-term risks include chronic diseases, reproductive issues, and potential life-threatening conditions.',
+    pdfUrl: 'http://127.0.0.1:8000/images/health.pdf' // Add a direct PDF URL
+  },
+  'The Social and Psychological Pressure to Use Doping': {
+    filename: 'pressuredope.mp4',
+    description: 'Athletes face immense pressure from competition, expectations, and the desire for success. This psychological strain can lead to considering doping as a solution, highlighting the importance of mental support and ethical education.'
+  }
+};
+
+export default function VideoScreen({ route }) {
+  const { chapterTitle, lessonId, moduleId } = route.params;
   const { chapter } = route.params;
-  
   const [paused, setPaused] = useState(false);
-  const [fullscreen, setFullscreen] = useState(false);
-  const videoRef = useRef(null);
+  const [videoUrl, setVideoUrl] = useState(null);
 
-  // Video endpoint URL (adjust base URL as needed)
-  const videoUrl = `https://127.0.0.1:8000/images/5c8a31b6-f327-423d-b443-3248063667c3.mp4`;
+  // Fetch video URL when component mounts
+  React.useEffect(() => {
+    const fetchVideoUrl = async () => {
+      try {
+        const content = videoContent[chapter];
+        
+        // Skip URL fetching for PDFs
+        if (content.filename.endsWith('.pdf')) {
+          return;
+        }
 
-  const togglePlayPause = () => {
-    setPaused(!paused);
+        // Construct the URL for the video
+        const response = await axios.get(`http://127.0.0.1:8000/images/${content.filename}`);
+        
+        // If the response includes an image_url or direct video URL
+        const videoSource = response.data.image_url || 
+                            `http://127.0.0.1:8000/images/${content.filename}`;
+        
+        setVideoUrl(videoSource);
+      } catch (error) {
+        console.error('Video fetch error:', error);
+        Alert.alert('Error', 'Could not load video');
+      }
+    };
+
+    fetchVideoUrl();
+  }, [chapter]);
+
+  // Handler to open PDF
+  const openPDF = () => {
+    const content = videoContent[chapter];
+    
+    // Prefer pdfUrl if provided, else construct from filename
+    const pdfUrl = content.pdfUrl || `http://127.0.0.1:8000/images/${content.filename}`;
+    
+    Linking.canOpenURL(pdfUrl).then(supported => {
+      if (supported) {
+        Linking.openURL(pdfUrl);
+      } else {
+        Alert.alert('Error', 'Unable to open PDF');
+      }
+    }).catch(err => {
+      console.error('Error opening PDF:', err);
+      Alert.alert('Error', 'Could not open PDF');
+    });
   };
 
-  const toggleFullscreen = () => {
-    setFullscreen(!fullscreen);
-  };
+  // Get the description for the current chapter
+  const description = videoContent[chapter]?.description || 'No description available.';
 
   return (
-    <View style={styles.container}>
-      {/* Chapter Title */}
-      <View style={styles.headerContainer}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Icon name="arrow-back" size={24} color="#ffffff" />
-        </TouchableOpacity>
-        <Text style={styles.chapterTitle} numberOfLines={1}>
-          {chapter}
-        </Text>
-      </View>
-
-      {/* Video Player */}
-      <View style={fullscreen ? styles.fullscreenVideo : styles.videoContainer}>
-        <Video
-          ref={videoRef}
-          source={{ uri: videoUrl }}
-          style={styles.video}
-          controls={false}
-          paused={paused}
-          resizeMode="contain"
-          onError={(error) => console.log('Video Error:', error)}
-        />
-
-        {/* Custom Video Controls */}
-        <View style={styles.controlsOverlay}>
-          <TouchableOpacity onPress={togglePlayPause} style={styles.playPauseButton}>
-            <Icon 
-              name={paused ? "play-arrow" : "pause"} 
-              size={50} 
-              color="#ffffff" 
+    <ScrollView 
+      style={styles.scrollViewContainer}
+      contentContainerStyle={styles.scrollViewContent}
+    >
+      <View style={styles.container}>
+        <View style={styles.videoContainer}>
+          {/* Check if it's a PDF or video */}
+          {videoContent[chapter]?.filename.endsWith('.pdf') ? (
+            <TouchableOpacity 
+              style={styles.pdfContainer} 
+              onPress={openPDF}
+            >
+              <Text style={styles.pdfNotice}>📄 Open PDF Document</Text>
+              <Text style={styles.pdfSubtitle}>Tap to view in default PDF viewer</Text>
+            </TouchableOpacity>
+          ) : videoUrl ? (
+            <Video
+              source={{ uri: videoUrl }}
+              style={styles.video}
+              resizeMode="contain"
+              paused={paused}
+              onError={(error) => {
+                console.log('Video Error:', error);
+                Alert.alert('Error', 'Could not play video');
+              }}
+              controls={true}
             />
-          </TouchableOpacity>
+          ) : (
+            <Text style={styles.loadingText}>Loading video...</Text>
+          )}
+        </View>
 
-          <TouchableOpacity onPress={toggleFullscreen} style={styles.fullscreenButton}>
-            <Icon 
-              name={fullscreen ? "fullscreen-exit" : "fullscreen"} 
-              size={30} 
-              color="#ffffff" 
-            />
-          </TouchableOpacity>
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.chapterTitle}>{chapter}</Text>
+          <Text style={styles.description}>{description}</Text>
         </View>
       </View>
-
-      {/* Additional Chapter Information */}
-      <View style={styles.descriptionContainer}>
-        <Text style={styles.descriptionTitle}>About this Chapter</Text>
-        <Text style={styles.descriptionText}>
-          Learn about the comprehensive impacts of doping on an athlete's physical and psychological well-being.
-        </Text>
-      </View>
-    </View>
+    </ScrollView>
   );
 }
 
-const { width, height } = Dimensions.get('window');
-
 const styles = StyleSheet.create({
+  scrollViewContainer: {
+    flex: 1,
+    backgroundColor: '#000000',
+    paddingVertical: 20,
+    minHeight: '100%',
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: '#000000',
   },
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 15,
-    backgroundColor: '#03615b',
-  },
-  backButton: {
-    marginRight: 15,
-  },
-  chapterTitle: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: 'bold',
-    flex: 1,
-  },
   videoContainer: {
-    height: width * 0.6,
-    backgroundColor: '#000000',
-    position: 'relative',
-  },
-  fullscreenVideo: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-    backgroundColor: '#000000',
-  },
-  video: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-  },
-  controlsOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    width: '100%',
+    height: Dimensions.get('window').width * 0.6, // 16:9 aspect ratio
+    backgroundColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.3)',
   },
-  playPauseButton: {
-    position: 'absolute',
-    alignSelf: 'center',
+  video: {
+    width: '100%',
+    height: '100%',
   },
-  fullscreenButton: {
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
+  pdfContainer: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#333',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  pdfNotice: {
+    color: '#ffffff',
+    fontSize: 22,
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  pdfSubtitle: {
+    color: '#cccccc',
+    fontSize: 16,
+    marginTop: 10,
+  },
+  loadingText: {
+    color: '#ffffff',
+    fontSize: 18,
   },
   descriptionContainer: {
-    padding: 15,
+    padding: 20,
     backgroundColor: '#D8D2C2',
   },
-  descriptionTitle: {
-    fontSize: 18,
+  chapterTitle: {
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#03615b',
     marginBottom: 10,
   },
-  descriptionText: {
+  description: {
     fontSize: 16,
     color: '#333',
+    lineHeight: 24,
   },
 });

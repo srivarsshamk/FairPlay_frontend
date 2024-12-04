@@ -40,7 +40,7 @@ import Message from "./assets/src/components/message";
 import DiscussionForumScreen from "./assets/src/screens/forum";
 import CreateForumModal from "./assets/src/components/createforum";
 import ForumDetailScreen from "./assets/src/components/forummsg";
-import ChatListScreen from "./assets/src/screens/chatlist";
+import ChatListScreen from "./assets/src/screens/ChatListScreen";
 import CaseStudies from './assets/src/screens/CaseStudies';
 import DopingScandals from './assets/src/components/DopingScandalsTimeline';
 import ImageTextExtractor from './assets/src/screens/ImageTextExtractor';
@@ -54,6 +54,7 @@ import ChaptersScreen from './assets/src/screens/ChapterScreen';
 import VideoScreen from './assets/src/screens/VideoScreen';
 import QuizScreen from './assets/src/screens/QuizScreen';
 import ModuleQuizScreen from './assets/src/screens/ModuleQuizScreen';
+import ChatbotScreen from "./assets/src/screens/ChatbotScreen";
 
 
 const Stack = createStackNavigator();
@@ -61,7 +62,7 @@ const Stack = createStackNavigator();
 export default function AppNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="LandingPage" screenOptions={{ cardStyle: { height: "100%" } }}>
+      <Stack.Navigator initialRouteName="ModuleScreen" screenOptions={{ cardStyle: { height: "100%" } }}>
         {/* Welcome Screen */}
         <Stack.Screen
           name="Login"
@@ -303,6 +304,11 @@ export default function AppNavigator() {
         <Stack.Screen
           name="LandingPage"
           component={LandingPage}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Chatbot"
+          component={ChatbotScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen name="ModuleScreen" component={ModulesScreen} />
