@@ -1,301 +1,862 @@
-import React, { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState, useEffect, useRef } from 'react';
 import {
+  Button,
+  StyleSheet,
   View,
   Text,
-  TextInput,
+  Image,
   TouchableOpacity,
-  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  Platform,
   Alert,
+  Dimensions,
+  Modal
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Feather } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
+import axios from 'axios';
 import { ArrowLeft } from 'lucide-react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import ActivitySection from "../components/profile/activity";
+//import ContactInfo from "../components/profile/contactinfo";
 
-const ProfilePage = () => {
-  const navigation = useNavigation();
-  const [isEditing, setIsEditing] = useState(false);
-  const [profile, setProfile] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    phone_number: "",
-    id: null
-  });
+const { width, height } = Dimensions.get('window');
 
-  const [editForm, setEditForm] = useState({ ...profile });
 
-  useEffect(() => {
-    loadUserData();
-  }, []);
+const colors = {
+  background: '#1a1a1a',
+  cardBackground: '#2d2d2d',
+  primary: '#00A86B',
+  text: '#ffffff',
+  secondaryText: '#b0b0b0',
+  border: '#404040',
+  promoBackground: '#363636',
+  headerBackground: '#424242',
+};
 
-  useFocusEffect(
-    React.useCallback(() => {
-      loadUserData();
-    }, [])
-  );
+const suggestedProfiles = [
+  {
+    id: 1,
+    name: 'Dr. Alex Johnson',
+    title: 'Senior Doping Control Officer at USADA',
+    image: 'https://via.placeholder.com/50',
+    connections: '500+',
+  },
+  {
+    id: 2,
+    name: 'Dr. Sarah Chen',
+    title: 'Laboratory Director at WADA',
+    image: 'https://via.placeholder.com/50',
+    connections: '432',
+  },
+  {
+    id: 3,
+    name: 'Michael Park',
+    title: 'Anti-Doping Education Coordinator',
+    image: 'https://via.placeholder.com/50',
+    connections: '892',
+  },
+];
 
-  const loadUserData = async () => {
-    try {
-      const userData = await AsyncStorage.getItem('userData');
-      if (userData) {
-        const parsedData = JSON.parse(userData);
-        setProfile(parsedData);
-        setEditForm(parsedData);
-      }
-    } catch (error) {
-      console.error('Error loading user data:', error);
-    }
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/users/${profile.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          first_name: editForm.first_name,
-          last_name: editForm.last_name,
-          email: editForm.email,
-          phone_number: editForm.phone_number
-        }),
-      });
-
-      if (response.ok) {
-        const updatedData = await response.json();
-        setProfile(updatedData);
-        await AsyncStorage.setItem('userData', JSON.stringify(updatedData));
-        setIsEditing(false);
-        Alert.alert('Success', 'Profile updated successfully');
-      } else {
-        const errorData = await response.json();
-        Alert.alert('Error', errorData.detail || 'Failed to update profile');
-      }
-    } catch (error) {
-      console.error('Update error:', error);
-      Alert.alert('Error', 'Network error. Please try again.');
-    }
-  };
-
-  const handleCancel = () => {
-    setEditForm({ ...profile });
-    setIsEditing(false);
-  };
+const SuggestedProfile = ({ profile, mini = false }) => {
+  if (mini) {
+    return (
+      <View style={styles.connectionPreview}>
+        <Image source={{ uri: profile.image }} style={styles.connectionPreviewImage} />
+        <Text style={styles.connectionPreviewName}>{profile.name}</Text>
+        <TouchableOpacity style={styles.miniConnectButton}>
+          <Text style={styles.miniConnectButtonText}>Connect</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.card}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => navigation.navigate('Home')}
-        >
-          <ArrowLeft size={24} color="#333" />
-        </TouchableOpacity>
-        
-        <View style={styles.header}>
-          <Text style={styles.title}>Profile</Text>
-          {!isEditing && (
-            <TouchableOpacity 
-              onPress={() => setIsEditing(true)}
-              style={styles.editButton}
-            >
-              <Text style={styles.buttonText}>Edit</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-
-        {isEditing ? (
-          <View style={styles.form}>
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>First Name</Text>
-              <TextInput
-                style={styles.input}
-                value={editForm.first_name}
-                onChangeText={(text) => setEditForm({
-                  ...editForm,
-                  first_name: text
-                })}
-                placeholder="First Name"
-              />
-            </View>
-
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Last Name</Text>
-              <TextInput
-                style={styles.input}
-                value={editForm.last_name}
-                onChangeText={(text) => setEditForm({
-                  ...editForm,
-                  last_name: text
-                })}
-                placeholder="Last Name"
-              />
-            </View>
-
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Email</Text>
-              <TextInput
-                style={styles.input}
-                value={editForm.email}
-                onChangeText={(text) => setEditForm({
-                  ...editForm,
-                  email: text
-                })}
-                placeholder="Email"
-                keyboardType="email-address"
-              />
-            </View>
-
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Phone Number</Text>
-              <TextInput
-                style={styles.input}
-                value={editForm.phone_number}
-                onChangeText={(text) => setEditForm({
-                  ...editForm,
-                  phone_number: text
-                })}
-                placeholder="Phone Number"
-                keyboardType="phone-pad"
-              />
-            </View>
-
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity 
-                style={styles.saveButton} 
-                onPress={handleSubmit}
-              >
-                <Text style={styles.buttonText}>Save Changes</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.cancelButton} 
-                onPress={handleCancel}
-              >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ) : (
-          <View style={styles.displayContainer}>
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>First Name</Text>
-              <Text style={styles.value}>{profile.first_name}</Text>
-            </View>
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Last Name</Text>
-              <Text style={styles.value}>{profile.last_name}</Text>
-            </View>
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Email</Text>
-              <Text style={styles.value}>{profile.email}</Text>
-            </View>
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Phone Number</Text>
-              <Text style={styles.value}>{profile.phone_number}</Text>
-            </View>
-          </View>
-        )}
+    <View style={styles.suggestedProfile}>
+      <Image source={{ uri: profile.image }} style={styles.suggestedProfileImage} />
+      <View style={styles.suggestedProfileInfo}>
+        <Text style={styles.suggestedProfileName}>{profile.name}</Text>
+        <Text style={styles.suggestedProfileTitle}>{profile.title}</Text>
+        <Text style={styles.suggestedProfileConnections}>
+          {profile.connections} connections
+        </Text>
       </View>
+      <TouchableOpacity style={styles.connectButton}>
+        <Text style={styles.connectButtonText}>Connect</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
+
+const profilescreen = () => {
+  
+    // State to track the visibility of the modal
+    const [modalVisible, setModalVisible] = useState(false);
+    
+    // User data
+    
+  const navigation = useNavigation();
+  const [profilePicture, setProfilePicture] = useState('https://via.placeholder.com/100');
+  const [userData, setUserData] = useState({
+    first_name: '',
+    last_name: '',
+    bio: '',
+    dp_url: '',
+    id: null
+  });
+  const fileInputRef = useRef(null);
+  const [showContactInfo, setShowContactInfo] = useState(false);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const storedUserData = await AsyncStorage.getItem('userData');
+        if (storedUserData) {
+          const parsedUserData = JSON.parse(storedUserData);
+          await fetchProfileDetails(parsedUserData);
+        }
+      } catch (error) {
+        console.error('Error retrieving user data', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+  
+  const fetchProfileDetails = async (baseUserData) => {
+    try {
+      if (!baseUserData?.id) return;
+  
+      const response = await axios.get(`http://127.0.0.1:8000/users/${baseUserData.id}`);
+      if (response.data) {
+        const updatedUserData = {
+          ...baseUserData,
+          first_name: response.data.first_name || baseUserData.first_name,
+          last_name: response.data.last_name || baseUserData.last_name,
+          bio: response.data.bio || " ",
+          dp_url: response.data.dp_url || baseUserData.dp_url,
+          state: response.data.state || '',  // Add these lines
+        country: response.data.country || ''
+        };
+        
+        await AsyncStorage.setItem('userData', JSON.stringify(updatedUserData));
+        setUserData(updatedUserData);
+        
+        if (updatedUserData.dp_url) {
+          // Modify profile picture URL construction
+          const imageUrl = `http://127.0.0.1:8000/images/${updatedUserData.dp_url.split('/').pop()}`;
+          setProfilePicture(imageUrl);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching profile details:', error);
+    }
+  };
+
+  
+
+  const handleEditPress = () => {
+    try {
+      navigation.navigate('EditProfile');
+    } catch (error) {
+      console.error('Navigation failed:', error);
+    }
+  };
+
+  const handleEditLanguages = () => {
+    try {
+      navigation.navigate('EditProfile', { section: 'languages' });
+    } catch (error) {
+      console.error('Navigation failed:', error);
+    }
+  };
+
+  const handleEditWadaProfile = () => {
+    try {
+      navigation.navigate('EditProfile', { section: 'wada-profile' });
+    } catch (error) {
+      console.error('Navigation failed:', error);
+    }
+  };
+
+  const pickProfilePicture = async () => {
+    try {
+      if (Platform.OS === 'web') {
+        fileInputRef.current?.click();
+      } else {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        
+        if (status !== "granted") {
+          Alert.alert("Permission Denied", "Sorry, we need media library permissions.");
+          return;
+        }
+  
+        const result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 1,
+        });
+  
+        if (!result.canceled) {
+          await uploadProfilePicture(result.assets[0]);
+        }
+      }
+    } catch (err) {
+      console.error("Profile picture pick error: " + err.message);
+      Alert.alert('Error', 'Could not pick profile picture');
+    }
+  };
+
+  const handleWebProfilePicturePick = async (event) => {
+    try {
+      const file = event.target.files?.[0];
+      if (file) {
+        const previewUrl = URL.createObjectURL(file);
+        await uploadProfilePicture(file, previewUrl);
+      }
+    } catch (err) {
+      console.error("Web profile picture pick error: " + err.message);
+      Alert.alert('Error', 'Could not process profile picture');
+    }
+  };
+
+  const uploadProfilePicture = async (mediaFile, previewUrl = null) => {
+    try {
+      if (!userData) {
+        Alert.alert('Error', 'User not logged in.');
+        return;
+      }
+  
+      const formData = new FormData();
+  
+      if (mediaFile instanceof File) {
+        formData.append('file', mediaFile);
+        if (previewUrl) setProfilePicture(previewUrl);
+      } else {
+        const fileExtension = mediaFile.uri.split('.').pop();
+        formData.append('file', {
+          uri: mediaFile.uri,
+          type: `image/${fileExtension}`,
+          name: `profile_picture.${fileExtension}`,
+        });
+        setProfilePicture(mediaFile.uri);
+      }
+  
+      const uploadResponse = await axios.post('http://127.0.0.1:8000/uploads', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      const imageUrl = uploadResponse.data.image_url;
+  
+      const userDataToUpdate = {
+        dp_url: imageUrl,
+      };
+  
+      const updateResponse = await axios.patch(`http://127.0.0.1:8000/users/${userData.id}`, userDataToUpdate, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (updateResponse.status === 200) {
+        const updatedUserData = {
+          ...userData,
+          dp_url: imageUrl
+        };
+        await AsyncStorage.setItem('userData', JSON.stringify(updatedUserData));
+        setUserData(updatedUserData);
+        
+        // Modify profile picture URL construction
+        const profileImageUrl = `http://127.0.0.1:8000/images/${imageUrl.split('/').pop()}`;
+        setProfilePicture(profileImageUrl);
+        
+        Alert.alert('Success', 'Profile picture updated successfully.');
+      } else {
+        Alert.alert('Error', 'Failed to update profile picture in the backend.');
+      }
+    } catch (error) {
+      console.error('Profile picture upload error:', error);
+      Alert.alert('Error', 'Could not upload profile picture');
+    }
+  };
+  const handleContactInfoPress = () => {
+    setModalVisible(true); // Open the modal
+  };
+
+  const closeModal = () => {
+    setModalVisible(false); // Close the modal
+  };
+  
+
+  return (
+
+    <SafeAreaView style={styles.safeArea}>
+      <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => navigation.navigate('Home')}
+        >
+          <ArrowLeft size={24} color="white" />
+        </TouchableOpacity>
+      {Platform.OS === 'web' && (
+        <input
+          type="file"
+          ref={fileInputRef}
+          accept="image/*"
+          onChange={handleWebProfilePicturePick}
+          style={{ display: 'none' }}
+        />
+      )}
+      <View style={styles.container}>
+        <ScrollView 
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          
+          
+          <View style={styles.profileSection}>
+            <TouchableOpacity onPress={pickProfilePicture}>
+              <Image
+                source={{ uri: profilePicture }}
+                style={styles.profileImage}
+              />
+              <View style={styles.editProfilePictureOverlay}>
+                <Feather name="camera" size={10} color="white" />
+              </View>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.editButton}
+              onPress={handleEditPress}
+              activeOpacity={0.7}
+            >
+              <Feather name="edit-2" size={20} color={colors.secondaryText} />
+            </TouchableOpacity>
+            
+            <View style={styles.profileInfo}>
+              <View style={styles.nameSection}>
+                <Text style={styles.name}>
+                  {
+                    `${userData.first_name} ${userData.last_name}` 
+                   }
+                </Text>
+                <Feather name="check-circle" size={16} color={colors.primary} />
+              </View>
+              <Text style={styles.education}>
+                {userData.bio}
+              </Text>
+              <Text style={styles.location}>
+              {
+                    `${userData.state}, ${userData.country}` 
+              }
+              </Text>
+              <View style={styles.container}>
+      <TouchableOpacity style={styles.contactInfo} onPress={handleContactInfoPress}>
+        <Text style={styles.contactInfoText}>Contact info</Text>
+      </TouchableOpacity>
+
+      {/* Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Contact Info</Text>
+            <Text style={styles.modalText}>Email: {userData?.email}</Text>
+            <Text style={styles.modalText}>Phone: {userData?.phone_number}</Text>
+            <Button title="Close" onPress={closeModal} />
+          </View>
+        </View>
+      </Modal>
+    </View>
+              
+            </View>
+
+            <View style={styles.actionButtons}>
+              <TouchableOpacity style={styles.primaryButton}>
+                <Text style={styles.primaryButtonText}>Available</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.secondaryButton}>
+                <Text style={styles.secondaryButtonText}>Add certification</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.moreButton}>
+                <Text style={styles.moreButtonText}>More</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.promoCards}>
+              <View style={styles.promoCard}>
+                <Feather name="briefcase" size={20} color={colors.secondaryText} />
+                <Text style={styles.promoText}>
+                  Share your expertise in anti-doping control and join our global network of professionals.
+                </Text>
+                <TouchableOpacity>
+                  <Text style={styles.getStartedText}>Get started</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.activitySection}>
+              <ActivitySection />
+            </View>
+          </View>
+        </ScrollView>
+
+        <View style={styles.sidebar}>
+          <ScrollView 
+            style={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            <View style={styles.sidebarCard}>
+              <Text style={styles.sidebarTitle}>Anti-Doping Professionals You May Know</Text>
+              {suggestedProfiles.map((profile) => (
+                <SuggestedProfile key={profile.id} profile={profile} />
+              ))}
+            </View>
+
+            <View style={styles.sidebarCard}>
+              <Text style={styles.sidebarTitle}>Recommended Professionals</Text>
+              <View style={styles.connectionsWidget}>
+                {suggestedProfiles.slice(0, 2).map((profile) => (
+                  <SuggestedProfile key={profile.id} profile={profile} mini={true} />
+                ))}
+              </View>
+            </View>
+
+            <View style={styles.sidebarCard}>
+              <View style={styles.sidebarHeader}>
+                <Text style={styles.sidebarTitle}>Working Languages</Text>
+                <TouchableOpacity 
+                  onPress={handleEditLanguages}
+                  activeOpacity={0.7}
+                >
+                  <Feather name="edit-2" size={16} color={colors.secondaryText} />
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.sidebarText}>English, French</Text>
+            </View>
+
+            <View style={styles.sidebarCard}>
+              <View style={styles.sidebarHeader}>
+                <Text style={styles.sidebarTitle}>WADA Profile & URL</Text>
+                <TouchableOpacity 
+                  onPress={handleEditWadaProfile}
+                  activeOpacity={0.7}
+                >
+                  <Feather name="edit-2" size={16} color={colors.secondaryText} />
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.sidebarLink}>
+                www.wada-ama.org/profile/emma-wilson
+              </Text>
+            </View>
+          </ScrollView>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+};
+
+// Note: Styles are not included for brevity. 
+// You would need to include the existing styles from the original component.
+
+
+
+   
 const styles = StyleSheet.create({
-  container: {
+  
+  modalOverlay: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-    padding: 16,
-    maxWidth: 500,
-    width: '100%',
-    marginHorizontal: 'auto',
+  modalContent: {
+    width: '80%',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.25,
     shadowRadius: 4,
+    elevation: 5,
   },
-  backButton: {
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  popupOverlay: {
     position: 'absolute',
-    top: 16,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 100
+  },
+  popupContainer: {
+    width: '85%',
+    backgroundColor: colors.cardBackground,
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 15,
+    right: 15,
+    zIndex: 1
+  },
+  profileImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 15
+  },
+  nameText: {
+    color: colors.text,
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 10
+  },
+  contactDetailsContainer: {
+    width: '100%',
+    marginTop: 15
+  },
+  contactRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+    backgroundColor: colors.promoBackground,
+    padding: 12,
+    borderRadius: 10
+  },
+  contactText: {
+    color: colors.text,
+    marginLeft: 15,
+    fontSize: 16
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    position: 'absolute',
+    top: -50,
     left: 16,
-    zIndex: 1,
+    borderWidth: 3,
+    borderColor: colors.cardBackground,
+  },
+  editProfilePictureOverlay: {
+    position: 'absolute',
+    top: -20,
+    left: 66,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingVertical: 20,
+    minHeight: "180%",
+    padding: 10,
+  },
+  sidebar: {
+    flex: 0.3,
+    padding: 30,
+    backgroundColor: colors.background,
+    borderLeftWidth: 1,
+    borderLeftColor: colors.border,
+    minHeight: "140%",
+  },
+  // ... (rest of the styles remain the same)
+ 
+  profileSection: {
+    
+    backgroundColor: colors.cardBackground,
+    borderRadius: 8,
+    marginHorizontal: 8,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+  },
+  profileImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 3,
+    borderColor: colors.cardBackground,
+  },
+  editButton: {
+    position: 'absolute',
+    right: 16,
+    top: 16,
     padding: 8,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-    marginTop: 48, // Added to accommodate back button
+  profileInfo: {
+    marginTop: 16,
   },
-  title: {
+  nameSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  name: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: colors.text,
   },
-  form: {
-    gap: 16,
+  education: {
+    fontSize: 16,
+    color: colors.secondaryText,
+    marginTop: 4,
   },
-  fieldContainer: {
-    marginBottom: 16,
-  },
-  label: {
+  location: {
     fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 4,
-    color: '#666',
+    color: colors.secondaryText,
+    marginTop: 4,
   },
-  value: {
-    fontSize: 16,
-    color: '#333',
+  contactInfo: {
+    marginTop: 8,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 4,
-    padding: 8,
-    fontSize: 16,
+  contactInfoText: {
+    color: colors.primary,
+    fontWeight: '600',
   },
-  buttonContainer: {
+  connections: {
+    marginTop: 8,
+    color: colors.secondaryText,
+  },
+  actionButtons: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
     marginTop: 16,
   },
-  editButton: {
-    backgroundColor: '#f0f0f0',
+  activitySection: {
+    marginTop: 16,
+    backgroundColor: colors.cardBackground,
+    borderRadius: 8,
+    overflow: 'hidden',
+    width: '100%',
+  },
+  primaryButton: {
+    backgroundColor: colors.primary,
     padding: 8,
-    borderRadius: 4,
+    borderRadius: 16,
+    paddingHorizontal: 16,
   },
-  saveButton: {
-    backgroundColor: '#007AFF',
-    padding: 12,
-    borderRadius: 4,
-    flex: 1,
-    alignItems: 'center',
+  primaryButtonText: {
+    color: colors.text,
+    fontWeight: '600',
   },
-  cancelButton: {
-    backgroundColor: '#f0f0f0',
-    padding: 12,
-    borderRadius: 4,
-    flex: 1,
-    alignItems: 'center',
+  secondaryButton: {
+    backgroundColor: 'transparent',
+    padding: 8,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: colors.primary,
   },
-  buttonText: {
-    color: 'white',
-    fontWeight: '500',
+  secondaryButtonText: {
+    color: colors.primary,
+    fontWeight: '600',
   },
-  cancelButtonText: {
-    color: '#333',
-    fontWeight: '500',
+  moreButton: {
+    backgroundColor: 'transparent',
+    padding: 8,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: colors.secondaryText,
   },
-  displayContainer: {
+  moreButtonText: {
+    color: colors.secondaryText,
+    fontWeight: '600',
+  },
+
+  promoCards: {
+    marginTop: 16,
     gap: 16,
-  }
+    marginBottom: 16,
+  },
+  promoCard: {
+    padding: 16,
+    backgroundColor: colors.promoBackground,
+    borderRadius: 8,
+    gap: 8,
+  },
+  promoText: {
+    color: colors.secondaryText,
+    fontSize: 14,
+  },
+  getStartedText: {
+    color: colors.primary,
+    fontWeight: '600',
+  },
+  sidebar: {
+    flex: 0.3,
+    padding: 16,
+    backgroundColor: colors.background,
+  },
+  sidebarCard: {
+    backgroundColor: colors.cardBackground,
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+  },
+  sidebarHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  sidebarTitle: {
+    fontWeight: '600',
+    fontSize: 16,
+    color: colors.text,
+  },
+  sidebarText: {
+    color: colors.secondaryText,
+  },
+  sidebarLink: {
+    color: colors.primary,
+    fontSize: 14,
+  },
+  suggestedProfilesSection: {
+    marginTop: 24,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: 16,
+  },
+  suggestedProfile: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  suggestedProfileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  suggestedProfileInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  suggestedProfileName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  suggestedProfileTitle: {
+    fontSize: 14,
+    color: colors.secondaryText,
+    marginTop: 2,
+  },
+  suggestedProfileConnections: {
+    fontSize: 12,
+    color: colors.secondaryText,
+    marginTop: 2,
+  },
+  connectButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 16,
+    marginLeft: 12,
+  },
+  connectButtonText: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  connectionsWidget: {
+    marginTop: 12,
+  },
+  connectionPreview: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  connectionPreviewImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  connectionPreviewName: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 14,
+    color: colors.text,
+  },
+  miniConnectButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.primary,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  backButton: {
+    position: 'absolute',
+    top: 10, // Adjust based on your SafeAreaView padding
+    left: 10,
+    zIndex: 10,
+    text: '#ffffff', 
+  },
+  miniConnectButtonText: {
+    color: colors.primary,
+    fontSize: 12,
+    fontWeight: '600',
+  },
 });
 
-export default ProfilePage;
+export default profilescreen;

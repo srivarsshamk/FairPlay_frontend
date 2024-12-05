@@ -54,8 +54,8 @@ import ChaptersScreen from './assets/src/screens/ChapterScreen';
 import VideoScreen from './assets/src/screens/VideoScreen';
 import QuizScreen from './assets/src/screens/QuizScreen';
 import ModuleQuizScreen from './assets/src/screens/ModuleQuizScreen';
-
-
+import allactivity from "./assets/src/components/profile/allactivity";
+import EditProfile from "./assets/src/components/profile/EditProfile";
 
 const Stack = createStackNavigator();
 
@@ -73,6 +73,18 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+        {/* Profile Screens */}
+        <Stack.Screen
+          name="EditProfile"
+          component={EditProfile}
+          options={{ headerShown: false }}
+        />
+        
+        <Stack.Screen
+          name="allactivity"
+          component={allactivity}
           options={{ headerShown: false }}
         />
         {/* Other Screens */}
