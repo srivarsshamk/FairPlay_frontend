@@ -54,6 +54,7 @@ import ChaptersScreen from './assets/src/screens/ChapterScreen';
 import VideoScreen from './assets/src/screens/VideoScreen';
 import QuizScreen from './assets/src/screens/QuizScreen';
 import ModuleQuizScreen from './assets/src/screens/ModuleQuizScreen';
+import edumodulequiz from './assets/src/screens/edumodulequiz';
 import allactivity from "./assets/src/components/profile/allactivity";
 import EditProfile from "./assets/src/components/profile/EditProfile";
 
@@ -323,6 +324,7 @@ export default function AppNavigator() {
         <Stack.Screen name="VideoScreen" component={VideoScreen} options={{ title: 'Video' }} />
         <Stack.Screen name="QuizScreen" component={QuizScreen} options={{ title: 'Chapter Quiz' }} />
         <Stack.Screen name="ModuleQuizScreen" component={ModuleQuizScreen} options={{ title: 'Module Quiz' }} />
+        <Stack.Screen name="edumodulequiz" component={edumodulequiz} options={{ title: 'Module Quiz' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

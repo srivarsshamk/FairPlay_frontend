@@ -511,7 +511,314 @@ export const chapterQuestions = {
       ],
       correctAnswer: 'A'
     }
-  ]  
+  ]  ,
+  'Education and Prevention Strategies in Anti-Doping':[
+    {
+      question: 'Why are anti-doping efforts important?',
+      options: [
+        { id: 'A', text: 'To allow athletes to use performance-enhancing drugs responsibly' },
+        { id: 'B', text: 'To ensure a level playing field and protect the integrity of sports' },
+        { id: 'C', text: 'To reduce competition in sports' },
+        { id: 'D', text: 'To make sports more entertaining' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'Which of these is an example of a banned substance?',
+      options: [
+        { id: 'A', text: 'Vitamin C' },
+        { id: 'B', text: 'Erythropoietin (EPO)' },
+        { id: 'C', text: 'Protein shakes' },
+        { id: 'D', text: 'Electrolyte drinks' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'What is the purpose of WADA’s Prohibited List?',
+      options: [
+        { id: 'A', text: 'To list substances that athletes can use safely' },
+        { id: 'B', text: 'To identify substances and methods banned in sports' },
+        { id: 'C', text: 'To highlight nutritional supplements' },
+        { id: 'D', text: 'To promote legal drug use in sports' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'What lesson can be learned from athletes like Ben Johnson and Maria Sharapova?',
+      options: [
+        { id: 'A', text: 'Using banned substances can improve careers long-term' },
+        { id: 'B', text: 'Integrity and fairness are more important than winning' },
+        { id: 'C', text: 'Doping only has minor consequences' },
+        { id: 'D', text: 'Breaking rules ensures success' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'What is the purpose of surprise drug tests in sports?',
+      options: [
+        { id: 'A', text: 'To prepare athletes for competition' },
+        { id: 'B', text: 'To ensure athletes are competing fairly and without cheating' },
+        { id: 'C', text: 'To track athletes\' training schedules' },
+        { id: 'D', text: 'To enforce dietary rules' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'What does the Whereabouts Rule require athletes to do?',
+      options: [
+        { id: 'A', text: 'Share their training routines with fans' },
+        { id: 'B', text: 'Inform authorities of their location for random testing' },
+        { id: 'C', text: 'Report their performance metrics daily' },
+        { id: 'D', text: 'Disclose their dietary plans to coaches' }
+      ],
+      correctAnswer: 'B'
+    }
+  ],
+  'Educating Athletes, Coaches, and all Stakeholders':[
+    {
+      "question": "What is the primary characteristic of Specified Substances?",
+      "options": [
+        { "id": "A", "text": "They are typically used for performance enhancement" },
+        { "id": "B", "text": "They are more likely to be used for non-sporting purposes" },
+        { "id": "C", "text": "They are always associated with severe penalties" },
+        { "id": "D", "text": "They are prohibited only during competitions" }
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "question": "Which of the following substances is categorized under S1 (Anabolic Agents)?",
+      "options": [
+        { "id": "A", "text": "Steroids" },
+        { "id": "B", "text": "Cannabinoids" },
+        { "id": "C", "text": "Glucocorticoids" },
+        { "id": "D", "text": "Peptide Hormones" }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "question": "Which of the following methods is classified under M1 (Manipulation of Blood and Blood Components)?",
+      "options": [
+        { "id": "A", "text": "Blood Doping" },
+        { "id": "B", "text": "Gene Doping" },
+        { "id": "C", "text": "Diuretics" },
+        { "id": "D", "text": "Hormone Therapy" }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "question": "True or False: Non-Specified Substances are typically associated with performance enhancement.",
+      "options": [
+        { "id": "A", "text": "True" },
+        { "id": "B", "text": "False" }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "question": "Which substance is prohibited during the In-Competition period and is found in S6 category?",
+      "options": [
+        { "id": "A", "text": "Stimulants" },
+        { "id": "B", "text": "Diuretics" },
+        { "id": "C", "text": "Beta-2 Agonists" },
+        { "id": "D", "text": "Peptide Hormones" }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "question": "Which of the following substances is a Non-Specified Substance?",
+      "options": [
+        { "id": "A", "text": "Anabolic Agents" },
+        { "id": "B", "text": "Peptide Hormones" },
+        { "id": "C", "text": "Diuretics" },
+        { "id": "D", "text": "Cannabinoids" }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "question": "In a scenario where an athlete uses a prohibited substance unintentionally for therapeutic purposes, what is most likely to happen?",
+      "options": [
+        { "id": "A", "text": "They will face the same penalties as those who use it for performance enhancement" },
+        { "id": "B", "text": "They may face reduced sanctions, if no intent to enhance performance is proven" },
+        { "id": "C", "text": "They will be exempt from any penalties" },
+        { "id": "D", "text": "They will be banned from competition permanently" }
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "question": "Which of the following methods is prohibited under M2 (Chemical and Physical Manipulation)?",
+      "options": [
+        { "id": "A", "text": "Gene Doping" },
+        { "id": "B", "text": "Blood Doping" },
+        { "id": "C", "text": "Surgical Enhancement" },
+        { "id": "D", "text": "Use of Masking Agents" }
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "question": "Which of the following substances is prohibited only for specific sports such as Archery and Automobile Racing?",
+      "options": [
+        { "id": "A", "text": "Beta-Blockers" },
+        { "id": "B", "text": "Diuretics" },
+        { "id": "C", "text": "Peptide Hormones" },
+        { "id": "D", "text": "Stimulants" }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "question": "Odd One Out: Which of the following substances is NOT classified under prohibited substances in sports?",
+      "options": [
+        { "id": "A", "text": "Anabolic Agents" },
+        { "id": "B", "text": "Glucocorticoids" },
+        { "id": "C", "text": "Caffeine" },
+        { "id": "D", "text": "Stimulants" }
+      ],
+      "correctAnswer": "C"
+    }
+  ],
+  'The Role of Schools and Universities':[
+    {
+      "question": "What role do schools and universities play in anti-doping awareness?",
+      "options": [
+        { "id": "A", "text": "They provide financial support for athletes" },
+        { "id": "B", "text": "They focus solely on athletic performance" },
+        { "id": "C", "text": "They incorporate anti-doping education into curricula" },
+        { "id": "D", "text": "They provide medical support during competitions" }
+      ],
+      "correctAnswer": "C"
+    },
+    {
+      "question": "What was the impact of the National Anti-Doping Agency (NADA) initiatives at the National Institute of Sports (NIS), Patiala?",
+      "options": [
+        { "id": "A", "text": "Increase in the number of athletes testing positive for banned substances" },
+        { "id": "B", "text": "Reduction in the number of athletes testing positive for banned substances" },
+        { "id": "C", "text": "Introduction of new doping substances in sports" },
+        { "id": "D", "text": "No change in anti-doping awareness" }
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "question": "What happened during the doping incident at Punjab University in 2017?",
+      "options": [
+        { "id": "A", "text": "An athlete ignored anti-doping education" },
+        { "id": "B", "text": "An athlete self-reported their supplement use after testing positive" },
+        { "id": "C", "text": "The university decided to end all sports programs" },
+        { "id": "D", "text": "The athlete was banned for life from competing" }
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "question": "True or False: Play True Day aims to emphasize the importance of doping in sports.",
+      "options": [
+        { "id": "A", "text": "True" },
+        { "id": "B", "text": "False" }
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "question": "In which month is Play True Day celebrated?",
+      "options": [
+        { "id": "A", "text": "April" },
+        { "id": "B", "text": "June" },
+        { "id": "C", "text": "January" },
+        { "id": "D", "text": "March" }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "question": "Which of the following is a key topic covered in the 'Optimizing Use of the NextGen Athlete Biological Passport (ABP) Module in ADAMS' webinar?",
+      "options": [
+        { "id": "A", "text": "Improving athletic performance through supplements" },
+        { "id": "B", "text": "Enhancements in the ABP module in ADAMS" },
+        { "id": "C", "text": "The financial benefits of anti-doping measures" },
+        { "id": "D", "text": "Legal consequences of doping in sports" }
+      ],
+      "correctAnswer": "B"
+    }
+  ],
+  'Comprehensive Guide for Athlete Preparation':[
+    {
+      "question": "What is required from athletes as part of the pre-competition document checklist?",
+      "options": [
+        { "id": "A", "text": "Valid Passport and ID" },
+        { "id": "B", "text": "Anti-Doping Registration" },
+        { "id": "C", "text": "Eligibility Verification" },
+        { "id": "D", "text": "All of the above" }
+      ],
+      "correctAnswer": "D"
+    },
+    {
+      "question": "What health checks should athletes undergo before competing?",
+      "options": [
+        { "id": "A", "text": "Physical examination" },
+        { "id": "B", "text": "Vaccinations and Health Documentation" },
+        { "id": "C", "text": "Emergency contact information" },
+        { "id": "D", "text": "All of the above" }
+      ],
+      "correctAnswer": "D"
+    },
+    {
+      "question": "What is the purpose of a Therapeutic Use Exemption (TUE)?",
+      "options": [
+        { "id": "A", "text": "To allow the use of prohibited substances for medical reasons" },
+        { "id": "B", "text": "To enable athletes to compete without documentation" },
+        { "id": "C", "text": "To replace a physical examination" },
+        { "id": "D", "text": "To grant automatic eligibility" }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "question": "What should athletes do if selected for drug testing during a competition?",
+      "options": [
+        { "id": "A", "text": "Immediately leave the competition" },
+        { "id": "B", "text": "Wait in the designated testing area until sample collection is complete" },
+        { "id": "C", "text": "Submit to random testing without any questions" },
+        { "id": "D", "text": "Request a re-test on the spot" }
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "question": "What is the first step in post-competition recovery for athletes?",
+      "options": [
+        { "id": "A", "text": "Cryotherapy" },
+        { "id": "B", "text": "Medical assessment" },
+        { "id": "C", "text": "Hydration" },
+        { "id": "D", "text": "Strength training" }
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "question": "What should an athlete do if they test positive for a banned substance?",
+      "options": [
+        { "id": "A", "text": "Immediately appeal the result and request a review" },
+        { "id": "B", "text": "Ignore the result and continue competing" },
+        { "id": "C", "text": "Request a new sample to be tested" },
+        { "id": "D", "text": "Publicly announce the result" }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "question": "Why is anti-doping education important for athletes?",
+      "options": [
+        { "id": "A", "text": "To understand the risks and consequences of doping" },
+        { "id": "B", "text": "To learn how to avoid accidental violations" },
+        { "id": "C", "text": "To prepare for drug testing procedures" },
+        { "id": "D", "text": "All of the above" }
+      ],
+      "correctAnswer": "D"
+    },
+    {
+      "question": "What role does eligibility verification play in pre-competition preparation?",
+      "options": [
+        { "id": "A", "text": "Ensures athletes meet age, residency, and other event-specific criteria" },
+        { "id": "B", "text": "Verifies the athlete's health condition" },
+        { "id": "C", "text": "Documents the athlete's past competition results" },
+        { "id": "D", "text": "Confirms the athlete's training schedule" }
+      ],
+      "correctAnswer": "A"
+    }
+  ]
+  
+
+  
 
       
     

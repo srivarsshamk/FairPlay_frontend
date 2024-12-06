@@ -24,7 +24,35 @@ const videoContent = {
   'The Social and Psychological Pressure to Use Doping': {
     filename: 'pressuredope.mp4',
     description: 'Athletes face immense pressure from competition, expectations, and the desire for success. This psychological strain can lead to considering doping as a solution, highlighting the importance of mental support and ethical education.'
+  },
+  //Education and Prevention
+    'Education and Prevention Strategies in Anti-Doping': {
+    filename: 'Edumodule1.mp4',
+    description: 'Education is the cornerstone of anti-doping efforts. Strategies include raising awareness, providing resources, and fostering ethical decision-making to discourage doping and promote clean sports practices.'
+  },
+  'Educating Athletes, Coaches, and all Stakeholders': {
+  filename: 'Edumodule2.mp4',
+  description: (
+    <Text>
+      A collaborative approach is key in anti-doping education. Athletes, coaches, and stakeholders must be educated about banned substances, testing procedures, and the importance of maintaining integrity in sports. For more details, refer to the{' '}
+      <Text
+        style={{ color: 'blue' }}
+        onPress={() => Linking.openURL('https://www.wada-ama.org/sites/default/files/2023-09/2024list_en_final_22_september_2023.pdf')}
+      >
+        2024 WADA Prohibited List
+      </Text>.
+    </Text>
+  ),
+},
+  'The Role of Schools and Universities': {
+    filename: 'Edumodule3.pdf',
+    description: 'Schools and universities play a vital role in anti-doping education by integrating ethical lessons into curriculums, conducting workshops, and shaping young athletes with the values of fairness and integrity.'
+  },
+  'Comprehensive Guide for Athlete Preparation': {
+    filename: 'Edumodule4.pdf',
+    description: 'This guide provides athletes with a holistic approach to preparation, emphasizing proper training, nutrition, mental health, and adherence to anti-doping regulations to achieve peak performance ethically.'
   }
+
 };
 
 export default function VideoScreen({ route }) {

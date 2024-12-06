@@ -58,13 +58,13 @@ export default function ModulesScreen() {
     },
     {
       title: 'Education and Prevention',
-      thumbnail: require('../../images/homepic.jpg'),
+      thumbnail: require('../../images/educationmodule/educationandpreven.webp'),
       chapters: [
-        'Anti-Doping Awareness Programs',
-        'Engaging Schools and Universities',
-        'Resilience Against Peer Pressure',
-        'Effective Communication Strategies',
-        'Integrating Anti-Doping in Training',
+        'Education and Prevention Strategies in Anti-Doping',
+        'Educating Athletes, Coaches, and all Stakeholders',
+        'The Role of Schools and Universities',
+        'Comprehensive Guide for Athlete Preparation',
+        //'Integrating Anti-Doping in Training',
       ],
     },
     {

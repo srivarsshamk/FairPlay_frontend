@@ -5,7 +5,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 export default function ChaptersScreen() {
   const route = useRoute();
   const navigation = useNavigation();
-  const { module } = route.params;
+  const { module, moduleId } = route.params;
 
   const handleChapterPress = (chapter) => {
     navigation.navigate('VideoScreen', { chapter });
@@ -16,7 +16,19 @@ export default function ChaptersScreen() {
   };
 
   const handleModuleQuizPress = () => {
-    navigation.navigate('ModuleQuizScreen', { module });
+    // Conditional navigation based on module title
+    switch(module.title) {
+      case 'Education and Prevention':
+        navigation.navigate('edumodulequiz', { module, moduleId   });
+        break;
+      case 'Doping Methods and Their Impacts':
+        navigation.navigate('ModuleQuizScreen', { module, moduleId });
+        break;
+      default:
+        // Optional: fallback navigation or error handling
+        console.log('No specific quiz screen found for this module');
+        break;
+    }
   };
 
   return (

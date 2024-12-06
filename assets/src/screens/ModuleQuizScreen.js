@@ -178,8 +178,8 @@ export default function ModuleQuizScreen() {
 
   const postQuizScore = async (finalScore) => {
     try {
-      await axios.post(`http://127.0.0.1:8000/module-quizzes/${moduleId}/score`, {
-        m_quizscore: finalScore
+      await axios.patch(`http://127.0.0.1:8000/module-quizzes/${moduleId}/score`, {
+        score: finalScore
       });
     } catch (error) {
       console.error('Error posting quiz score:', error);
