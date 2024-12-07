@@ -229,6 +229,14 @@ export default function edumodulequiz() {
       console.error('Error fetching previous quiz score:', error);
     }
   };
+  const markModuleAsCompleted = async () => {
+    try {
+      await axios.patch(`http://127.0.0.1:8000/module-quizzes/${moduleId}/completed`);
+    } catch (error) {
+      console.error('Error marking module as completed:', error);
+      Alert.alert('Module Completion', 'Unable to mark module as completed.');
+    }
+  };
 
   const calculateScore = () => {
     const newScore = selectedAnswers.reduce((total, answer, index) => {
@@ -239,6 +247,7 @@ export default function edumodulequiz() {
     setScore(newScore);
     setShowResults(true);
     postQuizScore(newScore);
+    markModuleAsCompleted();
   };
 
   const postQuizScore = async (finalScore) => {
@@ -246,6 +255,7 @@ export default function edumodulequiz() {
       await axios.patch(`http://127.0.0.1:8000/module-quizzes/${moduleId}/score`, {
         score: finalScore
       });
+     
     } catch (error) {
       console.error('Error posting quiz score:', error);
     }
