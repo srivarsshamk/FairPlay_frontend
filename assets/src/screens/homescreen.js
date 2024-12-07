@@ -18,7 +18,7 @@ import AntiDopingTimeline from "../components/AntiDopingTimeline";
 import ReportComponent from "../components/ReportComponent";
 import NewsTicker from "../components/NewsTicker";
 import CustomDrawer from "../components/CustomDrawer";
-
+import ChatbotComponent from "../components/ChatbotComponent";
 export default function HomeScreen() {
   const navigation = useNavigation();
   const [iconScale, setIconScale] = useState({});
@@ -154,7 +154,7 @@ export default function HomeScreen() {
             <Ionicons name="scan-outline" size={30} color="white" />
           </Animated.View>
         </TouchableOpacity>
-
+        <ChatbotComponent/>
       </View>
     </View>
   );
