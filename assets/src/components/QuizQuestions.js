@@ -815,11 +815,623 @@ export const chapterQuestions = {
       ],
       "correctAnswer": "A"
     }
-  ]
+  ],
   
+  'Emerging Doping Practices': [
+    {
+      question: 'What is the primary goal of gene doping?',
+      options: [
+        { id: 'A', text: 'Increasing recovery speed naturally' },
+        { id: 'B', text: 'Altering an athlete’s DNA to enhance performance traits' },
+        { id: 'C', text: 'Building muscle through regular exercise' },
+        { id: 'D', text: 'Using wearable devices to track training progress' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'Which tool is commonly associated with gene-editing in doping?',
+      options: [
+        { id: 'A', text: 'PCR' },
+        { id: 'B', text: 'CRISPR' },
+        { id: 'C', text: 'X-ray imaging' },
+        { id: 'D', text: 'Mass spectrometry' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'What is a countermeasure used to detect gene doping?',
+      options: [
+        { id: 'A', text: 'Athlete interviews' },
+        { id: 'B', text: 'Gene sequencing' },
+        { id: 'C', text: 'Fitness tracking apps' },
+        { id: 'D', text: 'Synthetic carrier detection' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'What does Microdosing involve?',
+      options: [
+        { id: 'A', text: 'Taking large amounts of legal supplements' },
+        { id: 'B', text: 'Altering genes for better recovery' },
+        { id: 'C', text: 'Using small amounts of banned substances to avoid detection' },
+        { id: 'D', text: 'Manipulating wearable device data' }
+      ],
+      correctAnswer: 'C'
+    },
+    {
+      question: 'What helps track small changes in blood parameters during microdosing?',
+      options: [
+        { id: 'A', text: 'Biological Passport' },
+        { id: 'B', text: 'Synthetic oxygen carriers' },
+        { id: 'C', text: 'Data from wearable devices' },
+        { id: 'D', text: 'Genetic screening' }
+      ],
+      correctAnswer: 'A'
+    },
+    {
+      question: 'Designer drugs are:?',
+      options: [
+        { id: 'A', text: 'Legal supplements approved for athletes' },
+        { id: 'B', text: 'Substances used in blood doping' },
+        { id: 'C', text: 'Fitness supplements from pharmaceutical companies' },
+        { id: 'D', text: 'Chemically altered substances designed to evade detection' }
+      ],
+      correctAnswer: 'D'
+    },
+    {
+      question: ' How do anti-doping agencies counteract designer drugs?',
+      options: [
+        { id: 'A', text: 'By ignoring untested substances' },
+        { id: 'B', text: 'Expanding testing protocols to include new molecules' },
+        { id: 'C', text: 'Testing athletes only during competitions' },
+        { id: 'D', text: 'Relying solely on athletes to self-report' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'Which of the following is a method of blood doping?',
+      options: [
+        { id: 'A', text: 'Transfusing stored blood' },
+        { id: 'B', text: 'Consuming legal protein powders' },
+        { id: 'C', text: 'Using wearable devices' },
+        { id: 'D', text: 'Practicing high-altitude training' }
+      ],
+      correctAnswer: 'A'
+    },
+    {
+      question: 'What wearable devices have been manipulated by athletes?',
+      options: [
+        { id: 'A', text: 'Blood transfusion monitors' },
+        { id: 'B', text: 'Apple Watch, Garmin Forerunner, Fitbit Sense' },
+        { id: 'C', text: 'Oxygen cylinders' },
+        { id: 'D', text: 'Smartphone apps' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'How can wearable device manipulation be countered?',
+      options: [
+        { id: 'A', text: 'Allowing athletes to use personal devices' },
+        { id: 'B', text: 'Independent monitoring devices and data verification' },
+        { id: 'C', text: 'Relying only on in-competition tests' },
+        { id: 'D', text: 'Reducing the frequency of testing' }
+      ],
+      correctAnswer: 'B'
+    }
+  ],
 
+  'Emerging Doping Practices': [
+    {
+      question: 'What is the primary goal of gene doping?',
+      options: [
+        { id: 'A', text: 'Increasing recovery speed naturally' },
+        { id: 'B', text: 'Altering an athlete’s DNA to enhance performance traits' },
+        { id: 'C', text: 'Building muscle through regular exercise' },
+        { id: 'D', text: 'Using wearable devices to track training progress' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'Which tool is commonly associated with gene-editing in doping?',
+      options: [
+        { id: 'A', text: 'PCR' },
+        { id: 'B', text: 'CRISPR' },
+        { id: 'C', text: 'X-ray imaging' },
+        { id: 'D', text: 'Mass spectrometry' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'What is a countermeasure used to detect gene doping?',
+      options: [
+        { id: 'A', text: 'Athlete interviews' },
+        { id: 'B', text: 'Gene sequencing' },
+        { id: 'C', text: 'Fitness tracking apps' },
+        { id: 'D', text: 'Synthetic carrier detection' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'What does Microdosing involve?',
+      options: [
+        { id: 'A', text: 'Taking large amounts of legal supplements' },
+        { id: 'B', text: 'Altering genes for better recovery' },
+        { id: 'C', text: 'Using small amounts of banned substances to avoid detection' },
+        { id: 'D', text: 'Manipulating wearable device data' }
+      ],
+      correctAnswer: 'C'
+    },
+    {
+      question: 'What helps track small changes in blood parameters during microdosing?',
+      options: [
+        { id: 'A', text: 'Biological Passport' },
+        { id: 'B', text: 'Synthetic oxygen carriers' },
+        { id: 'C', text: 'Data from wearable devices' },
+        { id: 'D', text: 'Genetic screening' }
+      ],
+      correctAnswer: 'A'
+    },
+    {
+      question: 'Designer drugs are:?',
+      options: [
+        { id: 'A', text: 'Legal supplements approved for athletes' },
+        { id: 'B', text: 'Substances used in blood doping' },
+        { id: 'C', text: 'Fitness supplements from pharmaceutical companies' },
+        { id: 'D', text: 'Chemically altered substances designed to evade detection' }
+      ],
+      correctAnswer: 'D'
+    },
+    {
+      question: ' How do anti-doping agencies counteract designer drugs?',
+      options: [
+        { id: 'A', text: 'By ignoring untested substances' },
+        { id: 'B', text: 'Expanding testing protocols to include new molecules' },
+        { id: 'C', text: 'Testing athletes only during competitions' },
+        { id: 'D', text: 'Relying solely on athletes to self-report' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'Which of the following is a method of blood doping?',
+      options: [
+        { id: 'A', text: 'Transfusing stored blood' },
+        { id: 'B', text: 'Consuming legal protein powders' },
+        { id: 'C', text: 'Using wearable devices' },
+        { id: 'D', text: 'Practicing high-altitude training' }
+      ],
+      correctAnswer: 'A'
+    },
+    {
+      question: 'What wearable devices have been manipulated by athletes?',
+      options: [
+        { id: 'A', text: 'Blood transfusion monitors' },
+        { id: 'B', text: 'Apple Watch, Garmin Forerunner, Fitbit Sense' },
+        { id: 'C', text: 'Oxygen cylinders' },
+        { id: 'D', text: 'Smartphone apps' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'How can wearable device manipulation be countered?',
+      options: [
+        { id: 'A', text: 'Allowing athletes to use personal devices' },
+        { id: 'B', text: 'Independent monitoring devices and data verification' },
+        { id: 'C', text: 'Relying only on in-competition tests' },
+        { id: 'D', text: 'Reducing the frequency of testing' }
+      ],
+      correctAnswer: 'B'
+    }
+  ],
   
+  'Technological Advances in Detection': [
+    {
+      question: 'What was the significance of the development of urine tests for steroids in the 1980s?',
+      options: [
+        { id: 'A', text: 'It introduced random drug testing in sports' },
+        { id: 'B', text: 'It was the first systematic method to detect anabolic steroid abuse' },
+        { id: 'C', text: 'It monitored athletes’ biological markers over time' },
+        { id: 'D', text: 'It utilized big data for doping detection' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'Which technology, introduced in the 1990s, revolutionized doping detection?',
+      options: [
+        { id: 'A', text: 'Gene sequencing' },
+        { id: 'B', text: 'Gas Chromatography-Mass Spectrometry (GC-MS)' },
+        { id: 'C', text: 'Artificial Intelligence algorithms' },
+        { id: 'D', text: 'Wearable fitness devices' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'What is a key feature of Gas Chromatography-Mass Spectrometry (GC-MS)?',
+      options: [
+        { id: 'A', text: 'It relies on athletes’ self-reports' },
+        { id: 'B', text: 'It provides highly precise and accurate analysis of banned substances' },
+        { id: 'C', text: 'It uses wearable devices for data collection' },
+        { id: 'D', text: 'It monitors long-term biological markers' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'What was the primary purpose of forming WADA in 1999?',
+      options: [
+        { id: 'A', text: 'To create new doping substances' },
+        { id: 'B', text: 'To unify global anti-doping efforts and standardize testing' },
+        { id: 'C', text: 'To promote steroid use for performance enhancement' },
+        { id: 'D', text: 'To develop AI tools for doping detection' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'When was the Athlete Biological Passport (ABP) introduced?',
+      options: [
+        { id: 'A', text: '1980' },
+        { id: 'B', text: '1999' },
+        { id: 'C', text: '2004' },
+        { id: 'D', text: '2020' }
+      ],
+      correctAnswer: 'C'
+    },
+    {
+      question: 'What makes the Athlete Biological Passport a groundbreaking tool?',
+      options: [
+        { id: 'A', text: 'It detects doping through wearable devices' },
+        { id: 'B', text: 'It uses machine learning to predict future doping trends' },
+        { id: 'C', text: 'It monitors athletes’ biological markers over time to detect irregular patterns' },
+        { id: 'D', text: 'It eliminates the need for any doping tests' }
+      ],
+      correctAnswer: 'C'
+    },
+    {
+      question: 'What advancements did the 2020s bring to anti-doping efforts?',
+      options: [
+        { id: 'A', text: 'The introduction of urine tests for steroids' },
+        { id: 'B', text: 'The use of AI and Big Data for doping detection' },
+        { id: 'C', text: 'The creation of new anabolic steroids' },
+        { id: 'D', text: 'The discontinuation of biological passports' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'How does Artificial Intelligence enhance anti-doping research?',
+      options: [
+        { id: 'A', text: 'By creating new banned substances' },
+        { id: 'B', text: 'By analyzing vast amounts of data to predict and detect suspicious patterns' },
+        { id: 'C', text: 'By replacing all traditional testing methods' },
+        { id: 'D', text: 'By monitoring competition schedules' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'What was the primary achievement of urine tests for steroids in the 1980s?',
+      options: [
+        { id: 'A', text: 'Detecting all forms of doping immediately' },
+        { id: 'B', text: 'Systematic detection of anabolic steroid abuse in international competitions' },
+        { id: 'C', text: 'Providing longitudinal data for biological passports' },
+        { id: 'D', text: 'Using AI models for faster testing' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'What year marked the establishment of the World Anti-Doping Agency (WADA)?',
+      options: [
+        { id: 'A', text: '1980' },
+        { id: 'B', text: '1990' },
+        { id: 'C', text: '1999' },
+        { id: 'D', text: '2004' }
+      ],
+      correctAnswer: 'C'
+    }
+  ],
 
-      
+  'AI and Big Data in Anti-Doping': [
+    {
+      question: 'What is the first step in building an anti-doping system?',
+      options: [
+        { id: 'A', text: 'AI-Powered Analysis' },
+        { id: 'B', text: 'Prediction and Reporting' },
+        { id: 'C', text: 'Data Collection' },
+        { id: 'D', text: 'Pattern Detection and Flagging' }
+      ],
+      correctAnswer: 'C'
+    },
+    {
+      question: 'Which of the following is an example of data collected in anti-doping research?',
+      options: [
+        { id: 'A', text: 'Athlete biometrics' },
+        { id: 'B', text: 'Competition data' },
+        { id: 'C', text: 'Test results' },
+        { id: 'D', text: 'All of the above' }
+      ],
+      correctAnswer: 'D'
+    },
+    {
+      question: 'Why is data storage and integration important in anti-doping systems?',
+      options: [
+        { id: 'A', text: 'To analyze data faster' },
+        { id: 'B', text: 'To ensure secure and centralized access for analysis' },
+        { id: 'C', text: 'To create data silos' },
+        { id: 'D', text: 'To simplify wearable device usage' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'Which tool is commonly used for secure storage in anti-doping research?',
+      options: [
+        { id: 'A', text: 'Local spreadsheets' },
+        { id: 'B', text: 'Secure cloud platforms like AWS or Azure' },
+        { id: 'C', text: 'Paper files' },
+        { id: 'D', text: 'USB storage devices' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'How does AI help in anti-doping research?',
+      options: [
+        { id: 'A', text: 'By manually checking historical records' },
+        { id: 'B', text: 'By identifying patterns and trends in performance data' },
+        { id: 'C', text: 'By conducting interviews with athletes' },
+        { id: 'D', text: 'By organizing competition schedules' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'What happens during the pattern detection and flagging stage?',
+      options: [
+        { id: 'A', text: 'AI flags irregularities in biomarkers' },
+        { id: 'B', text: 'Athletes report their own data' },
+        { id: 'C', text: 'AI optimizes performance training' },
+        { id: 'D', text: 'Athletes are educated about anti-doping rules' }
+      ],
+      correctAnswer: 'A'
+    },
+    {
+      question: 'Which anomaly could indicate potential doping in pattern detection?',
+      options: [
+        { id: 'A', text: 'Consistent performance improvement' },
+        { id: 'B', text: 'A sudden spike in red blood cell count' },
+        { id: 'C', text: 'Low oxygen saturation during recovery' },
+        { id: 'D', text: 'Gradual fitness improvements over time' }
+      ],
+      correctAnswer: 'B'
+    },
+    {
+      question: 'What is a key output of the prediction and reporting stage?',
+      options: [
+        { id: 'A', text: 'Detailed reports summarizing flagged cases' },
+        { id: 'B', text: 'Athlete biometrics tracking' },
+        { id: 'C', text: 'Athlete interviews for feedback' },
+        { id: 'D', text: 'Random testing schedules' }
+      ],
+      correctAnswer: 'A'
+    },
+    {
+      question: 'How does AI predict future doping trends?',
+      options: [
+        { id: 'A', text: 'By analyzing historical doping data' },
+        { id: 'B', text: 'By tracking athlete training schedules' },
+        { id: 'C', text: 'By monitoring wearable device activity' },
+        { id: 'D', text: 'By conducting interviews with coaches' }
+      ],
+      correctAnswer: 'A'
+    },
+    {
+      question: 'Why is centralized data storage crucial in anti-doping research?',
+      options: [
+        { id: 'A', text: 'It prevents data silos and ensures secure access' },
+        { id: 'B', text: 'It replaces wearable devices for tracking' },
+        { id: 'C', text: 'It enables athletes to access their own data' },
+        { id: 'D', text: 'It eliminates the need for testing during competitions' }
+      ],
+      correctAnswer: 'A'
+    }
+  ],
+  
+  'Collaboration Across Nations': [
+    {
+        question: 'What is the key focus of future anti-doping efforts?',
+        options: [
+            { id: 'A', text: 'Real-time monitoring, technological advancements, and international collaboration' },
+            { id: 'B', text: 'Only post-competition testing' },
+            { id: 'C', text: 'Reduction of anti-doping agencies' },
+            { id: 'D', text: 'Elimination of wearable devices' }
+        ],
+        correctAnswer: 'A'
+    },
+    {
+        question: 'Which technology will play a central role in real-time monitoring for anti-doping?',
+        options: [
+            { id: 'A', text: 'AI-based systems and wearable devices' },
+            { id: 'B', text: 'Traditional urine tests' },
+            { id: 'C', text: 'Fitness trackers with no data sharing' },
+            { id: 'D', text: 'Offline data storage' }
+        ],
+        correctAnswer: 'A'
+    },
+    {
+        question: 'How can big data and AI improve anti-doping efforts?',
+        options: [
+            { id: 'A', text: 'By replacing anti-doping agencies entirely' },
+            { id: 'B', text: 'By pooling global data to detect doping patterns and predict potential cases' },
+            { id: 'C', text: 'By ignoring historical data to focus on current trends' },
+            { id: 'D', text: 'By conducting only manual analysis of test results' }
+        ],
+        correctAnswer: 'B'
+    },
+    {
+        question: 'What is the purpose of harmonizing global anti-doping efforts?',
+        options: [
+            { id: 'A', text: 'To ensure consistency and fairness in testing and enforcement' },
+            { id: 'B', text: 'To allow athletes to choose their testing protocols' },
+            { id: 'C', text: 'To reduce international cooperation in anti-doping efforts' },
+            { id: 'D', text: 'To increase discrepancies in regulations' }
+        ],
+        correctAnswer: 'A'
+    },
+    {
+        question: 'What will enhanced legal frameworks in anti-doping aim to address?',
+        options: [
+            { id: 'A', text: 'Emerging challenges like gene doping and micro-dosing' },
+            { id: 'B', text: 'Reduced testing efforts' },
+            { id: 'C', text: 'Traditional substances only' },
+            { id: 'D', text: 'Non-athletic violations' }
+        ],
+        correctAnswer: 'A'
+    },
+    {
+        question: 'What role will athletes play in future anti-doping initiatives?',
+        options: [
+            { id: 'A', text: 'Serving as advocates for clean sport and reporting violations' },
+            { id: 'B', text: 'Avoiding any involvement in anti-doping education' },
+            { id: 'C', text: 'Relying solely on organizations to ensure clean sport' },
+            { id: 'D', text: 'Refusing to participate in any testing' }
+        ],
+        correctAnswer: 'A'
+    },
+    {
+        question: 'What is one way athletes can raise awareness about clean sport?',
+        options: [
+            { id: 'A', text: 'Educational campaigns and social media engagement' },
+            { id: 'B', text: 'Avoiding public discussions about anti-doping' },
+            { id: 'C', text: 'Supporting unregulated substances' },
+            { id: 'D', text: 'Hiding information about doping violations' }
+        ],
+        correctAnswer: 'A'
+    },
+    {
+        question: 'Why is international cooperation critical in anti-doping?',
+        options: [
+            { id: 'A', text: 'To promote fair competition and protect athlete integrity globally' },
+            { id: 'B', text: 'To reduce transparency in anti-doping laws' },
+            { id: 'C', text: 'To limit testing only to select regions' },
+            { id: 'D', text: 'To prioritize competition over athlete health' }
+        ],
+        correctAnswer: 'A'
+    },
+    {
+        question: 'What is a significant goal of future anti-doping advancements?',
+        options: [
+            { id: 'A', text: 'Prevention of doping through predictive and proactive measures' },
+            { id: 'B', text: 'Relying only on traditional testing methods' },
+            { id: 'C', text: 'Reducing international partnerships' },
+            { id: 'D', text: 'Ignoring technological advancements' }
+        ],
+        correctAnswer: 'A'
+    },
+    {
+        question: 'What will global standardization of anti-doping policies minimize?',
+        options: [
+            { id: 'A', text: 'Discrepancies in testing and regulations' },
+            { id: 'B', text: 'Transparency in anti-doping processes' },
+            { id: 'C', text: 'Collaboration between nations' },
+            { id: 'D', text: 'Use of advanced testing technologies' }
+        ],
+        correctAnswer: 'A'
+    }
+ ],
+ 'The Role of Athletes in Anti-Doping Efforts': [
+    {
+      question: 'What is the purpose of WADA’s prohibited substance list?',
+      options: [
+          { id: 'A', text: 'To inform athletes about banned substances and methods' },
+          { id: 'B', text: 'To list all approved supplements for athletes' },
+          { id: 'C', text: 'To replace national anti-doping regulations' },
+          { id: 'D', text: 'To provide guidelines for fitness training' }
+      ],
+      correctAnswer: 'A'
+    },
+    {
+      question: 'What should athletes do regarding therapeutic use exemptions (TUEs)?',
+      options: [
+          { id: 'A', text: 'Understand the rules and procedures for medical treatments' },
+          { id: 'B', text: 'Avoid applying for TUEs even if medically necessary' },
+          { id: 'C', text: 'Ignore TUE regulations' },
+          { id: 'D', text: 'Use substances without checking if a TUE is required' }
+      ],
+      correctAnswer: 'A'
+    },
+    {
+      question: 'Why is it important to review anti-doping regulations yearly?',
+      options: [
+          { id: 'A', text: 'Because regulations and prohibited substances can change yearly' },
+          { id: 'B', text: 'To memorize all existing doping violations' },
+          { id: 'C', text: 'To compare testing procedures across sports' },
+          { id: 'D', text: 'To create personal testing protocols' }
+      ],
+      correctAnswer: 'A'
+    },
+    {
+      question: 'What are the consequences of violating anti-doping rules?',
+      options: [
+          { id: 'A', text: 'Suspensions and bans from competition' },
+          { id: 'B', text: 'Warnings with no further action' },
+          { id: 'C', text: 'Exemptions from future testing' },
+          { id: 'D', text: 'Free participation in events' }
+      ],
+      correctAnswer: 'A'
+    },
+    {
+      question: 'What is the purpose of providing accurate location information?',
+      options: [
+          { id: 'A', text: 'To facilitate out-of-competition testing and ensure transparency' },
+          { id: 'B', text: 'To avoid participating in any doping tests' },
+          { id: 'C', text: 'To allow athletes to skip in-competition testing' },
+          { id: 'D', text: 'To hide from doping control officers' }
+      ],
+      correctAnswer: 'A'
+    },
+    {
+      question: 'What should athletes consider before using supplements?',
+      options: [
+          { id: 'A', text: 'Check if the supplement is certified by anti-doping organizations' },
+          { id: 'B', text: 'Buy supplements from any available online store' },
+          { id: 'C', text: 'Only rely on advertisements for supplement selection' },
+          { id: 'D', text: 'Use supplements without checking the ingredients' }
+      ],
+      correctAnswer: 'A'
+    },
+    {
+      question: 'How can athletes report suspicious doping practices?',
+      options: [
+          { id: 'A', text: 'Use proper channels like WADA’s Speak Up program' },
+          { id: 'B', text: 'Ignore any irregularities they notice' },
+          { id: 'C', text: 'Discuss doping behavior openly on social media' },
+          { id: 'D', text: 'Avoid reporting to maintain privacy' }
+      ],
+      correctAnswer: 'A'
+    },
+    {
+      question: 'What does committing to clean sport mean for athletes?',
+      options: [
+          { id: 'A', text: 'Avoiding doping and promoting ethical decision-making' },
+          { id: 'B', text: 'Using performance-enhancing drugs under supervision' },
+          { id: 'C', text: 'Relying on banned substances for success' },
+          { id: 'D', text: 'Refusing to participate in anti-doping initiatives' }
+      ],
+      correctAnswer: 'A'
+    },
+    {
+      question: 'How can athletes stay informed about anti-doping updates?',
+      options: [
+          { id: 'A', text: 'Monitor updates from WADA and attend relevant workshops or webinars' },
+          { id: 'B', text: 'Avoid reading updates to focus on competition' },
+          { id: 'C', text: 'Rely solely on teammates for updates' },
+          { id: 'D', text: 'Ignore any changes in anti-doping policies' }
+      ],
+      correctAnswer: 'A'
+    },
+    {
+      question: 'What role do athletes play in supporting clean sport initiatives?',
+      options: [
+          { id: 'A', text: 'Advocating for a drug-free culture and serving as role models' },
+          { id: 'B', text: 'Avoiding community outreach or public discussions' },
+          { id: 'C', text: 'Focusing only on personal performance without education' },
+          { id: 'D', text: 'Opposing anti-doping campaigns' }
+      ],
+      correctAnswer: 'A'
+    }
+]
     
   };

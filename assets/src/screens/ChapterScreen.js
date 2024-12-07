@@ -24,6 +24,9 @@ export default function ChaptersScreen() {
       case 'Doping Methods and Their Impacts':
         navigation.navigate('ModuleQuizScreen', { module, moduleId });
         break;
+      case 'Future of Anti-Doping':
+        navigation.navigate('futuremodulequiz', { module, moduleId });
+        break;
       default:
         // Optional: fallback navigation or error handling
         console.log('No specific quiz screen found for this module');

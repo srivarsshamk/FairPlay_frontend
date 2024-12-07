@@ -69,7 +69,7 @@ export default function ModulesScreen() {
     },
     {
       title: 'Future of Anti-Doping',
-      thumbnail: require('../../images/homepic.jpg'),
+      thumbnail: require('../../images/futureantidope.jpg'),
       chapters: [
         'Emerging Doping Practices',
         'Technological Advances in Detection',

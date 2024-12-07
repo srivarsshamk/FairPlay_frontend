@@ -51,8 +51,32 @@ const videoContent = {
   'Comprehensive Guide for Athlete Preparation': {
     filename: 'Edumodule4.pdf',
     description: 'This guide provides athletes with a holistic approach to preparation, emphasizing proper training, nutrition, mental health, and adherence to anti-doping regulations to achieve peak performance ethically.'
-  }
+  },
 
+  'Emerging Doping Practices': {
+    filename: 'EmergingDopingMethods.pdf',
+    description: 'Emerging doping practices include methods like gene doping, microdosing, and the use of designer drugs to evade detection.',
+    pdfUrl: 'http://127.0.0.1:8000/images/EmergingDopingMethods.pdf'
+  },
+  'Technological Advances in Detection': {
+    filename: 'dopingdetectadv.mp4',
+    description: 'Advanced doping detection leverages AI, biomarker analysis, and cutting-edge testing methods to identify even the most sophisticated doping practices.'
+  },
+  'AI and Big Data in Anti-Doping': {
+    filename: 'AIbigd.pdf',
+    description: 'AI and big data are transforming anti-doping research by detecting patterns, predicting trends, and flagging anomalies in athlete performance and biomarkers.',
+    pdfUrl: 'http://127.0.0.1:8000/images/AIbigd.pdf'
+  },
+  'Collaboration Across Nations': {
+    filename: 'collabnation.pdf',
+    description: 'Global cooperation is essential to harmonize anti-doping policies, share resources, and ensure a level playing field in sports.',
+    pdfUrl: 'http://127.0.0.1:8000/images/collabnation.pdf'
+  },
+  'The Role of Athletes in Anti-Doping Efforts': {
+    filename: 'contribution.pdf',
+    description: 'Athletes play a vital role in promoting clean sports by adhering to regulations, staying informed, and serving as advocates against doping.',
+    pdfUrl: 'http://127.0.0.1:8000/images/contribution.pdf'
+  }
 };
 
 export default function VideoScreen({ route }) {
