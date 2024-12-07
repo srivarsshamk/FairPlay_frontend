@@ -23,15 +23,14 @@ export default function ModulesScreen() {
 
   const modules = [
     {
-      title: 'Athlete Awareness',
-      thumbnail: require('../../images/homepic.jpg'),
+      title: 'Fundamentals of Anti-Doping',
+      thumbnail: require('../../images/module1.jpg'),
       chapters: [
-        'Introduction to Anti-Doping',
-        'Consequences of Doping',
-        'Prohibited Substances and Methods',
-        'Therapeutic Use Exemptions (TUE)',
-        'Nutrition and Supplements Awareness',
-        'Psychological and Social Aspects of Doping',
+        'History of Anti-Doping',
+        'Understanding Doping and its Impacts',
+        'Guardians of FairPlay',
+        'Anti-Doping Codes-The Basics',
+        'Complexities of Anti-Doping',
       ],
     },
     {

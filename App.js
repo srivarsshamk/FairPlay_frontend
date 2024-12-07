@@ -57,7 +57,7 @@ import ModuleQuizScreen from './assets/src/screens/ModuleQuizScreen';
 import edumodulequiz from './assets/src/screens/edumodulequiz';
 import allactivity from "./assets/src/components/profile/allactivity";
 import EditProfile from "./assets/src/components/profile/EditProfile";
-
+import funmodulequiz from "./assets/src/screens/funmodulequiz";
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -325,6 +325,7 @@ export default function AppNavigator() {
         <Stack.Screen name="QuizScreen" component={QuizScreen} options={{ title: 'Chapter Quiz' }} />
         <Stack.Screen name="ModuleQuizScreen" component={ModuleQuizScreen} options={{ title: 'Module Quiz' }} />
         <Stack.Screen name="edumodulequiz" component={edumodulequiz} options={{ title: 'Module Quiz' }} />
+        <Stack.Screen name="funmodulequiz" component={funmodulequiz} options={{ title: 'Module Quiz' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
