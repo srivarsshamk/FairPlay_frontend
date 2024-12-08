@@ -164,15 +164,7 @@ export default function ModuleQuizScreen() {
       console.error('Error fetching previous quiz score:', error);
     }
   };
-
-  const markModuleAsCompleted = async () => {
-    try {
-      await axios.patch(`http://127.0.0.1:8000/module-quizzes/${moduleId}/completed`);
-    } catch (error) {
-      console.error('Error marking module as completed:', error);
-      Alert.alert('Module Completion', 'Unable to mark module as completed.');
-    }
-  };
+ 
 
   const calculateScore = () => {
     const newScore = selectedAnswers.reduce((total, answer, index) => {
@@ -183,11 +175,21 @@ export default function ModuleQuizScreen() {
     setScore(newScore);
     setShowResults(true);
     postQuizScore(newScore);
-    
-    // Always mark module as completed, even if previously attempted
+    // Pass newScore directly to both functions
     markModuleAsCompleted();
+    
   };
-
+  
+  const markModuleAsCompleted = async () => {
+    try {
+      await axios.patch(`http://127.0.0.1:8000/module-quizzes/${moduleId}/completed`);
+      console.log('Module marked as completed');
+    } catch (error) {
+      console.error('Error marking module as completed:', error.response?.data || error.message);
+      
+      
+    }
+  };
   const postQuizScore = async (finalScore) => {
     try {
       await axios.patch(`http://127.0.0.1:8000/module-quizzes/${moduleId}/score`, {
@@ -198,7 +200,6 @@ export default function ModuleQuizScreen() {
       Alert.alert('Score Update', 'Unable to update quiz score.');
     }
   };
-
   const handleAnswerSelection = (optionIndex) => {
     if (showResults) return;
 
