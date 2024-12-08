@@ -229,7 +229,6 @@ export default function edumodulequiz() {
       console.error('Error fetching previous quiz score:', error);
     }
   };
-
   const calculateScore = () => {
     const newScore = selectedAnswers.reduce((total, answer, index) => {
       return answer !== null && quizQuestions[index].options[answer].isCorrect 
@@ -238,9 +237,23 @@ export default function edumodulequiz() {
     }, 0);
     setScore(newScore);
     setShowResults(true);
+  
+    // Pass newScore directly to both functions
     postQuizScore(newScore);
+    markModuleAsCompleted();
+    
   };
-
+  
+  const markModuleAsCompleted = async () => {
+    try {
+      await axios.patch(`http://127.0.0.1:8000/module-quizzes/${moduleId}/completed`);
+      console.log('Module marked as completed');
+    } catch (error) {
+      console.error('Error marking module as completed:', error.response?.data || error.message);
+      
+      
+    }
+  };
   const postQuizScore = async (finalScore) => {
     try {
       await axios.patch(`http://127.0.0.1:8000/module-quizzes/${moduleId}/score`, {
@@ -248,6 +261,7 @@ export default function edumodulequiz() {
       });
     } catch (error) {
       console.error('Error posting quiz score:', error);
+      Alert.alert('Score Update', 'Unable to update quiz score.');
     }
   };
 

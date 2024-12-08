@@ -16,12 +16,13 @@ import {
   ShieldCheck, 
   BookOpen, 
   MessageCircle, 
-  Bot, 
+  Bot, Newspaper,Gamepad,Clipboard,
   Scale, 
   Italic
 } from 'lucide-react';
 import { useNavigation } from '@react-navigation/native';
 import SpaceBackground from '../components/SpaceBackground';
+import axios from 'axios';
 
 // Import Social Media Icons
 import InstagramIcon from '../../images/socialmedia/instagram.png';
@@ -58,39 +59,47 @@ const LandingPage = ({ navigation }) => {
     {
       icon: <ShieldCheck color="#00A86B" size={64} />,
       title: "Supplement Verification",
-      description: "Advanced AI-powered analysis of supplement safety and WADA compliance, ensuring athletes' health and fair competition.",
-      details: "Our cutting-edge verification system cross-references global databases, providing instant, comprehensive supplement safety assessments.",
-      background: require('../../images/nebula.jpg')
+      description: "AI-powered analysis of supplement safety and WADA compliance, ensuring athletes' health and fair competition.",
+      details: "Our verification system cross-references global databases, providing instant, comprehensive supplement safety assessments.",
+      background: require('../../images/nebula.jpg'),
     },
     {
       icon: <MessageCircle color="#00A86B" size={64} />,
       title: "Professional Network",
       description: "Exclusive community platform connecting athletes, coaches, and anti-doping experts worldwide.",
       details: "Secure, moderated forums for sharing experiences, seeking advice, and building a transparent athletic community.",
-      background: require('../../images/nebula.jpg')
-    },
-    {
-      icon: <Bot color="#00A86B" size={64} />,
-      title: "Compliance Intelligence",
-      description: "AI-driven personal guidance navigating complex anti-doping regulations with precision.",
-      details: "Personalized consultations, real-time regulatory updates, and contextual recommendations tailored to your athletic profile.",
-      background: require('../../images/nebula.jpg')
+      background: require('../../images/nebula.jpg'),
     },
     {
       icon: <BookOpen color="#00A86B" size={64} />,
       title: "Knowledge Ecosystem",
-      description: "Comprehensive, continually updated educational resources on anti-doping standards.",
+      description: "Comprehensive educational resources on anti-doping standards.",
       details: "Interactive learning modules, expert-curated content, and multimedia resources exploring ethical sporting practices.",
-      background: require('../../images/nebula.jpg')
+      background: require('../../images/nebula.jpg'),
     },
     {
-      icon: <Scale color="#00A86B" size={64} />,
-      title: "Regulatory Intelligence",
-      description: "Sophisticated tracking and analysis of evolving global anti-doping legislation.",
-      details: "Comprehensive monitoring of international sports governance, providing athletes with authoritative legal insights.",
-      background: require('../../images/nebula.jpg')
-    }
+      icon: <Gamepad color="#00A86B" size={64} />,
+      title: "Interactive Games",
+      description: "Engage in fun, educational games designed to promote awareness about anti-doping practices.",
+      details: "Challenge your peers in quizzes and interactive games, featuring a global leaderboard to foster healthy competition.",
+      background: require('../../images/nebula.jpg'),
+    },
+    {
+      icon: <Clipboard color="#00A86B" size={64} />,
+      title: "TUE Guidance",
+      description: "Personalized guidance for Therapeutic Use Exemptions (TUE) application and approval processes.",
+      details: "Step-by-step assistance in submitting TUE applications, ensuring compliance with WADA regulations.",
+      background: require('../../images/nebula.jpg'),
+    },
+    {
+      icon: <Newspaper color="#00A86B" size={64} />,
+      title: "Latest News & Journals",
+      description: "Stay informed with curated news, journals, and real-life case studies in the world of anti-doping.",
+      details: "Explore expert analyses, scientific breakthroughs, and inspiring stories from athletes' journeys to clean sport.",
+      background: require('../../images/nebula.jpg'),
+    },
   ];
+  
 
   const scrollToSection = (section) => {
     switch(section) {
@@ -110,89 +119,123 @@ const LandingPage = ({ navigation }) => {
     }
   };
 
-  const handleNewsletterSubscription = () => {
+  const handleNewsletterSubscription = async () => {
     if (email.trim() && email.includes('@')) {
-      alert('Thank you for subscribing!');
-      setEmail('');
+      try {
+        // Make a POST request to the FastAPI endpoint
+        const response = await axios.post('http://127.0.0.1:8000/newsletter/subscribe', {
+          email: email,
+        });
+  
+        // Check if subscription was successful
+        if (response.status === 201) {
+          alert('Thank you for subscribing!');
+          setEmail('');
+        } else {
+          alert('There was an issue subscribing. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error subscribing to newsletter:', error);
+        alert('There was an error subscribing. Please try again later.');
+      }
     } else {
       alert('Please enter a valid email address');
-    }
-  };
+    }}
 
-  const FeatureCarousel = () => {
-    return (
-      <View style={styles.featureCarouselContainer}>
-        <Animated.ScrollView
-          ref={featureCarouselRef}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-            { useNativeDriver: false }
-          )}
-          scrollEventThrottle={16}
-          contentContainerStyle={styles.featureCarouselContent}
-        >
-          {features.map((feature, index) => (
-            <View key={index} style={styles.featureCarouselItem}>
-              <Image 
-                source={feature.background}
-                style={styles.featureBackground}
-                blurRadius={5}
-              />
-              <View style={styles.featureOverlay} />
-              <View style={styles.featureContent}>
-                <View style={styles.featureIconContainer}>
-                  {feature.icon}
+    const FeatureCarousel = () => {
+      const [currentIndex, setCurrentIndex] = useState(0);
+    
+      useEffect(() => {
+        const interval = setInterval(() => {
+          // Update the index to simulate a slide change
+          setCurrentIndex(prevIndex => (prevIndex + 1) % features.length);
+        }, 4000); // Change slide every 2.5 seconds
+    
+        // Cleanup the interval when the component unmounts
+        return () => clearInterval(interval);
+      }, []);
+    
+      useEffect(() => {
+        // Scroll the carousel to the active slide
+        if (featureCarouselRef.current) {
+          featureCarouselRef.current.scrollTo({
+            x: currentIndex * width, // Scroll to the active slide
+            animated: true,
+          });
+        }
+      }, [currentIndex]);
+    
+      return (
+        <View style={styles.featureCarouselContainer}>
+          <Animated.ScrollView
+            ref={featureCarouselRef}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+              { useNativeDriver: false }
+            )}
+            scrollEventThrottle={16}
+            contentContainerStyle={styles.featureCarouselContent}
+          >
+            {features.map((feature, index) => (
+              <View key={index} style={styles.featureCarouselItem}>
+                <Image 
+                  source={feature.background}
+                  style={styles.featureBackground}
+                  blurRadius={5}
+                />
+                <View style={styles.featureOverlay} />
+                <View style={styles.featureContent}>
+                  <View style={styles.featureIconContainer}>
+                    {feature.icon}
+                  </View>
+                  <Text style={styles.featureCarouselTitle}>{feature.title}</Text>
+                  <Text style={styles.featureCarouselDescription}>
+                    {feature.description}
+                  </Text>
+                  <TouchableOpacity style={styles.learnMoreButton}>
+                    <Text style={styles.learnMoreButtonText} onPress={() => navigation.push('Login')}>Learn More</Text>
+                  </TouchableOpacity>
                 </View>
-                <Text style={styles.featureCarouselTitle}>{feature.title}</Text>
-                <Text style={styles.featureCarouselDescription}>
-                  {feature.description}
-                </Text>
-                <TouchableOpacity style={styles.learnMoreButton}>
-                  <Text style={styles.learnMoreButtonText} onPress={() => navigation.push('Login')} >Learn More</Text>
-                </TouchableOpacity>
               </View>
-            </View>
-          ))}
-        </Animated.ScrollView>
-        
-        {/* Pagination Dots */}
-        <View style={styles.paginationContainer}>
-          {features.map((_, index) => {
-            const inputRange = [
-              (index - 1) * width,
-              index * width,
-              (index + 1) * width
-            ];
-            const opacity = scrollX.interpolate({
-              inputRange,
-              outputRange: [0.3, 1, 0.3],
-              extrapolate: 'clamp'
-            });
-            const scale = scrollX.interpolate({
-              inputRange,
-              outputRange: [0.7, 1, 0.7],
-              extrapolate: 'clamp'
-            });
-            return (
-              <Animated.View
-                key={index}
-                style={[
-                  styles.paginationDot,
-                  { 
-                    opacity,
-                    transform: [{ scale }]
-                  }
-                ]}
-              />
-            );
-          })}
+            ))}
+          </Animated.ScrollView>
+          
+          {/* Pagination Dots */}
+          <View style={styles.paginationContainer}>
+            {features.map((_, index) => {
+              const inputRange = [
+                (index - 1) * width,
+                index * width,
+                (index + 1) * width
+              ];
+              const opacity = scrollX.interpolate({
+                inputRange,
+                outputRange: [0.3, 1, 0.3],
+                extrapolate: 'clamp'
+              });
+              const scale = scrollX.interpolate({
+                inputRange,
+                outputRange: [0.7, 1, 0.7],
+                extrapolate: 'clamp'
+              });
+              return (
+                <Animated.View
+                  key={index}
+                  style={[
+                    styles.paginationDot,
+                    { opacity, transform: [{ scale }] }
+                  ]}
+                />
+              );
+            })}
+          </View>
         </View>
-      </View>
-    );
-  };
+      );
+    };
+    
 
   return (
     <SafeAreaView style={styles.container}>
@@ -308,25 +351,36 @@ const LandingPage = ({ navigation }) => {
         <View style={styles.greenBorderLine} />
         {/* Connect Section */}
         
-        <View style={styles.connectSection}>
+                {/* Connect Section */}
+                <View style={styles.connectSection}>
           <Text style={styles.sectionTitle}>
-            <Text style={styles.greenText}>Connect</Text> With Us
+            <Text style={styles.greenText}>Connect</Text> With NADA
           </Text>
           <View style={styles.socialLinks}>
-            <TouchableOpacity style={styles.socialIcon}>
+            <TouchableOpacity
+              style={styles.socialIcon}
+              onPress={() => navigation.navigate('WebView', { url: 'https://www.instagram.com/nadaindiaoffice/?hl=en' })}
+            >
               <Image source={InstagramIcon} style={styles.socialIconImage} />
               <Text style={styles.socialText}>Instagram</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.socialIcon}>
+            <TouchableOpacity
+              style={styles.socialIcon}
+              onPress={() => navigation.navigate('WebView', { url: 'https://x.com/NADAIndiaOffice?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor' })}
+            >
               <Image source={TwitterIcon} style={styles.socialIconImage} />
               <Text style={styles.socialText}>Twitter</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.socialIcon}>
+            <TouchableOpacity
+              style={styles.socialIcon}
+              onPress={() => navigation.navigate('WebView', { url: 'https://www.linkedin.com/company/national-anti-doping-agency-india/?originalSubdomain=in' })}
+            >
               <Image source={LinkedinIcon} style={styles.socialIconImage} />
               <Text style={styles.socialText}>LinkedIn</Text>
             </TouchableOpacity>
           </View>
         </View>
+
       </ScrollView>
     </SafeAreaView>
   );

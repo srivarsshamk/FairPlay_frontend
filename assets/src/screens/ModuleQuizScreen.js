@@ -164,6 +164,7 @@ export default function ModuleQuizScreen() {
       console.error('Error fetching previous quiz score:', error);
     }
   };
+ 
 
   const calculateScore = () => {
     const newScore = selectedAnswers.reduce((total, answer, index) => {
@@ -174,8 +175,21 @@ export default function ModuleQuizScreen() {
     setScore(newScore);
     setShowResults(true);
     postQuizScore(newScore);
+    // Pass newScore directly to both functions
+    markModuleAsCompleted();
+    
   };
-
+  
+  const markModuleAsCompleted = async () => {
+    try {
+      await axios.patch(`http://127.0.0.1:8000/module-quizzes/${moduleId}/completed`);
+      console.log('Module marked as completed');
+    } catch (error) {
+      console.error('Error marking module as completed:', error.response?.data || error.message);
+      
+      
+    }
+  };
   const postQuizScore = async (finalScore) => {
     try {
       await axios.patch(`http://127.0.0.1:8000/module-quizzes/${moduleId}/score`, {
@@ -183,9 +197,9 @@ export default function ModuleQuizScreen() {
       });
     } catch (error) {
       console.error('Error posting quiz score:', error);
+      Alert.alert('Score Update', 'Unable to update quiz score.');
     }
   };
-
   const handleAnswerSelection = (optionIndex) => {
     if (showResults) return;
 
@@ -195,7 +209,6 @@ export default function ModuleQuizScreen() {
   };
 
   const moveToNextQuestion = () => {
-    // Check if an answer is selected
     if (selectedAnswers[currentQuestion] === null) {
       Alert.alert('Please select an answer');
       return;
@@ -208,7 +221,6 @@ export default function ModuleQuizScreen() {
     }
   };
 
-
   const restartQuiz = () => {
     setCurrentQuestion(0);
     setSelectedAnswers(new Array(quizQuestions.length).fill(null));
@@ -217,29 +229,24 @@ export default function ModuleQuizScreen() {
   };
 
   const getOptionStyle = (optionIndex) => {
-    // If results are not shown, use standard selection logic
     if (!showResults) {
       return selectedAnswers[currentQuestion] === optionIndex 
         ? styles.selectedOption 
         : styles.optionButton;
     }
     
-    // When showing results
     const currentQuestionData = quizQuestions[currentQuestion];
     const correctOptionIndex = currentQuestionData.options.findIndex(option => option.isCorrect);
     
-    // Always highlight the correct answer in green
     if (correctOptionIndex === optionIndex) {
       return styles.correctOption;
     }
     
-    // If a wrong answer was selected, highlight it in red
     if (selectedAnswers[currentQuestion] === optionIndex && 
         !currentQuestionData.options[optionIndex].isCorrect) {
       return styles.incorrectOption;
     }
     
-    // Default style for other options
     return styles.optionButton;
   };
 
@@ -251,12 +258,10 @@ export default function ModuleQuizScreen() {
     const currentQuestionData = quizQuestions[currentQuestion];
     const correctOptionIndex = currentQuestionData.options.findIndex(option => option.isCorrect);
     
-    // Green text for correct answer
     if (correctOptionIndex === optionIndex) {
       return [styles.optionText, { color: 'white' }];
     }
     
-    // Red text for incorrect selected answer
     if (selectedAnswers[currentQuestion] === optionIndex && 
         !currentQuestionData.options[optionIndex].isCorrect) {
       return [styles.optionText, { color: 'white' }];
