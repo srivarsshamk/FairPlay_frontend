@@ -46,57 +46,47 @@
   "about": {
     "title": "About Us"
   },
-  {
-
-    "features": [
-      {
-        "title": "Supplement Verification",
-        "description": "Advanced AI-powered analysis of supplement safety and WADA compliance, ensuring athletes' health and fair competition.",
-        "details": "Our cutting-edge verification system cross-references global databases, providing instant, comprehensive supplement safety assessments."
-      },
-      {
-        "title": "Professional Network",
-        "description": "Exclusive community platform connecting athletes, coaches, and anti-doping experts worldwide.",
-        "details": "Secure, moderated forums for sharing experiences, seeking advice, and building a transparent athletic community."
-      },
-      {
-        "title": "Compliance Intelligence",
-        "description": "AI-driven personal guidance navigating complex anti-doping regulations with precision.",
-        "details": "Personalized consultations, real-time regulatory updates, and contextual recommendations tailored to your athletic profile."
-      },
-      {
-        "title": "Knowledge Ecosystem",
-        "description": "Comprehensive, continually updated educational resources on anti-doping standards.",
-        "details": "Interactive learning modules, expert-curated content, and multimedia resources exploring ethical sporting practices."
-      },
-      {
-        "title": "Regulatory Intelligence",
-        "description": "Sophisticated tracking and analysis of evolving global anti-doping legislation.",
-        "details": "Comprehensive monitoring of international sports governance, providing athletes with authoritative legal insights."
-      },
-      {
-        "title1": "Our",
-        "title2": "Features"
-      }
-    ]
-  },
-  "newsletter": {
-    "title": "Subscribe to Our Newsletter",
-    "placeholder": "Enter your email",
-    "subscribe": "Subscribe"
-  },
-  "subscription": {
-    "success": "You have successfully subscribed!",
-    "error": "Please enter a valid email address."
-  },
   "feature1": {
-    "title": "Clean Sport Commitment",
-    "description": "Learn about the importance of fair play in sports.",
-    "details": "Discover how our platform supports a doping-free sporting environment."
+    "title": "Supplement Verification",
+    "description": "Advanced AI-powered analysis of supplement safety and WADA compliance, ensuring athletes' health and fair competition.",
+    "details": "Our cutting-edge verification system cross-references global databases, providing instant, comprehensive supplement safety assessments."
   },
   "feature2": {
-    "title": "Anti-Doping Chatbot",
-    "description": "Get instant answers to your anti-doping questions.",
-    "details": "Our AI-powered chatbot is ready to assist you 24/7."
+    "title": "Professional Network",
+    "description": "Exclusive community platform connecting athletes, coaches, and anti-doping experts worldwide.",
+    "details": "Secure, moderated forums for sharing experiences, seeking advice, and building a transparent athletic community."
+  },
+  "feature3": {
+    "title": "Compliance Intelligence",
+    "description": "AI-driven personal guidance navigating complex anti-doping regulations with precision.",
+    "details": "Personalized consultations, real-time regulatory updates, and contextual recommendations tailored to your athletic profile."
+  },
+  "feature4": {
+    "title": "Knowledge Ecosystem",
+    "description": "Comprehensive, continually updated educational resources on anti-doping standards.",
+    "details": "Interactive learning modules, expert-curated content, and multimedia resources exploring ethical sporting practices."
+  },
+  "feature5": {
+    "title": "Regulatory Intelligence",
+    "description": "Sophisticated tracking and analysis of evolving global anti-doping legislation.",
+    "details": "Comprehensive monitoring of international sports governance, providing athletes with authoritative legal insights."
+  },
+
+  "features": {
+    "title1": "Our",
+    "title2": "Features",
+    "learnMore": "Learn More"
+  },
+  "newsletter": {
+    "thankYouMessage": "Thank you for subscribing!",
+    "invalidEmailMessage": "Please enter a valid email address",
+    "subscribe": "Subscribe",
+    "title": "Stay at the Forefront",
+    "subtitle": "Receive cutting-edge insights, regulatory updates, and exclusive athlete resources",
+    "placeholder": "Professional email address"
+  },
+  "connectWithUs": {
+    "title": "With Us",
+    "highlightedText": "Connect"
   }
 }
