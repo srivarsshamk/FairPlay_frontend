@@ -27,10 +27,13 @@ import SpaceBackground from '../components/SpaceBackground';
 import InstagramIcon from '../../images/socialmedia/instagram.png';
 import TwitterIcon from '../../images/socialmedia/facebook.png';
 import LinkedinIcon from '../../images/socialmedia/linkedin.png';
+import LanguageSwitcher from '../components/LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 const { width, height } = Dimensions.get('window');
 
 const LandingPage = ({ navigation }) => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [activeFeature, setActiveFeature] = useState(0);
   const scrollViewRef = useRef(null);
@@ -197,27 +200,31 @@ const LandingPage = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       {/* Sticky Navbar */}
+  
       <View style={styles.stickyNavBar}>
         <Image 
           source={require('../../images/logo.png')}
           style={styles.logo}
           resizeMode="contain"
         />
+
         <View style={styles.navItems}>
           <TouchableOpacity onPress={() => scrollToSection('about')}>
-            <Text style={styles.navItem}>About</Text>
+            <Text style={styles.navItem}>{t('navbar.about')}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => scrollToSection('solutions')}>
-            <Text style={styles.navItem}>Features</Text>
+            <Text style={styles.navItem}>{t('navbar.features')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.loginButton} onPress={() => navigation.push('Login')}>
-            <Text style={styles.loginButtonText}>Login</Text>
+            <Text style={styles.loginButtonText}>{t('navbar.login')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.signupButton} onPress={() => navigation.push('SignUp')}>
-            <Text style={styles.signupText}>Sign Up</Text>
+            <Text style={styles.signupText}>{t('navbar.signup')}</Text>
           </TouchableOpacity>
+              <LanguageSwitcher/>
         </View>
       </View>
+  
 
       <ScrollView 
         ref={scrollViewRef}
@@ -230,17 +237,17 @@ const LandingPage = ({ navigation }) => {
           <View style={styles.heroContent}>
           
             <Text style={styles.heroTitle}>
-              Empowering <Text style={styles.greenText}>Integrity</Text>
+              {t('hero.title1')} <Text style={styles.greenText}>{t('hero.title2')}</Text>
             </Text>
             <Text style={styles.heroSubtitle}>
-              Your journey to clean sports starts here
+              {t('hero.subtitle')}
             </Text>
             <TouchableOpacity 
               style={styles.heroButton}
               onPress={() => scrollToSection('solutions')}
             >
-              <Text style={styles.heroButtonText}>Explore FairPlay</Text>
-            </TouchableOpacity>
+              <Text style={styles.heroButtonText}>{t('hero.btn-txt')}</Text>
+            </TouchableOpacity> 
           </View>
           <View style={styles.heroImageContainer}>
             <Image 
@@ -274,7 +281,7 @@ const LandingPage = ({ navigation }) => {
         {/* Solutions Carousel */}
         <View style={styles.solutionsContainer}>
           <Text style={styles.sectionTitle}>
-            Our <Text style={styles.greenText}>Features</Text>
+            {t('features.title1')} <Text style={styles.greenText}>{t('features.title2')}</Text>
           </Text>
           <FeatureCarousel />
         </View>

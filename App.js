@@ -58,6 +58,9 @@ import edumodulequiz from './assets/src/screens/edumodulequiz';
 import allactivity from "./assets/src/components/profile/allactivity";
 import EditProfile from "./assets/src/components/profile/EditProfile";
 import funmodulequiz from "./assets/src/screens/funmodulequiz";
+import LanguageSwitcher from "./assets/src/components/LanguageSwitcher";
+import i18n from "./i18n";
+
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {

@@ -1,0 +1,102 @@
+{
+  "signin": {
+    "sign_in": "Sign In",
+    "email_placeholder": "Email",
+    "password_placeholder": "Password",
+    "login_button": "Sign In",
+    "logging_in": "Logging in...",
+    "signup_text": "Don't have an account?",
+    "signup_link": "Sign Up",
+    "error_empty_fields": "Please fill in all fields",
+    "login_failed": "Login Failed",
+    "invalid_credentials": "Invalid credentials",
+    "network_error": "Network error. Please check your connection."
+  },
+  "signup": {
+    "title": "Create Account",
+    "firstNamePlaceholder": "First Name",
+    "lastNamePlaceholder": "Last Name",
+    "emailPlaceholder": "Email",
+    "phoneNumberPlaceholder": "Phone Number",
+    "passwordPlaceholder": "Password",
+    "signupButton": "Sign Up",
+    "signupButtonLoading": "Creating Account...",
+    "alreadyHaveAccount": "Already have an account?",
+    "loginLinkText": "Log in",
+    "error": "Error",
+    "errorFillAllFields": "Please fill in all fields",
+    "registrationSuccess": "Success",
+    "registrationSuccessMessage": "Account created successfully",
+    "registrationErrorTitle": "Registration Error",
+    "networkErrorMessage": "Network error. Please check your connection."
+  },
+
+  "navbar": {
+    "about": "About",
+    "features": "Features",
+    "login": "Login",
+    "signup": "Sign Up"
+  },
+  "hero": {
+    "title1": "Empowering",
+    "title2": "Integrity",
+    "subtitle": "Your journey to clean sports starts here",
+    "btn-txt": "Explore Fairplay"
+  },
+  "about": {
+    "title": "About Us"
+  },
+  {
+
+    "features": [
+      {
+        "title": "Supplement Verification",
+        "description": "Advanced AI-powered analysis of supplement safety and WADA compliance, ensuring athletes' health and fair competition.",
+        "details": "Our cutting-edge verification system cross-references global databases, providing instant, comprehensive supplement safety assessments."
+      },
+      {
+        "title": "Professional Network",
+        "description": "Exclusive community platform connecting athletes, coaches, and anti-doping experts worldwide.",
+        "details": "Secure, moderated forums for sharing experiences, seeking advice, and building a transparent athletic community."
+      },
+      {
+        "title": "Compliance Intelligence",
+        "description": "AI-driven personal guidance navigating complex anti-doping regulations with precision.",
+        "details": "Personalized consultations, real-time regulatory updates, and contextual recommendations tailored to your athletic profile."
+      },
+      {
+        "title": "Knowledge Ecosystem",
+        "description": "Comprehensive, continually updated educational resources on anti-doping standards.",
+        "details": "Interactive learning modules, expert-curated content, and multimedia resources exploring ethical sporting practices."
+      },
+      {
+        "title": "Regulatory Intelligence",
+        "description": "Sophisticated tracking and analysis of evolving global anti-doping legislation.",
+        "details": "Comprehensive monitoring of international sports governance, providing athletes with authoritative legal insights."
+      },
+      {
+        "title1": "Our",
+        "title2": "Features"
+      }
+    ]
+  },
+  "newsletter": {
+    "title": "Subscribe to Our Newsletter",
+    "placeholder": "Enter your email",
+    "subscribe": "Subscribe"
+  },
+  "subscription": {
+    "success": "You have successfully subscribed!",
+    "error": "Please enter a valid email address."
+  },
+  "feature1": {
+    "title": "Clean Sport Commitment",
+    "description": "Learn about the importance of fair play in sports.",
+    "details": "Discover how our platform supports a doping-free sporting environment."
+  },
+  "feature2": {
+    "title": "Anti-Doping Chatbot",
+    "description": "Get instant answers to your anti-doping questions.",
+    "details": "Our AI-powered chatbot is ready to assist you 24/7."
+  }
+}

@@ -12,9 +12,12 @@ import {
 } from 'react-native';
 import { Mail, Lock, User, Phone } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next'; // Import useTranslation
 import SpaceBackground from '../components/SpaceBackground';
+import LanguageSwitcher from '../components/LanguageSwitcher'; // Import the LanguageSwitcher component
 
 const SignupScreen = () => {
+  const { t } = useTranslation(); // Initialize useTranslation hook
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -25,7 +28,7 @@ const SignupScreen = () => {
 
   const handleSignup = async () => {
     if (!firstName || !lastName || !email || !password || !phoneNumber) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert(t('signup.error'), t('signup.errorFillAllFields')); // Localized error message
       return;
     }
 
@@ -37,8 +40,8 @@ const SignupScreen = () => {
         email,
         password,
         phone_number: phoneNumber,
-        age:null,
-        bio:null
+        age: null,
+        bio: null
       };
 
       const response = await fetch('http://127.0.0.1:8000/users', {
@@ -53,9 +56,9 @@ const SignupScreen = () => {
       const responseData = await response.json();
 
       if (response.ok) {
-        Alert.alert('Success', 'Account created successfully', [
+        Alert.alert(t('signup.registrationSuccess'), t('signup.registrationSuccessMessage'), [
           {
-            text: 'Login',
+            text: t('signup.loginLinkText'),
             onPress: () => navigation.navigate('Login'),
           },
         ]);
@@ -64,13 +67,13 @@ const SignupScreen = () => {
           ? Array.isArray(responseData.detail)
             ? responseData.detail.map((error) => `${error.loc.join('.')}: ${error.msg}`).join('\n')
             : responseData.detail
-          : 'Registration failed. Please try again.';
+          : t('signup.error');
 
-        Alert.alert('Registration Error', errorMessage);
+        Alert.alert(t('signup.registrationErrorTitle'), errorMessage);
       }
     } catch (error) {
       console.error('Signup error:', error);
-      Alert.alert('Error', 'Network error. Please check your connection.');
+      Alert.alert(t('signup.error'), t('signup.networkErrorMessage'));
     } finally {
       setLoading(false);
     }
@@ -83,6 +86,10 @@ const SignupScreen = () => {
   return (
     <View style={styles.mainContainer}>
       <SpaceBackground />
+      
+      {/* Language Switcher at the top-right */}
+      <LanguageSwitcher />
+
       <View style={styles.container}>
         <View style={styles.signupContainer}>
           <KeyboardAvoidingView
@@ -90,13 +97,13 @@ const SignupScreen = () => {
             style={styles.formContainer}
           >
             <ScrollView contentContainerStyle={styles.scrollContainer}>
-              <Text style={styles.title}>Create Account</Text>
+              <Text style={styles.title}>{t('signup.title')}</Text>
 
               <View style={styles.inputWrapper}>
                 <User width={20} height={20} color="#00A86B" style={styles.icon} />
                 <TextInput
                   style={styles.input}
-                  placeholder="First Name"
+                  placeholder={t('signup.firstNamePlaceholder')}
                   value={firstName}
                   onChangeText={setFirstName}
                   editable={!loading}
@@ -107,7 +114,7 @@ const SignupScreen = () => {
                 <User width={20} height={20} color="#00A86B" style={styles.icon} />
                 <TextInput
                   style={styles.input}
-                  placeholder="Last Name"
+                  placeholder={t('signup.lastNamePlaceholder')}
                   value={lastName}
                   onChangeText={setLastName}
                   editable={!loading}
@@ -118,7 +125,7 @@ const SignupScreen = () => {
                 <Mail width={20} height={20} color="#00A86B" style={styles.icon} />
                 <TextInput
                   style={styles.input}
-                  placeholder="Email"
+                  placeholder={t('signup.emailPlaceholder')}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   value={email}
@@ -131,7 +138,7 @@ const SignupScreen = () => {
                 <Phone width={20} height={20} color="#00A86B" style={styles.icon} />
                 <TextInput
                   style={styles.input}
-                  placeholder="Phone Number"
+                  placeholder={t('signup.phoneNumberPlaceholder')}
                   keyboardType="phone-pad"
                   value={phoneNumber}
                   onChangeText={setPhoneNumber}
@@ -143,7 +150,7 @@ const SignupScreen = () => {
                 <Lock width={20} height={20} color="#00A86B" style={styles.icon} />
                 <TextInput
                   style={styles.input}
-                  placeholder="Password"
+                  placeholder={t('signup.passwordPlaceholder')}
                   secureTextEntry
                   value={password}
                   onChangeText={setPassword}
@@ -157,14 +164,13 @@ const SignupScreen = () => {
                 disabled={loading}
               >
                 <Text style={styles.signupButtonText}>
-                  {loading ? 'Creating Account...' : 'Sign Up'}
+                  {loading ? t('signup.signupButtonLoading') : t('signup.signupButton')}
                 </Text>
               </TouchableOpacity>
 
               <TouchableOpacity onPress={navigateToLogin} style={styles.loginLink}>
                 <Text style={styles.loginText}>
-                  Already have an account?{' '}
-                  <Text style={styles.signupText}>Login</Text>
+                  {t('signup.alreadyHaveAccount')} <Text style={styles.signupText}>{t('signup.loginLinkText')}</Text>
                 </Text>
               </TouchableOpacity>
             </ScrollView>
@@ -174,7 +180,6 @@ const SignupScreen = () => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,

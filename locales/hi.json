@@ -1,0 +1,72 @@
+{
+  "signin": {
+    "sign_in": "साइन इन करें",
+    "email_placeholder": "ईमेल",
+    "password_placeholder": "पासवर्ड",
+    "login_button": "साइन इन",
+    "logging_in": "लॉग इन हो रहा है...",
+    "signup_text": "क्या आपके पास खाता नहीं है?",
+    "signup_link": "साइन अप करें",
+    "error_empty_fields": "कृपया सभी फ़ील्ड भरें",
+    "login_failed": "लॉगिन असफल",
+    "invalid_credentials": "अमान्य क्रेडेंशियल्स",
+    "network_error": "नेटवर्क त्रुटि। कृपया अपने कनेक्शन की जाँच करें।"
+  },
+  "signup": {
+    "title": "खाता बनाएं",
+    "firstNamePlaceholder": "पहला नाम",
+    "lastNamePlaceholder": "अंतिम नाम",
+    "emailPlaceholder": "ईमेल",
+    "phoneNumberPlaceholder": "फोन नंबर",
+    "passwordPlaceholder": "पासवर्ड",
+    "signupButton": "साइन अप करें",
+    "signupButtonLoading": "खाता बनाया जा रहा है...",
+    "alreadyHaveAccount": "पहले से खाता है?",
+    "loginLinkText": "लॉगिन करें",
+    "error": "त्रुटि",
+    "errorFillAllFields": "कृपया सभी फ़ील्ड भरें",
+    "registrationSuccess": "सफलता",
+    "registrationSuccessMessage": "खाता सफलतापूर्वक बनाया गया",
+    "registrationErrorTitle": "पंजीकरण त्रुटि",
+    "networkErrorMessage": "नेटवर्क त्रुटि। कृपया अपना कनेक्शन जांचें।"
+  },
+  "navbar": {
+    "about": "हमारे बारे में",
+    "features": "विशेषताएँ",
+    "login": "लॉगिन",
+    "signup": "साइन अप करें"
+  },
+  "hero": {
+    "title1":"सशक्त बनाना",
+    "title2":"Iईमानदारी",
+    "subtitle": "यहां से शुरू होती है आपकी यात्रा स्वच्छ खेल की ओर",
+    "btn-txt":"अन्वेषण करें  फेयरप्ले"
+  },
+  "about": {
+    "title": "हमारे बारे में"
+  },
+  "features": {
+    "title1": "हमारी",
+    "title2":"विशेषताएं"
+  },
+  "newsletter": {
+    "title": "हमारे न्यूज़लेटर के लिए सदस्यता लें",
+    "placeholder": "अपना ईमेल दर्ज करें",
+    "subscribe": "सदस्यता लें"
+  },
+  "subscription": {
+    "success": "आपने सफलतापूर्वक सदस्यता ली है!",
+    "error": "कृपया एक वैध ईमेल पता दर्ज करें।"
+  },
+  "feature1": {
+    "title": "स्वच्छ खेल प्रतिबद्धता",
+    "description": "खेलों में निष्पक्ष खेल के महत्व के बारे में जानें।",
+    "details": "पता करें कि हमारा प्लेटफॉर्म डोपिंग-मुक्त खेल वातावरण का समर्थन कैसे करता है।"
+  },
+  "feature2": {
+    "title": "डोपिंग विरोधी चैटबॉट",
+    "description": "डोपिंग विरोधी सवालों के त्वरित उत्तर प्राप्त करें।",
+    "details": "हमारा एआई-संचालित चैटबॉट 24/7 आपकी सहायता के लिए तैयार है।"
+  }
+  
+}

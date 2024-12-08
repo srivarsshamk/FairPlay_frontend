@@ -1,4 +1,3 @@
-// LoginScreen.js
 import React, { useState } from 'react';
 import {
   StyleSheet,
@@ -14,16 +13,20 @@ import { Mail, Lock } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import SpaceBackground from '../components/SpaceBackground';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { useTranslation } from 'react-i18next'; 
+import LanguageSwitcher from '../components/LanguageSwitcher'; // Import the LanguageSwitcher component
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
   const navigation = useNavigation();
+
+  // Handle login function
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert(t('error'), t('signin.error_empty_fields'));
       return;
     }
 
@@ -41,43 +44,45 @@ const LoginScreen = () => {
       const responseData = await response.json();
 
       if (response.ok) {
-        // Store user data in AsyncStorage
         await AsyncStorage.setItem('userData', JSON.stringify(responseData));
         navigation.navigate('Home', { 
           updateProfile: true 
         });
       } else {
-        Alert.alert('Login Failed', responseData.detail || 'Invalid credentials');
+        Alert.alert(t('signin.login_failed'), responseData.detail || t('signin.invalid_credentials'));
       }
     } catch (error) {
       console.error('Login error:', error);
-      Alert.alert('Error', 'Network error. Please check your connection.');
+      Alert.alert(t('error'), t('signin.network_error'));
     } finally {
       setLoading(false);
     }
   };
 
-
+  // Navigate to Signup screen
   const navigateToSignup = () => {
     navigation.navigate('SignUp');
   };
 
   return (
     <View style={styles.mainContainer}>
-     <SpaceBackground />
+      <SpaceBackground />
+      
+      <LanguageSwitcher /> {/* Add the LanguageSwitcher component */}
+
       <View style={styles.container}>
         <View style={styles.loginContainer}>
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={styles.formContainer}
           >
-            <Text style={styles.title}>Sign In</Text>
+            <Text style={styles.title}>{t('signin.sign_in')}</Text>
 
             <View style={styles.inputWrapper}>
               <Mail width={20} height={20} color="#00A86B" style={styles.icon} />
               <TextInput
                 style={styles.input}
-                placeholder="Mail"
+                placeholder={t('signin.email_placeholder')}
                 placeholderTextColor="#999"
                 value={email}
                 onChangeText={setEmail}
@@ -89,7 +94,7 @@ const LoginScreen = () => {
               <Lock width={20} height={20} color="#00A86B" style={styles.icon} />
               <TextInput
                 style={styles.input}
-                placeholder="Password"
+                placeholder={t('signin.password_placeholder')}
                 placeholderTextColor="#999"
                 secureTextEntry
                 value={password}
@@ -104,15 +109,14 @@ const LoginScreen = () => {
               disabled={loading}
             >
               <Text style={styles.loginButtonText}>
-                {loading ? 'Logging in...' : 'Sign In'}
+                {loading ? t('signin.logging_in') : t('signin.sign_in')}
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={navigateToSignup} style={styles.signupLink}>
-             
               <Text style={styles.signupText}>
-        Don't have an account?{' '}
-        <Text style={styles.signupTextt}>Sign Up</Text></Text>
+                {t('signin.signup_text')} <Text style={styles.signupTextHighlight}>{t('signin.signup_link')}</Text>
+              </Text>
             </TouchableOpacity>
           </KeyboardAvoidingView>
         </View>
