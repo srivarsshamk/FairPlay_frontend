@@ -35,7 +35,13 @@
     "about": "About",
     "features": "Features",
     "login": "Login",
-    "signup": "Sign Up"
+    "signup": "Sign Up",
+    "home": "Home",
+    "infographics": "Infographics",
+    "latestNews": "Latest News",
+    "post": "Post",
+    "discussionForum": "Discussion Forum",
+    "play": "Play"
   },
   "hero": {
     "title1": "Empowering",
@@ -88,5 +94,85 @@
   "connectWithUs": {
     "title": "With Us",
     "highlightedText": "Connect"
+  },
+
+  "menuItem": {
+    "backToHome": "Back to Home",
+    "home": "Home",
+    "aboutUs": "About Us",
+    "discoverStats": "Discover Stats",
+    "caseStudiesAndLaw": "Case studies and Case Law",
+    "play": "Play",
+    "podcast": "Podcast"
+  },
+  "timelineEvents": {
+    "title": "Evolution of Fair Play in Sports"
+  },
+  "timelineEvents1": {
+    "year": "1960s",
+    "title": "Birth of Anti-Doping Movement",
+    "description": "First anti-doping initiatives introduced in international sports to promote fair competition.",
+    "achievements1": "First doping tests at Olympics",
+    "achievements2": "Creation of initial banned substance list"
+  },
+  "timelineEvents2": {
+    "year": "1999",
+    "title": "WADA Establishment",
+    "description": "World Anti-Doping Agency (WADA) formed to promote and coordinate the fight against doping in sports.",
+    "achievements1": "International standards created",
+    "achievements2": "Unified global anti-doping approach"
+  },
+  "timelineEvents3": {
+    "year": "2004",
+    "title": "World Anti-Doping Code",
+    "description": "First universal anti-doping code implemented across all sports and countries.",
+    "achievements1": "Harmonized rules",
+    "achievements2": "Standard sanctions",
+    "achievements3": "Athlete rights protection"
+  },
+  "timelineEvents4": {
+    "year": "2009",
+    "title": "NADA India Establishment",
+    "description": "National Anti-Doping Agency (NADA) established by Indian Government to promote doping-free sports.",
+    "achievements1": "Independent testing program",
+    "achievements2": "National anti-doping rules",
+    "achievements3": "Education initiatives in India"
+  },
+  "timelineEvents5": {
+    "year": "2015",
+    "title": "Enhanced Testing Methods",
+    "description": "Introduction of the Athlete Biological Passport and advanced testing procedures.",
+    "achievements1": "Long-term testing programs",
+    "achievements2": "Advanced detection methods"
+  },
+  "timelineEvents6": {
+    "year": "2021",
+    "title": "Digital Revolution & Indian Leadership",
+    "description": "Implementation of AI and data analytics in anti-doping efforts, with NADA India adopting modern approaches.",
+    "achievements1": "Smart testing strategies",
+    "achievements2": "Predictive analytics",
+    "achievements3": "Mobile app for whereabouts"
+  },
+  "timelineEvents7": {
+    "year": "2022",
+    "title": "Ministry of Youth Affairs Initiatives",
+    "description": "Enhanced support from Indian Ministry of Youth Affairs for anti-doping programs.",
+    "achievements1": "Increased funding for testing",
+    "achievements2": "National awareness campaigns",
+    "achievements3": "Enhanced laboratory facilities"
+  },
+
+  "report": {
+    "title": "SPEAK UP!",
+    "buttonText": "Report Now",
+    "textBeforeEmail": "To ensure clean sports, NADA India seeks cooperation from all stakeholders. If you observe any doping-related misconduct, report it immediately at ",
+    "email": "speakup-nada@gov.in",
+    "textAfterEmail": ". Your identity will be protected."
+  },
+  "news": {
+    "newsTickerTitle": "Latest News",
+    "seeMoreButtonText": "See More",
+    "noImageText": "No Image",
+    "noDescriptionText": "No description available"
   }
 }

@@ -1,57 +1,60 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Animated } from 'react-native';
 import { CheckCircle, Award, Star, Medal, Trophy, Flag, Shield } from 'lucide-react-native';
-
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 const AntiDopingTimeline = () => {
+  const {t}=useTranslation();
   const timelineEvents = [
     {
-      year: "1960s",
-      title: "Birth of Anti-Doping Movement",
-      description: "First anti-doping initiatives introduced in international sports to promote fair competition.",
-      icon: Flag,
-      achievements: ["First doping tests at Olympics", "Creation of initial banned substance list"]
+      year: t('timelineEvents1.year'),
+      title:  t('timelineEvents1.title'),
+      description: t('timelineEvents1.description'),
+      achievements: [t('timelineEvents1.achievements1'), t('timelineEvents1.achievements2')],
+      icon: Flag
+
     },
     {
-      year: "1999",
-      title: "WADA Establishment",
-      description: "World Anti-Doping Agency (WADA) formed to promote and coordinate the fight against doping in sports.",
+      year: t('timelineEvents2.year'),
+      title:  t('timelineEvents2.title'),
+      description: t('timelineEvents2.description'),
+      achievements: [t('timelineEvents2.achievements1'), t('timelineEvents2.achievements2')],
       icon: Award,
-      achievements: ["International standards created", "Unified global anti-doping approach"]
     },
     {
-      year: "2004",
-      title: "World Anti-Doping Code",
-      description: "First universal anti-doping code implemented across all sports and countries.",
+      year: t('timelineEvents3.year'),
+      title:  t('timelineEvents3.title'),
+      description: t('timelineEvents3.description'),
+      achievements: [t('timelineEvents3.achievements1'), t('timelineEvents3.achievements2'), t('timelineEvents3.achievements3')],
       icon: CheckCircle,
-      achievements: ["Harmonized rules", "Standard sanctions", "Athlete rights protection"]
     },
     {
-      year: "2009",
-      title: "NADA India Establishment",
-      description: "National Anti-Doping Agency (NADA) established by Indian Government to promote doping-free sports.",
+      year: t('timelineEvents4.year'),
+      title:  t('timelineEvents4.title'),
+      description: t('timelineEvents4.description'),
+      achievements: [t('timelineEvents4.achievements1'), t('timelineEvents4.achievements2'), t('timelineEvents4.achievements3')],
       icon: Shield,
-      achievements: ["Independent testing program", "National anti-doping rules", "Education initiatives in India"]
     },
     {
-      year: "2015",
-      title: "Enhanced Testing Methods",
-      description: "Introduction of the Athlete Biological Passport and advanced testing procedures.",
+      year: t('timelineEvents5.year'),
+      title:  t('timelineEvents5.title'),
+      description: t('timelineEvents5.description'),
+      achievements: [t('timelineEvents5.achievements1'), t('timelineEvents5.achievements2')],
       icon: Star,
-      achievements: ["Long-term testing programs", "Advanced detection methods"]
     },
     {
-      year: "2021",
-      title: "Digital Revolution & Indian Leadership",
-      description: "Implementation of AI and data analytics in anti-doping efforts, with NADA India adopting modern approaches.",
+      year: t('timelineEvents6.year'),
+      title:  t('timelineEvents6.title'),
+      description: t('timelineEvents6.description'),
+      achievements: [t('timelineEvents6.achievements1'), t('timelineEvents6.achievements2'), t('timelineEvents6.achievements3')],
       icon: Trophy,
-      achievements: ["Smart testing strategies", "Predictive analytics", "Mobile app for whereabouts"]
     },
     {
-      year: "2022",
-      title: "Ministry of Youth Affairs Initiatives",
-      description: "Enhanced support from Indian Ministry of Youth Affairs for anti-doping programs.",
+      year: t('timelineEvents7.year'),
+      title:  t('timelineEvents7.title'),
+      description: t('timelineEvents7.description'),
+      achievements: [t('timelineEvents7.achievements1'), t('timelineEvents7.achievements2'), t('timelineEvents7.achievements3')],
       icon: Medal,
-      achievements: ["Increased funding for testing", "National awareness campaigns", "Enhanced laboratory facilities"]
     }
   ];
 
@@ -75,7 +78,7 @@ const AntiDopingTimeline = () => {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <Text style={styles.mainTitle}>Evolution of Fair Play in Sports</Text>
+        <Text style={styles.mainTitle}>{t('timelineEvents.title')}</Text>
         
         <View style={styles.timeline}>
           {timelineEvents.map((event, index) => {

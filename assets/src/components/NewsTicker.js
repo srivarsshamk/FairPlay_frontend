@@ -10,10 +10,13 @@ import {
 } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import axios from 'axios';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const NewsTicker = () => {
+  const {t}=useTranslation();
   const [news, setNews] = useState([]);
   const navigation = useNavigation();
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -79,12 +82,12 @@ const NewsTicker = () => {
   return (
     <View style={styles.newsTickerContainer}>
       <View style={styles.newsTickerHeader}>
-        <Text style={styles.newsTickerTitle}>Latest News</Text>
+        <Text style={styles.newsTickerTitle}>{t('news.newsTickerTitle')}</Text>
         <TouchableOpacity 
           style={styles.seeMoreButton}
           onPress={handleSeeMore}
         >
-          <Text style={styles.seeMoreButtonText}>See More</Text>
+          <Text style={styles.seeMoreButtonText}>{t('news.seeMoreButtonText')}</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.newsTickerContent}>
@@ -112,7 +115,7 @@ const NewsTicker = () => {
                 />
               ) : (
                 <View style={styles.newsTickerPlaceholder}>
-                  <Text style={styles.newsTickerPlaceholderText}>No Image</Text>
+                  <Text style={styles.newsTickerPlaceholderText}>{t('news.noImageText')}</Text>
                 </View>
               )}
               <View style={styles.newsTickerItemContent}>
@@ -126,7 +129,7 @@ const NewsTicker = () => {
                   style={styles.newsTickerItemDescription} 
                   numberOfLines={2}
                 >
-                  {article.description || 'No description available'}
+                  {article.description || t('news.noDescriptionText')}
                 </Text>
               </View>
             </TouchableOpacity>

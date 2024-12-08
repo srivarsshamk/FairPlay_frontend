@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Linking, Image } from 'react-native';
-
+import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 const ReportComponent = () => {
+  const {t}=useTranslation();
   const handleReportClick = () => {
     Linking.openURL('mailto:speakup-nada@gov.in');
   };
@@ -13,13 +15,12 @@ const ReportComponent = () => {
 
       {/* Content */}
       <View style={styles.content}>
-        <Text style={styles.title}>SPEAK UP!</Text>
+        <Text style={styles.title}>{t('report.title')}</Text>
         <TouchableOpacity style={styles.button} onPress={handleReportClick}>
-          <Text style={styles.buttonText}>Report Now</Text>
+          <Text style={styles.buttonText}>{t('report.buttonText')}</Text>
         </TouchableOpacity>
         <Text style={styles.text}>
-          To ensure clean sports, NADA India seeks cooperation from all stakeholders. If you observe any doping-related misconduct, report it immediately at{' '}
-          <Text style={styles.email}>speakup-nada@gov.in</Text>. Your identity will be protected.
+        {t('report.textBeforeEmail')}<Text style={styles.email}>{t('report.email')}</Text>{t('report.textAfterEmail')}
         </Text>
       </View>
     </View>

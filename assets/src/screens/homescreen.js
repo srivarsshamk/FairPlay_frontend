@@ -19,11 +19,15 @@ import ReportComponent from "../components/ReportComponent";
 import NewsTicker from "../components/NewsTicker";
 import CustomDrawer from "../components/CustomDrawer";
 import ChatbotComponent from "../components/ChatbotComponent";
+import LanguageSwitcher from "../components/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
+
 export default function HomeScreen() {
   const navigation = useNavigation();
   const [iconScale, setIconScale] = useState({});
   const [showNews, setShowNews] = useState(false);
-
+  const { t } = useTranslation();
+  
   // Persistent animated value
   const scanButtonAnim = useRef(new Animated.Value(0)).current;
 
@@ -86,34 +90,35 @@ export default function HomeScreen() {
       <SpaceBackground style={styles.backgroundContainer} />
       <CustomDrawer />
       <View style={styles.contentContainer}>
+        <LanguageSwitcher/>
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
           <View style={styles.navBar}>
             <TouchableOpacity style={styles.navButton}>
-              <Text style={styles.navButtonText}>Home</Text>
+              <Text style={styles.navButtonText}>{t('navbar.home')}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("ModuleScreen")}>
-              <Text style={styles.navButtonText}>Infographics</Text>
+              <Text style={styles.navButtonText}>{t('navbar.infographics')}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.navButton} onPress={handleNewsClick}>
-              <Text style={styles.navButtonText}>Latest News</Text>
+              <Text style={styles.navButtonText}>{t('navbar.latestNews')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.navButton}
               onPress={() => navigation.navigate("Post")}
             >
-              <Text style={styles.navButtonText}>Post</Text>
+              <Text style={styles.navButtonText}>{t('navbar.post')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.navButton}
               onPress={() => navigation.navigate("Forum")}
             >
-              <Text style={styles.navButtonText}>Discussion Forum</Text>
+              <Text style={styles.navButtonText}>{t('navbar.discussionForum')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.navButton}
               onPress={() => navigation.navigate("Game")}
             >
-              <Text style={styles.navButtonText}>Play</Text>
+              <Text style={styles.navButtonText}>{t('navbar.play')}</Text>
             </TouchableOpacity>
           </View>
 

@@ -12,12 +12,13 @@ import Animated, {
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from 'react';
 import { useNavigation } from "@react-navigation/native";
-
+import { useTranslation } from 'react-i18next';
 
 const DRAWER_WIDTH = Dimensions.get('window').width * 0.3; // Reduced width
 const ITEM_DELAY = 100;
 
 const CustomDrawer = () => {
+  const {t}=useTranslation();
   const navigation = useNavigation();
   const translateX = useSharedValue(-DRAWER_WIDTH);
   const [isOpen, setIsOpen] = useState(false);
@@ -127,43 +128,43 @@ const CustomDrawer = () => {
               }}
             >
               <Ionicons name="arrow-back-outline" size={24} color="#fff" />
-              <Text style={styles.backButtonText}>Back to Home</Text>
+              <Text style={styles.backButtonText}>{t('menuItem.backToHome')}</Text>
             </TouchableOpacity>
 
             <MenuButton 
               icon="home-outline" 
-              text="Home" 
+              text={t('menuItem.home')}
               index={0}
               onPress={() => navigation.navigate('Home')}
             />
             <MenuButton 
               icon="information-circle-outline" 
-              text="About Us" 
+              text={t('menuItem.aboutUs')}
               index={1}
               onPress={() => {}}
             />
             <MenuButton 
               icon="stats-chart" 
-              text="Discover Stats" 
+              text={t('menuItem.discoverStats')}
               index={2}
               onPress={() => navigation.navigate('CaseStud')}
             />
             <MenuButton 
               icon="file-tray" 
-              text="Case studies and Case Law" 
+              text={t('menuItem.caseStudiesAndLaw')}
               index={3}
               onPress={() => navigation.navigate('CaseStudies')}  
             />
             <MenuButton 
               icon="game-controller-outline" 
-              text="Play" 
+              text={t('menuItem.play')}
               index={4}
               onPress={() => navigation.navigate('Game')}
             />
             {/* Added Podcast Button */}
             <MenuButton 
               icon="mic" 
-              text="Podcast" 
+              text={t('menuItem.podcast')}
               index={5}
               onPress={() => navigation.navigate('Podcast')}
             />
