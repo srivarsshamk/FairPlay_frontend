@@ -16,10 +16,13 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import Tesseract from "tesseract.js";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const GEMINI_API_URL = "http://127.0.0.1:8000/gemini";
 
 const WADASubstanceChecker = ({ extractedText }) => {
+  const { t } = useTranslation();
   const [analysis, setAnalysis] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState(null);
@@ -27,7 +30,7 @@ const WADASubstanceChecker = ({ extractedText }) => {
 
   const analyzeText = async (text) => {
     if (!text?.trim()) {
-      setError("No text provided for analysis");
+      setError(t('noTextError'));
       return;
     }
 
@@ -36,7 +39,7 @@ const WADASubstanceChecker = ({ extractedText }) => {
 
     try {
       const params = new URLSearchParams({
-        prompt: `Analyze the following text and identify any substances that are banned according to the WADA Prohibited List.Also provide food first alternatives. Text to analyze: ${text}.`,
+        prompt: `Analyze the following text and identify any substances that are banned according to the WADA Prohibited List. Also provide food first alternatives. Text to analyze: ${text}.`,
         max_tokens: 500,
       });
 
@@ -60,8 +63,11 @@ const WADASubstanceChecker = ({ extractedText }) => {
       setAnalysis(data.data);
     } catch (err) {
       console.error("Analysis error:", err);
-      setError("Failed to analyze substances. Please try again later.");
-      Alert.alert("Error", "Failed to analyze substances. Please try again.");
+      setError(t('substanceAnalysis.analysisError'));
+      Alert.alert(
+        t('substanceAnalysis.analysisErrorAlert.title'), 
+        t('substanceAnalysis.analysisErrorAlert.message')
+      );
     } finally {
       setAnalyzing(false);
       Animated.timing(fadeAnim, {
@@ -84,13 +90,13 @@ const WADASubstanceChecker = ({ extractedText }) => {
     <View style={styles.analysisContainer}>
       <View style={styles.analysisHeaderContainer}>
         <Ionicons name="shield-checkmark" size={24} color="#2ECC71" />
-        <Text style={styles.analysisHeaderText}>Substance Analysis</Text>
+        <Text style={styles.analysisHeaderText}>{t('substanceAnalysis.header')}</Text>
       </View>
 
       {analyzing && (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#3498DB" />
-          <Text style={styles.loadingText}>Scanning substances...</Text>
+          <Text style={styles.loadingText}>{t('substanceAnalysis.scanning')}</Text>
         </View>
       )}
 
@@ -102,7 +108,7 @@ const WADASubstanceChecker = ({ extractedText }) => {
             style={styles.retryButton}
             onPress={() => analyzeText(extractedText)}
           >
-            <Text style={styles.retryButtonText}>Retry Analysis</Text>
+            <Text style={styles.retryButtonText}>{t('retryButton')}</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -112,15 +118,15 @@ const WADASubstanceChecker = ({ extractedText }) => {
           {analysis.toLowerCase().includes("no banned substances") ? (
             <View style={styles.safeContainer}>
               <Ionicons name="checkmark-circle" size={48} color="#2ECC71" />
-              <Text style={styles.safeText}>Safe Substances</Text>
+              <Text style={styles.safeText}>{t('analysisResults.safe.title')}</Text>
               <Text style={styles.safeSubtext}>
-                No prohibited substances detected
+                {t('analysisResults.safe.subtitle')}
               </Text>
             </View>
           ) : (
             <View style={styles.warningContainer}>
               <Ionicons name="close-circle" size={48} color="#E74C3C" />
-              <Text style={styles.warningText}>Banned Substances Detected</Text>
+              <Text style={styles.warningText}>{t('analysisResults.warning.title')}</Text>
               
                 {analysis.split("\n").map((line, index) => (
                   <Text key={index} style={[
@@ -140,6 +146,7 @@ const WADASubstanceChecker = ({ extractedText }) => {
 };
 
 const ImageTextExtractor = ({ navigation }) => {
+  const { t } = useTranslation();
   const [imageUri, setImageUri] = useState(null);
   const [extractedText, setExtractedText] = useState("");
   const [loading, setLoading] = useState(false);
@@ -150,9 +157,9 @@ const ImageTextExtractor = ({ navigation }) => {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== "granted") {
         Alert.alert(
-          "Permission Required",
-          "Camera roll permissions are needed to upload images",
-          [{ text: "OK" }]
+          t('permissionAlert.title'),
+          t('permissionAlert.message'),
+          [{ text: t('permissionAlert.buttonText') }]
         );
         return false;
       }
@@ -196,7 +203,10 @@ const ImageTextExtractor = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error picking image:", error);
-      Alert.alert("Error", "Failed to pick image. Please try again.");
+      Alert.alert(
+        t('imagePickError.title'), 
+        t('imagePickError.message')
+      );
     }
   };
 
@@ -223,9 +233,9 @@ const ImageTextExtractor = ({ navigation }) => {
     } catch (error) {
       console.error("Error extracting text:", error);
       Alert.alert(
-        "Error",
-        "Failed to extract text from the image. Please try a clearer image.",
-        [{ text: "OK" }]
+        t('textExtractionError.title'),
+        t('textExtractionError.message'),
+        [{ text: t('textExtractionError.buttonText') }]
       );
     } finally {
       setLoading(false);
@@ -249,9 +259,9 @@ const ImageTextExtractor = ({ navigation }) => {
             </TouchableOpacity>
             
             <Ionicons name="medical" size={40} color="#2ECC71" />
-            <Text style={styles.headerTitle}>WADA Substance Scanner</Text>
+            <Text style={styles.headerTitle}>{t('headerTitle')}</Text>
             <Text style={styles.subHeaderText}>
-              Upload an image to check for prohibited substances
+              {t('subHeaderText')}
             </Text>
           </View>
 
@@ -269,7 +279,10 @@ const ImageTextExtractor = ({ navigation }) => {
           >
             <Ionicons name="cloud-upload" size={24} color="white" />
             <Text style={styles.uploadButtonText}>
-              {loading ? "Processing..." : "Upload Image"}
+              {loading 
+                ? t('uploadButton.processing') 
+                : t('uploadButton.default')
+              }
             </Text>
           </TouchableOpacity>
 
@@ -286,7 +299,7 @@ const ImageTextExtractor = ({ navigation }) => {
           {loading && (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color="#3498DB" />
-              <Text style={styles.loadingText}>Extracting text...</Text>
+              <Text style={styles.loadingText}>{t('substanceAnalysis.extractingText')}</Text>
             </View>
           )}
 

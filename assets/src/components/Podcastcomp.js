@@ -1,9 +1,12 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Linking, Image } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import BackButton from './BackButton';
-import SpaceBackground from '../components/SpaceBackground'; // Import SpaceBackground
-
+import SpaceBackground from '../components/SpaceBackground';
+import LanguageSwitcher from './LanguageSwitcher';
 const PodcastComp = () => {
+  const { t } = useTranslation();
+
   const openSpotifyLink = () => {
     Linking.openURL('https://open.spotify.com/show/4tBispbp2qYjTR3Loan3t5');
   };
@@ -14,9 +17,7 @@ const PodcastComp = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* SpaceBackground component to act as a background */}
       <SpaceBackground style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
-
       <ScrollView vertical={true} contentContainerStyle={{ flexGrow: 1 }}>
         <View style={{
           backgroundColor: '#0A0A0A',
@@ -30,10 +31,9 @@ const PodcastComp = () => {
           elevation: 12,
           maxWidth: 450,
           alignSelf: 'center',
-          zIndex: 1, // Ensure the content is above the background
+          zIndex: 1,
         }}>
           <BackButton />
-          {/* Header with Podcast Image and Title */}
           <View style={{
             flexDirection: 'row',
             alignItems: 'center',
@@ -60,19 +60,18 @@ const PodcastComp = () => {
                 fontWeight: '700',
                 marginBottom: 8
               }}>
-                Anti-Doping Podcast
+                {t('podcastTitle')}
               </Text>
               <Text style={{
                 color: '#9CA3AF',
                 fontSize: 16,
                 fontStyle: 'italic'
               }}>
-                Championing Clean Sport
+                {t('podcastSubtitle')}
               </Text>
             </View>
           </View>
 
-          {/* Sections */}
           <View style={{
             backgroundColor: '#111111',
             borderRadius: 12,
@@ -85,16 +84,14 @@ const PodcastComp = () => {
               fontWeight: '600',
               marginBottom: 15
             }}>
-              About the Podcast
+              {t('aboutPodcastTitle')}
             </Text>
             <Text style={{
               color: '#D1D5DB',
               fontSize: 16,
               lineHeight: 24
             }}>
-              Dive deep into anti-doping research, technology, law, and policy. This podcast, presented by the 
-              Partnership for Clean Competition, features expert insights from scientists, sport organizations, 
-              athletes, and clean sport champions.
+              {t('aboutPodcastDescription')}
             </Text>
           </View>
 
@@ -110,14 +107,11 @@ const PodcastComp = () => {
               fontWeight: '600',
               marginBottom: 15
             }}>
-              Mission
+              {t('missionTitle')}
             </Text>
+            <LanguageSwitcher />
             <View>
-              {[ 
-                'Increase awareness of anti-doping issues', 
-                'Educate on anti-doping science and policies', 
-                'Inspire careers in anti-doping professions' 
-              ].map((mission, index) => (
+              {t('missionItems', { returnObjects: true }).map((item, index) => (
                 <View key={index} style={{
                   flexDirection: 'row',
                   alignItems: 'center',
@@ -134,7 +128,7 @@ const PodcastComp = () => {
                     fontSize: 16,
                     flex: 1
                   }}>
-                    {mission}
+                    {item}
                   </Text>
                 </View>
               ))}
@@ -153,25 +147,24 @@ const PodcastComp = () => {
               fontWeight: '600',
               marginBottom: 15
             }}>
-              Credits
+              {t('creditsTitle')}
             </Text>
             <Text style={{
               color: '#D1D5DB',
               fontSize: 16,
               marginBottom: 8
             }}>
-              Host: Marie McNeely, PhD
+              {t('host')}
             </Text>
             <Text style={{
               color: '#9CA3AF',
               fontSize: 14,
               fontStyle: 'italic'
             }}>
-              Presented by: Partnership for Clean Competition
+              {t('presentedBy')}
             </Text>
           </View>
 
-          {/* Spotify Button */}
           <TouchableOpacity
             onPress={openSpotifyLink}
             style={{
@@ -188,7 +181,6 @@ const PodcastComp = () => {
               elevation: 10
             }}
           >
-            {/* Custom Spotify Logo Image */}
             <Image
               source={{ uri: 'https://www.dropbox.com/scl/fi/n9i6c1c6b8l4pm9bh72al/spotify.jpg?rlkey=5xd4qjz6iiwk7q3od6f1ooz9u&st=k49gsggu&raw=1' }}
               style={{ width: 30, height: 30, marginRight: 15 }}
@@ -199,11 +191,10 @@ const PodcastComp = () => {
               fontSize: 18,
               letterSpacing: 0.6
             }}>
-              Listen on Spotify
+              {t('spotifyButton')}
             </Text>
           </TouchableOpacity>
 
-          {/* Apple Podcasts Button */}
           <TouchableOpacity
             onPress={openApplePodcastLink}
             style={{
@@ -221,7 +212,6 @@ const PodcastComp = () => {
               marginTop: 20
             }}
           >
-            {/* Custom Apple Podcasts Logo Image */}
             <Image
               source={{ uri: 'https://www.dropbox.com/scl/fi/nxph234rv955663sdk000/apple.png?rlkey=shtfahd8mhx04wa1r7xeptfl5&st=uzx8w3rn&raw=1' }}
               style={{ width: 30, height: 30, marginRight: 15 }}
@@ -232,7 +222,7 @@ const PodcastComp = () => {
               fontSize: 18,
               letterSpacing: 0.6
             }}>
-              Listen on Apple Podcasts
+              {t('appleButton')}
             </Text>
           </TouchableOpacity>
         </View>
