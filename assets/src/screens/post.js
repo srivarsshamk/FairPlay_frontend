@@ -349,13 +349,13 @@ export default function PostsScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.navButton}>
           <Text style={styles.navButtonText}>Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton}>
-          <Text style={styles.navButtonText}>About Us</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('ModuleScreen')}style={styles.navButton}>
+          <Text style={styles.navButtonText}>Infographics</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navButton}>
           <Text style={styles.navButtonText}>Posts</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton}>
+        <TouchableOpacity onPress={() => navigation.navigate('Forum')}style={styles.navButton}>
           <Text style={styles.navButtonText}>Discussion Forum</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Game')} style={styles.navButton}>

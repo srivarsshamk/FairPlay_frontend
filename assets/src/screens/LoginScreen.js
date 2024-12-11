@@ -1,4 +1,3 @@
-// LoginScreen.js
 import React, { useState } from 'react';
 import {
   StyleSheet,
@@ -14,15 +13,18 @@ import { Mail, Lock } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import SpaceBackground from '../components/SpaceBackground';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [category, setCategory] = useState('');
+  const [dropdownOpen, setDropdownOpen] = useState(false); // New state for category
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
+
   const handleLogin = async () => {
-    if (!email || !password) {
+    if (!email || !password || !category) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
@@ -33,18 +35,19 @@ const LoginScreen = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, category }), // Include category in the request body
       });
 
       const responseData = await response.json();
+      console.log(responseData)
 
       if (response.ok) {
         // Store user data in AsyncStorage
         await AsyncStorage.setItem('userData', JSON.stringify(responseData));
-        navigation.navigate('Home', { 
-          updateProfile: true 
+        navigation.navigate('Home', {
+          updateProfile: true,
         });
       } else {
         Alert.alert('Login Failed', responseData.detail || 'Invalid credentials');
@@ -57,18 +60,17 @@ const LoginScreen = () => {
     }
   };
 
-
   const navigateToSignup = () => {
     navigation.navigate('SignUp');
   };
 
   return (
     <View style={styles.mainContainer}>
-     <SpaceBackground />
+      <SpaceBackground />
       <View style={styles.container}>
         <View style={styles.loginContainer}>
           <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={styles.formContainer}
           >
             <Text style={styles.title}>Sign In</Text>
@@ -98,6 +100,24 @@ const LoginScreen = () => {
               />
             </View>
 
+            <DropDownPicker
+              open={dropdownOpen}
+              value={category}
+              items={[
+                { label: 'Athlete', value: 'athlete' },
+                { label: 'Student', value: 'student' },
+                { label: 'Coach', value: 'coach' },
+                { label: 'Experts', value: 'experts' },
+                { label: 'Others', value: 'others' },
+              ]}
+              setOpen={setDropdownOpen}
+              setValue={setCategory}
+              placeholder="Select Category"
+              style={styles.dropdown}
+              dropDownContainerStyle={styles.dropdownContainer}
+              disabled={loading}
+            />
+
             <TouchableOpacity
               style={[styles.loginButton, loading && styles.loginButtonDisabled]}
               onPress={handleLogin}
@@ -109,10 +129,10 @@ const LoginScreen = () => {
             </TouchableOpacity>
 
             <TouchableOpacity onPress={navigateToSignup} style={styles.signupLink}>
-             
               <Text style={styles.signupText}>
-        Don't have an account?{' '}
-        <Text style={styles.signupTextt}>Sign Up</Text></Text>
+                Don't have an account?{' '}
+                <Text style={styles.signupTextt}>Sign Up</Text>
+              </Text>
             </TouchableOpacity>
           </KeyboardAvoidingView>
         </View>
@@ -120,6 +140,7 @@ const LoginScreen = () => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -166,6 +187,19 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: 'transparent',
   },
+  dropdownWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(26,26,26,0.8)',
+    borderWidth: 2,
+    borderColor: '#999',
+    borderRadius: 8,
+    marginBottom: 16,
+    paddingHorizontal: 16,
+    height: 48,
+    width: '100%',
+    backgroundColor: 'transparent',
+  },
   icon: {
     marginRight: 8
   },
@@ -173,6 +207,11 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: '#FFFFFF'
+  },
+  dropdownText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    flex: 1,
   },
   loginButton: {
     backgroundColor: '#FFFFFF',
@@ -205,5 +244,6 @@ const styles = StyleSheet.create({
     fontSize: 16
   }
 });
+
 
 export default LoginScreen;

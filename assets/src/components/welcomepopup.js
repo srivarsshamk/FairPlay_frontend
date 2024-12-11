@@ -86,7 +86,7 @@ const WelcomePopup = ({ onClose }) => {
         style={styles.closeButton}
         onPress={() => {
           setIsVisible(false);
-          onClose && onClose();
+          onClose &&onClose();
         }}
       >
         <Ionicons name="close-circle" size={24} color="white" />
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     top: -10,
     right: -10,
     zIndex: 1001,
-    backgroundColor: '#03615b',
+    backgroundColor: '#002D04',
     borderRadius: 12,
   },
   avatarContainer: {
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     height: 80,
   },
   textBubble: {
-    backgroundColor: '#03615b',
+    backgroundColor: '#002D04',
     padding: 15,
     borderRadius: 15,
     width: 250,
@@ -180,3 +180,4 @@ const styles = StyleSheet.create({
 });
 
 export default WelcomePopup;
+

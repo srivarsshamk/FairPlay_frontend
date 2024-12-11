@@ -61,12 +61,51 @@ const suggestedProfiles = [
 ];
 
 const SuggestedProfile = ({ profile, mini = false }) => {
+  const navigation = useNavigation();
+
+  // Construct the profile picture URL
+  const profileImageUrl = profile.dp_url 
+    ? `http://127.0.0.1:8000/images/${profile.dp_url.split('/').pop()}`
+    : 'https://via.placeholder.com/50';
+
+  // Handle connect button press
+  const handleConnectPress = async () => {
+    try {
+      // Retrieve the current user's ID
+      const storedUserData = await AsyncStorage.getItem('userData');
+      const currentUser = storedUserData ? JSON.parse(storedUserData) : null;
+
+      if (!currentUser) {
+        Alert.alert('Error', 'User not logged in');
+        return;
+      }
+
+      // Navigate to Message screen
+      navigation.navigate("Message", { 
+        senderId: currentUser.id,
+        receiverId: profile.id, 
+        receiverName: `${profile.first_name} ${profile.last_name}`
+      });
+    } catch (error) {
+      console.error('Connect navigation error:', error);
+      Alert.alert('Error', 'Could not initiate conversation');
+    }
+  };
+
   if (mini) {
     return (
       <View style={styles.connectionPreview}>
-        <Image source={{ uri: profile.image }} style={styles.connectionPreviewImage} />
-        <Text style={styles.connectionPreviewName}>{profile.name}</Text>
-        <TouchableOpacity style={styles.miniConnectButton}>
+        <Image 
+          source={{ uri: profileImageUrl }} 
+          style={styles.connectionPreviewImage} 
+        />
+        <Text style={styles.connectionPreviewName}>
+          {`${profile.first_name} ${profile.last_name}`}
+        </Text>
+        <TouchableOpacity 
+          style={styles.miniConnectButton}
+          onPress={handleConnectPress}
+        >
           <Text style={styles.miniConnectButtonText}>Connect</Text>
         </TouchableOpacity>
       </View>
@@ -75,26 +114,38 @@ const SuggestedProfile = ({ profile, mini = false }) => {
 
   return (
     <View style={styles.suggestedProfile}>
-      <Image source={{ uri: profile.image }} style={styles.suggestedProfileImage} />
+      <Image 
+        source={{ uri: profileImageUrl }} 
+        style={styles.suggestedProfileImage} 
+      />
       <View style={styles.suggestedProfileInfo}>
-        <Text style={styles.suggestedProfileName}>{profile.name}</Text>
-        <Text style={styles.suggestedProfileTitle}>{profile.title}</Text>
+        <Text style={styles.suggestedProfileName}>
+          {`${profile.first_name} ${profile.last_name}`}
+        </Text>
+        <Text style={styles.suggestedProfileTitle}>
+          {profile.bio || 'Anti-Doping Professional'}
+        </Text>
         <Text style={styles.suggestedProfileConnections}>
-          {profile.connections} connections
+          {profile.state && profile.country 
+            ? `${profile.state}, ${profile.country}`
+            : 'Location not specified'}
         </Text>
       </View>
-      <TouchableOpacity style={styles.connectButton}>
+      <TouchableOpacity 
+        style={styles.connectButton}
+        onPress={handleConnectPress}
+      >
         <Text style={styles.connectButtonText}>Connect</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-
 const profilescreen = () => {
   
     // State to track the visibility of the modal
     const [modalVisible, setModalVisible] = useState(false);
+
     
     // User data
     
@@ -109,6 +160,8 @@ const profilescreen = () => {
   });
   const fileInputRef = useRef(null);
   const [showContactInfo, setShowContactInfo] = useState(false);
+  const [suggestedProfiles, setSuggestedProfiles] = useState([]);
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -155,6 +208,41 @@ const profilescreen = () => {
       console.error('Error fetching profile details:', error);
     }
   };
+
+  useEffect(() => {
+    const fetchSuggestedProfiles = async () => {
+      try {
+        // Retrieve the logged-in user's data
+        const storedUserData = await AsyncStorage.getItem('userData');
+        const loggedInUser = storedUserData ? JSON.parse(storedUserData) : null;
+
+        const response = await axios.get('http://127.0.0.1:8000/users');
+        
+        // Filter out the logged-in user and take the first 3 remaining users
+        const filteredProfiles = response.data.data
+          .filter(profile => profile.id !== loggedInUser?.id)
+          .slice(0, 3);
+
+        setSuggestedProfiles(filteredProfiles);
+      } catch (error) {
+        console.error('Error fetching suggested profiles:', error);
+        // Fallback to default profiles if fetch fails
+        setSuggestedProfiles([
+          {
+            id: 1,
+            first_name: 'Dr. Alex',
+            last_name: 'Johnson',
+            bio: 'Senior Doping Control Officer',
+            dp_url: null,
+            state: 'California',
+            country: 'USA'
+          }
+        ]);
+      }
+    };
+
+    fetchSuggestedProfiles();
+  }, []);
 
   
 
@@ -240,8 +328,8 @@ const profilescreen = () => {
         const fileExtension = mediaFile.uri.split('.').pop();
         formData.append('file', {
           uri: mediaFile.uri,
-          type: `image/${fileExtension}`,
-          name: `profile_picture.${fileExtension}`,
+          type: `image/${fileExtension},
+          name: profile_picture.${fileExtension}`,
         });
         setProfilePicture(mediaFile.uri);
       }
@@ -353,7 +441,7 @@ const profilescreen = () => {
               </Text>
               <Text style={styles.location}>
               {
-                    `${userData.state}, ${userData.country}` 
+                    `${userData.state}, ${userData.country}`
               }
               </Text>
               <View style={styles.container}>
@@ -412,26 +500,33 @@ const profilescreen = () => {
         </ScrollView>
 
         <View style={styles.sidebar}>
-          <ScrollView 
-            style={styles.scrollView}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
-          >
-            <View style={styles.sidebarCard}>
-              <Text style={styles.sidebarTitle}>Anti-Doping Professionals You May Know</Text>
-              {suggestedProfiles.map((profile) => (
-                <SuggestedProfile key={profile.id} profile={profile} />
+        <ScrollView 
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <View style={styles.sidebarCard}>
+            <Text style={styles.sidebarTitle}>Anti-Doping Professionals You May Know</Text>
+            {suggestedProfiles.map((profile) => (
+              <SuggestedProfile 
+                key={profile.id} 
+                profile={profile} 
+              />
+            ))}
+          </View>
+
+          <View style={styles.sidebarCard}>
+            <Text style={styles.sidebarTitle}>Recommended Professionals</Text>
+            <View style={styles.connectionsWidget}>
+              {suggestedProfiles.slice(0, 2).map((profile) => (
+                <SuggestedProfile 
+                  key={profile.id} 
+                  profile={profile} 
+                  mini={true} 
+                />
               ))}
             </View>
-
-            <View style={styles.sidebarCard}>
-              <Text style={styles.sidebarTitle}>Recommended Professionals</Text>
-              <View style={styles.connectionsWidget}>
-                {suggestedProfiles.slice(0, 2).map((profile) => (
-                  <SuggestedProfile key={profile.id} profile={profile} mini={true} />
-                ))}
-              </View>
-            </View>
+          </View>            
 
             <View style={styles.sidebarCard}>
               <View style={styles.sidebarHeader}>
@@ -467,8 +562,7 @@ const profilescreen = () => {
   );
 };
 
-// Note: Styles are not included for brevity. 
-// You would need to include the existing styles from the original component.
+
 
 
 

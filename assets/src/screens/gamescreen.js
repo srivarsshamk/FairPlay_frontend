@@ -6,6 +6,7 @@ import { Audio } from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import WelcomePopup from '../components/welcomepopup';
 import Leaderboard from '../components/leaderboard';
+import SpaceBackground from '../components/SpaceBackground';
 
 export default function GameScreen({ navigation }) {
   const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
@@ -187,12 +188,9 @@ export default function GameScreen({ navigation }) {
   };
 
   return (
-    <ImageBackground
-      source={require('../../images/game.jpg')}
-      style={styles.imageBackground}
-      resizeMode="cover"
-      blurRadius={7}
-    >
+    <View style={styles.containerWithBlackBackground}>
+            <SpaceBackground style={styles.backgroundContainer} />
+  
       <View style={styles.container}>
         {/* Menu Buttons */}
         <TouchableOpacity onPress={toggleLeftDrawer} style={styles.leftMenuButton}>
@@ -207,13 +205,13 @@ export default function GameScreen({ navigation }) {
           <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.navButton}>
             <Text style={styles.navButtonText}>Home</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.navButtonText}>About Us</Text>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("ModuleScreen")}>
+            <Text style={styles.navButtonText}>Infographics</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("Post")}>
             <Text style={styles.navButtonText}>Posts</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}>
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("Forum")}>
             <Text style={styles.navButtonText}>Discussion Forum</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navButton}>
@@ -315,7 +313,7 @@ export default function GameScreen({ navigation }) {
           />
         </TouchableOpacity>
       </View>
-    </ImageBackground>
+      </View>
   );
 }
 
@@ -329,6 +327,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+  },
+  containerWithBlackBackground: {
+    flex: 1,
+    backgroundColor: 'black',
   },
   welcomeText: {
     fontSize: 32,
@@ -359,7 +361,7 @@ const styles = StyleSheet.create({
     top: 30,
     left: 15,
     zIndex: 1001,
-    backgroundColor: '#03615b',
+    backgroundColor: '#002D04',
     padding: 10,
     borderRadius: 50,
   },
@@ -368,7 +370,7 @@ const styles = StyleSheet.create({
     top: 30,
     right: 15,
     zIndex: 1001,
-    backgroundColor: '#03615b',
+    backgroundColor: '#002D04',
     padding: 10,
     borderRadius: 50,
   },
@@ -381,7 +383,7 @@ const styles = StyleSheet.create({
     width: "80%",
     left: "10%",
     padding: 10,
-    backgroundColor: "#03615b",
+    backgroundColor: "#002D04",
     borderRadius: 20,
     elevation: 5,
     shadowColor: "#000",
@@ -403,7 +405,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: 250,
     height: '100%',
-    backgroundColor: '#03615b',
+    backgroundColor: '#002D04',
     paddingTop: 100,
     zIndex: 900,
   },
@@ -413,7 +415,7 @@ const styles = StyleSheet.create({
     right: 0,
     width: 250,
     height: '100%',
-    backgroundColor: '#03615b',
+    backgroundColor: '#002D04',
     paddingTop: 100,
     zIndex: 900,
   },
@@ -464,20 +466,20 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#03615b',
+    backgroundColor: '#002D04',
     borderRadius: 10,
   },
   progressText: {
     textAlign: 'center',
     marginTop: 5,
-    color: '#03615b',
+    color: '#002D04',
     fontWeight: 'bold',
   },
   audioPlayerButton: {
     position: 'absolute',
     bottom: 20,
     right: 20,
-    backgroundColor: '#03615b',
+    backgroundColor: '#002D04',
     width: 50,
     height: 50,
     borderRadius: 25,

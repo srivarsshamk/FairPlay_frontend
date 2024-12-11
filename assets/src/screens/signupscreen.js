@@ -13,6 +13,7 @@ import {
 import { Mail, Lock, User, Phone } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import SpaceBackground from '../components/SpaceBackground';
+import { Picker } from '@react-native-picker/picker'; // Import Picker
 
 const SignupScreen = () => {
   const [firstName, setFirstName] = useState('');
@@ -20,11 +21,12 @@ const SignupScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [userType, setUserType] = useState(''); // State for dropdown selection
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
   const handleSignup = async () => {
-    if (!firstName || !lastName || !email || !password || !phoneNumber) {
+    if (!firstName || !lastName || !email || !password || !phoneNumber || !userType) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
@@ -37,6 +39,7 @@ const SignupScreen = () => {
         email,
         password,
         phone_number: phoneNumber,
+        category: userType, // Send selected user type
         age:null,
         bio:null
       };
@@ -151,6 +154,20 @@ const SignupScreen = () => {
                 />
               </View>
 
+              {/* Dropdown for user type */}
+              <View style={styles.inputWrapper}>
+                <Picker
+                  selectedValue={userType}
+                  onValueChange={(itemValue) => setUserType(itemValue)}
+                  style={styles.picker}
+                >
+                  <Picker.Item label="Student" value="student" />
+                  <Picker.Item label="Athlete" value="athlete" />
+                  <Picker.Item label="Coach" value="coach" />
+                  <Picker.Item label="Others" value="others" />
+                </Picker>
+              </View>
+
               <TouchableOpacity
                 style={[styles.signupButton, loading && styles.signupButtonDisabled]}
                 onPress={handleSignup}
@@ -185,7 +202,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   signupContainer: {
-    width: '20%',
+    width: '80%', // Adjusted to avoid covering the button
     height: '80%',
     backgroundColor: 'rgba(0,0,0,0.7)',
     borderWidth: 2,
@@ -198,7 +215,7 @@ const styles = StyleSheet.create({
   formContainer: {
     width: '100%',
     alignItems: 'center',
-    marginBottom:30,
+    marginBottom: 30,
   },
   scrollContainer: {
     flexGrow: 1,
@@ -232,6 +249,10 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: '#FFFFFF',
+  },
+  picker: {
+    flex: 1,
+    color: 'black',
   },
   signupButton: {
     backgroundColor: '#FFFFFF',

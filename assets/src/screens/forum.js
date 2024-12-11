@@ -130,8 +130,8 @@ const DiscussionForumScreen = ({ navigation }) => {
         >
           <Text style={styles.navButtonText}>Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton}>
-          <Text style={styles.navButtonText}>About Us</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('ModuleScreen')} style={styles.navButton}>
+          <Text style={styles.navButtonText}>Infographics</Text>
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.navButton} 
@@ -142,7 +142,7 @@ const DiscussionForumScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.navButton}>
           <Text style={styles.navButtonText}>Discussion Forum</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton}>
+        <TouchableOpacity onPress={() => navigation.navigate('Game')}style={styles.navButton}>
           <Text style={styles.navButtonText}>Play</Text>
         </TouchableOpacity>
       </View>
@@ -199,21 +199,22 @@ const styles = StyleSheet.create({
     width: "80%",
     left: "10%",
     padding: 10,
-    backgroundColor: "#03615b",
+    backgroundColor: "#002D04",
     borderRadius: 20,
     elevation: 5,
-    shadowColor: "#000",
+    shadowColor: "#00A86B",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
     zIndex: 1000,
   },
   navButton: {
-    padding: 10,
+    padding: 8,
   },
   navButtonText: {
-    color: "#fff",
-    fontSize: 16,
+    color: '#C9D1D9',
+    fontSize: 14,
+    fontWeight: '500',
   },
   createForumContainer: {
     marginTop: height * 0.15,
