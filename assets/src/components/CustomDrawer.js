@@ -138,9 +138,9 @@ const CustomDrawer = () => {
             />
             <MenuButton 
               icon="information-circle-outline" 
-              text="About Us" 
+              text="TUE" 
               index={1}
-              onPress={() => {}}
+              onPress={() =>  navigation.navigate('TUE')}
             />
             <MenuButton 
               icon="stats-chart" 

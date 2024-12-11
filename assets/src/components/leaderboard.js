@@ -41,7 +41,7 @@ const Leaderboard = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#03615b" />
+        <ActivityIndicator size="large" color="#002D04" />
       </View>
     );
   }
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   totalScoreCard: {
-    backgroundColor: '#03615b',
+    backgroundColor: '#002D04',
     padding: 15,
     borderRadius: 10,
     marginBottom: 20,
@@ -149,13 +149,13 @@ const styles = StyleSheet.create({
   leaderboardTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#03615b',
+    color: '#002D04',
     textAlign: 'center',
     marginBottom: 15,
   },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#03615b',
+    backgroundColor: '#002D04',
     padding: 10,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,

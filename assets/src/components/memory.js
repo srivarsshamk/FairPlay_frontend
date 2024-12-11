@@ -3,11 +3,11 @@ import { View, Text, TouchableOpacity, Image, StyleSheet, Alert, SafeAreaView, D
 import { Button, IconButton } from 'react-native-paper';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
-// Get device dimensions
 const { width, height } = Dimensions.get('window');
 
-// Images (Use the images from your local assets folder)
 const images = [
   require('../../images/image1.png'),
   require('../../images/image2.png'),
@@ -28,31 +28,52 @@ const shuffleArray = (array) => {
   return shuffledArray;
 };
 
+const submitScore = async (finalScore) => {
+  try {
+    const userData = await AsyncStorage.getItem('userData');
+    if (userData) {
+      const parsedData = JSON.parse(userData);
+      const userId = parsedData.id;
+
+      const scoreData = {
+        game_name: 'memory',
+        score: finalScore,
+        user_id: userId
+      };
+
+      const response = await axios.post('http://127.0.0.1:8000/game-scores', scoreData);
+      Alert.alert('Score Submitted', `You scored ${finalScore} points!`);
+    } else {
+      throw new Error('User data not found');
+    }
+  } catch (error) {
+    console.error('Error submitting score:', error);
+    Alert.alert('Score Submission Failed', 'Please check your connection and try again.');
+  }
+};
+
 const App = () => {
   const navigation = useNavigation();
   const [cards, setCards] = useState([]);
   const [flippedIndices, setFlippedIndices] = useState([]);
   const [matchedPairs, setMatchedPairs] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [currentQuote, setCurrentQuote] = useState('');
-
-  const quotes = [
-    "True champions compete on their own merits, not on substances.",
-    "The greatest victory is achieved with honesty, not chemicals.",
-    "Doping might make you faster today, but it destroys the true legacy of sport tomorrow.",
-    "Real strength comes from within, not from a needle or a pill.",
-    "Fair play is the only way to truly measure greatness.",
-    "Drugs don't build champions; dedication, discipline, and determination do.",
-    "Victory earned through doping is not a victory at all – it's a defeat of the soul.",
-    "Integrity is the true test of an athlete's character.",
-    "Winning clean is the only way to win with pride.",
-    "Your legacy is built on your actions, not on substances.",
-  ];
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [score, setScore] = useState(0);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [gameActive, setGameActive] = useState(false);
 
   useEffect(() => {
     const shuffledCards = shuffleArray([...images, ...images].map((img, index) => ({ id: index, image: img, flipped: false, matched: false })));
     setCards(shuffledCards);
   }, []);
+
+  useEffect(() => {
+    if (gameActive) {
+      const timer = setInterval(() => setElapsedTime((prev) => prev + 1), 1000);
+      return () => clearInterval(timer);
+    }
+  }, [gameActive]);
 
   useEffect(() => {
     if (flippedIndices.length === 2) {
@@ -62,7 +83,6 @@ const App = () => {
         updatedCards[firstIndex].matched = true;
         updatedCards[secondIndex].matched = true;
         setMatchedPairs((prev) => prev + 1);
-        showNextQuote();
         setShowConfetti(true);
         setTimeout(() => setShowConfetti(false), 1000);
       } else {
@@ -77,6 +97,21 @@ const App = () => {
     }
   }, [flippedIndices]);
 
+  useEffect(() => {
+    if (matchedPairs === images.length) {
+      setGameActive(false);
+      const finalScore = Math.max(0, 1000 - elapsedTime * 10);
+      setScore(finalScore);
+      setTimeout(async () => {
+        await submitScore(finalScore);
+        Alert.alert(
+          'Congratulations!', 
+          `You matched all pairs in ${elapsedTime} seconds! Your score: ${finalScore}`
+        );
+      }, 1000);
+    }
+  }, [matchedPairs]);
+
   const handleCardPress = (index) => {
     if (cards[index].flipped || cards[index].matched) return;
 
@@ -87,29 +122,26 @@ const App = () => {
     setFlippedIndices((prev) => [...prev, index]);
   };
 
-  const showNextQuote = () => {
-    const remainingQuotes = quotes.filter((_, index) => index >= matchedPairs);
-    if (remainingQuotes.length > 0) {
-      setCurrentQuote(remainingQuotes[0]);
-    }
-  };
-
   const restartGame = () => {
     const shuffledCards = shuffleArray([...images, ...images].map((img, index) => ({ id: index, image: img, flipped: false, matched: false })));
     setCards(shuffledCards);
     setMatchedPairs(0);
     setShowConfetti(false);
-    setCurrentQuote('');
+    setElapsedTime(0);
+    setScore(0);
+    setGameStarted(false);
+    setGameActive(false);
   };
 
-  useEffect(() => {
-    if (matchedPairs === images.length) {
-      setTimeout(() => {
-        Alert.alert('Congratulations!', 'You have matched all the pairs!');
-      }, 1000);
-    }
-  }, [matchedPairs]);
+  const [showInstructions, setShowInstructions] = useState(true);
 
+  const startGame = () => {
+    setShowInstructions(false);
+    setGameStarted(true);
+    setGameActive(true);
+    setElapsedTime(0);
+  };
+  
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -119,28 +151,53 @@ const App = () => {
           onPress={() => navigation.goBack()}
           style={styles.backButton}
         />
-        <Text style={styles.title}>Anti Doping Memory Match</Text>
       </View>
-      <View style={styles.content}>
-        {showConfetti && <ConfettiCannon count={150} origin={{ x: width / 2, y: height / 3 }} />}
-        {currentQuote && (
-          <Text style={styles.quote}>
-            {`Do you know?\n${currentQuote}`}
+      {showInstructions ? (
+        <View style={styles.startScreen}>
+          <Text style={styles.title}>Anti Doping Memory Match</Text>
+          <Text style={styles.startText}>Ready to test your memory?</Text>
+          <Text style={styles.instructions}>
+            Instructions:
+            {"\n\n"}
+            1. Flip two cards at a time to find matching pairs.
+            {"\n"}
+            2. If the cards match, they stay flipped.
+            {"\n"}
+            3. If the cards don't match, they will flip back after a short time.
+            {"\n"}
+            4. Try to match all pairs in the shortest time possible.
           </Text>
-        )}
-        <View style={styles.grid}>
-          {cards.map((card, index) => (
-            <TouchableOpacity key={index} onPress={() => handleCardPress(index)} style={styles.card}>
-              <View style={[styles.cardInner, card.flipped || card.matched ? styles.flipped : null]}>
-                <Image source={card.flipped || card.matched ? card.image : require('../../images/hidden.png')} style={styles.cardImage} />
-              </View>
-            </TouchableOpacity>
-          ))}
+          <Button mode="contained" onPress={startGame} style={styles.startButton}>
+            Start Game
+          </Button>
         </View>
-        <Button mode="contained" onPress={restartGame} style={styles.button}>
-          Restart Game
-        </Button>
-      </View>
+      ) : (
+        <View style={styles.content}>
+          {showConfetti &&<ConfettiCannon count={150} origin={{ x: width / 2, y: height / 3 }} />}
+          <View style={styles.stats}>
+            <Text style={styles.timer}>Time: {elapsedTime}s</Text>
+            <Text style={styles.score}>Score: {score}</Text>
+          </View>
+          <View style={styles.grid}>
+            {cards.map((card, index) => (
+              <TouchableOpacity key={index} onPress={() => handleCardPress(index)} style={styles.card}>
+                <View style={[styles.cardInner, card.flipped || card.matched ? styles.flipped : null]}>
+                  <Image source={card.flipped || card.matched ? card.image : null} style={[styles.cardImage, {backgroundColor: card.flipped || card.matched ? 'transparent' : '#03615b'}]} />
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <Button
+  mode="contained"
+  onPress={restartGame}
+  style={[styles.restartButton, { justifyContent: 'center', alignItems: 'center' }]}
+>
+  <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#03615b' }}>
+    Restart Game
+  </Text>
+</Button>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -148,7 +205,7 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#90EE90', // Light green background color
+    backgroundColor: '#000',
   },
   header: {
     flexDirection: 'row',
@@ -162,64 +219,90 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   title: {
-    flex: 1,
     fontSize: 24,
-    color: '#000',
+    color: '#33FFBD',
     fontWeight: 'bold',
     textAlign: 'center',
+    marginBottom: 10,
   },
-  quote: {
-    fontSize: 18,
-    color: '#006400',
-    textAlign: 'center',
-    paddingHorizontal: 10,
+  startScreen: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  startText: {
+    fontSize: 20,
     marginBottom: 20,
-    fontStyle: 'italic',
+    color: '#33FFBD',
+    textAlign: 'center',
+  },
+  instructions: {
+    color: '#fff',
+    fontSize: 18,
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+  startButton: {
+    backgroundColor: '#03615b',
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  stats: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    width: '100%',
+    paddingVertical: 15,
+    backgroundColor: '#33FFBD',
+  },
+  timer: {
+    fontSize: 18,
+    color: '#000',
+  },
+  score: {
+    fontSize: 18,
+    color: '#000',
+  },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    width: 360,
     justifyContent: 'center',
-    marginBottom: 20,
+    marginTop: 30,
+    width: width * 0.4,
   },
   card: {
-    width: 80,
-    height: 80,
     margin: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-    backgroundColor: '#f0f0f0',
-    elevation: 5,
+    width: '20%',
+    height: 120,
   },
   cardInner: {
     width: '100%',
     height: '100%',
-    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#e0e0e0',
-    overflow: 'hidden',
+    backgroundColor: '#03615b',
+    borderRadius: 10,
   },
   flipped: {
-    backgroundColor: '#fff',
+    backgroundColor: '#33FFBD',
   },
   cardImage: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',
+    borderRadius: 10,
   },
-  button: {
+  restartButton: {
+    backgroundColor: '#33FFBD',
     marginTop: 20,
-    backgroundColor: '#6200EE',
-    width: 200,
+    width: '15%',
+    height: '6%',
+    padding: 10,
   },
 });
 
 export default App;
+
+

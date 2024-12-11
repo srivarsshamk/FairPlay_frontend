@@ -30,6 +30,7 @@ const ForumDetailScreen = ({ route, navigation }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerAnimation] = useState(new Animated.Value(0));
   const [forumMembers, setForumMembers] = useState([]);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     loadUserData();
@@ -100,7 +101,6 @@ const ForumDetailScreen = ({ route, navigation }) => {
       <Text style={styles.memberName}>{item.first_name}</Text>
     </TouchableOpacity>
   );
-
 
   const fetchMessages = async () => {
     try {
@@ -183,6 +183,9 @@ const ForumDetailScreen = ({ route, navigation }) => {
       Alert.alert('Error', 'Could not upload media');
     }
   };
+  const clearErrorMessage = () => {
+    setErrorMessage('');
+  };
 
   const sendMessage = async () => {
     if ((!newMessage.trim() && !imageUri) || !userId) return;
@@ -200,7 +203,13 @@ const ForumDetailScreen = ({ route, navigation }) => {
       setImageUri(null);
       fetchMessages();
     } catch (error) {
-      console.error('Error sending message:', error);
+      if (error.response && error.response.status === 409) {
+        // Assuming 403 is the status for spam detection
+        setErrorMessage('Spam detected. You can\'t send this message.');
+      } else {
+        console.error('Error sending message:', error);
+        setErrorMessage('An error occurred. Please try again.');
+      }
     }
   };
 
@@ -222,6 +231,20 @@ const ForumDetailScreen = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Error Message Display */}
+      {errorMessage && (
+        <View style={styles.errorMessageContainer}>
+          <View style={styles.errorMessageContent}>
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+            <TouchableOpacity 
+              style={styles.errorCloseButton} 
+              onPress={clearErrorMessage}
+            >
+              <Icon name="close" size={20} color="red" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
       {/* Header */}
       <View style={styles.header}>
   <TouchableOpacity 
@@ -333,9 +356,51 @@ const ForumDetailScreen = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  errorMessageContainer: {
+    backgroundColor: 'rgba(255, 0, 0, 0.1)',
+    marginHorizontal: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  errorMessageContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 10,
+  },
+  errorMessage: {
+    color: 'red',
+    flex: 1,
+    marginRight: 10,
+    fontSize: 14,
+  },
+  errorCloseButton: {
+    padding: 5,
+  },
   container: {
     flex: 1,
     backgroundColor: '#121212',
+  },
+  errorMessageContainer: {
+    backgroundColor: 'rgba(255, 0, 0, 0.1)',
+    marginHorizontal: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  errorMessageContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 10,
+  },
+  errorMessage: {
+    color: 'red',
+    flex: 1,
+    marginRight: 10,
+    fontSize: 14,
+  },
+  errorCloseButton: {
+    padding: 5,
   },
   header: {
     flexDirection: 'row',
@@ -491,6 +556,19 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
   },
+  errorMessageContainer: {
+    backgroundColor: 'rgba(255, 0, 0, 0.1)',
+    padding: 10,
+    marginHorizontal: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  errorMessage: {
+    color: 'red',
+    textAlign: 'center',
+    fontSize: 14,
+  },
 });
 
 export default ForumDetailScreen;
+
