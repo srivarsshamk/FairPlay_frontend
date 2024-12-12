@@ -1,4 +1,5 @@
 import { StatusBar } from "expo-status-bar";
+import SearchButton from "../components/SearchButton";
 import {
   StyleSheet,
   Text,
@@ -19,6 +20,7 @@ import ReportComponent from "../components/ReportComponent";
 import NewsTicker from "../components/NewsTicker";
 import CustomDrawer from "../components/CustomDrawer";
 import ChatbotComponent from "../components/ChatbotComponent";
+import { isPowerOfTwo } from "three/src/math/MathUtils.js";
 export default function HomeScreen() {
   const navigation = useNavigation();
   const [iconScale, setIconScale] = useState({});
@@ -154,6 +156,7 @@ export default function HomeScreen() {
             <Ionicons name="scan-outline" size={30} color="white" />
           </Animated.View>
         </TouchableOpacity>
+        <SearchButton onPress={( )=>navigation.navigate("SearchScreen")} />
         <ChatbotComponent/>
       </View>
     </View>

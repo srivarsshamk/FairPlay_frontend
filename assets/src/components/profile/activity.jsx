@@ -160,7 +160,7 @@ const Activity = () => {
 
   const handleCreatePost = () => {
     try {
-      navigation.navigate('Post');
+      navigation.navigate('allactivity');
     } catch (error) {
       console.error('Navigation to Post failed:', error);
     }
@@ -214,12 +214,6 @@ const Activity = () => {
       <View style={styles.tabs}>
         <TouchableOpacity style={[styles.tab, styles.activeTab]}>
           <Text style={[styles.tabText, styles.activeTabText]}>Posts</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tab}>
-          <Text style={styles.tabText}>Comments</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tab}>
-          <Text style={styles.tabText}>Images</Text>
         </TouchableOpacity>
       </View>
 

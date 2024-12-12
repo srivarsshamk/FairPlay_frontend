@@ -448,9 +448,9 @@ const LinkedInStyleFeed = () => {
         </TouchableOpacity>
         <View style={styles.header}>
           <View style={styles.titleContainer}>
-            <Text style={styles.headerTitle}>My Activity</Text>
+            <Text style={styles.headerTitle}>      My Activity</Text>
             <Text style={styles.followerCount}>
-              {userData.first_name ? `${userData.first_name}'s Feed` : '276 followers'}
+              {userData.first_name ? `        ${userData.first_name}'s Feed` : '276 followers'}
             </Text>
           </View>
           <View style={styles.headerIcons}>

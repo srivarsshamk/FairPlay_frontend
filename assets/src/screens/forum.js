@@ -23,10 +23,12 @@ const DiscussionForumScreen = ({ navigation }) => {
   const [forums, setForums] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState(null);
+  const [joinedForums, setJoinedForums] = useState([]);
 
   useEffect(() => {
     loadUserData();
     fetchForums();
+    fetchUserJoinedForums();
   }, []);
 
   const loadUserData = async () => {
@@ -53,6 +55,18 @@ const DiscussionForumScreen = ({ navigation }) => {
     }
   };
 
+  const fetchUserJoinedForums = async () => {
+    if (!userId) return;
+
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/users/${userId}/forums`);
+      const joinedForumIds = response.data.data.map(forum => forum.id);
+      setJoinedForums(joinedForumIds);
+    } catch (error) {
+      console.error('Error fetching joined forums:', error);
+    }
+  };
+
   const openCreateForumModal = () => {
     setIsCreateForumModalVisible(true);
   };
@@ -65,7 +79,7 @@ const DiscussionForumScreen = ({ navigation }) => {
     fetchForums();
   };
 
-  const handleJoinForum = async (forumId) => {
+  const handleJoinForum = async (forum) => {
     if (!userId) {
       Alert.alert('Error', 'User ID not found. Please log in again.');
       return;
@@ -73,12 +87,16 @@ const DiscussionForumScreen = ({ navigation }) => {
 
     try {
       const response = await axios.post('http://127.0.0.1:8000/forums/members', {
-        forum_id: forumId,
+        forum_id: forum.id,
         user_id: userId
       });
 
       if (response.status === 200 || response.status === 201) {
-        Alert.alert('Success', 'You have joined the forum!');
+        const updatedJoinedForums = [...joinedForums, forum.id];
+        setJoinedForums(updatedJoinedForums);
+        
+        // Navigate to forum messages
+        navigation.navigate('Forum msg', { forum });
       }
     } catch (error) {
       console.error('Error joining forum:', error);
@@ -86,39 +104,56 @@ const DiscussionForumScreen = ({ navigation }) => {
     }
   };
 
+  const handleForumPress = (forum) => {
+    // Check if user has already joined the forum
+    if (joinedForums.includes(forum.id)) {
+      navigation.navigate('Forum msg', { forum });
+    } else {
+      // Show join confirmation
+      Alert.alert(
+        'Join Forum',
+        `${forum.forum_name}\n\n${forum.description}\n\nWould you like to join this forum?`,
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel'
+          },
+          {
+            text: 'Join',
+            onPress: () => handleJoinForum(forum)
+          }
+        ]
+      );
+    }
+  };
+
   const ForumItem = ({ forum }) => {
     const imageUrl = `http://127.0.0.1:8000/images/${forum.image_url.split('/').pop()}`;
 
     return (
-        <TouchableOpacity 
-      style={styles.forumItemContainer}
-      onPress={() => navigation.navigate('Forum msg', { forum })}
-    >
-      <View style={styles.forumItemContainer}>
-        <Image 
-          source={{ uri: imageUrl }} 
-          style={styles.forumItemImage} 
-        />
-        <View style={styles.forumItemTextContainer}>
-          <Text style={styles.forumItemName}>{forum.forum_name}</Text>
-          <Text 
-            style={styles.forumItemDescription} 
-            numberOfLines={2}
-          >
-            {forum.description}
-          </Text>
+      <TouchableOpacity 
+        style={styles.forumItemContainer}
+        onPress={() => navigation.navigate('Forum msg', { forum })}
+      >
+        <View style={styles.forumItemContainer}>
+          <Image 
+            source={{ uri: imageUrl }} 
+            style={styles.forumItemImage} 
+          />
+          <View style={styles.forumItemTextContainer}>
+            <Text style={styles.forumItemName}>{forum.forum_name}</Text>
+            <Text 
+              style={styles.forumItemDescription} 
+              numberOfLines={2}
+            >
+              {forum.description}
+            </Text>
+          </View>
         </View>
-        <TouchableOpacity 
-          style={styles.joinButton}
-          onPress={() => handleJoinForum(forum.id)}
-        >
-          <Icon name="add-circle" size={30} color="#4287f5" />
-          <Text style={styles.joinButtonText}>Join</Text>
-        </TouchableOpacity>
-      </View>
       </TouchableOpacity>
     );
   };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -160,20 +195,20 @@ const DiscussionForumScreen = ({ navigation }) => {
 
       {/* Forums Horizontal ScrollView */}
       <ScrollView
-  style={[styles.forumsScrollContainer, { paddingVertical: 20 }]}
-  contentContainerStyle={[styles.forumsContentContainer, { minHeight: '120%' }]}
-  showsVerticalScrollIndicator={false}
->
-  {isLoading ? (
-    <Text style={styles.loadingText}>Loading forums...</Text>
-  ) : forums.length === 0 ? (
-    <Text style={styles.emptyListText}>No forums yet. Create one!</Text>
-  ) : (
-    forums.map((forum) => (
-      <ForumItem key={forum.id} forum={forum} />
-    ))
-  )}
-</ScrollView>
+        style={[styles.forumsScrollContainer, { paddingVertical: 20 }]}
+        contentContainerStyle={[styles.forumsContentContainer, { minHeight: '120%' }]}
+        showsVerticalScrollIndicator={false}
+      >
+        {isLoading ? (
+          <Text style={styles.loadingText}>Loading forums...</Text>
+        ) : forums.length === 0 ? (
+          <Text style={styles.emptyListText}>No forums yet. Create one!</Text>
+        ) : (
+          forums.map((forum) => (
+            <ForumItem key={forum.id} forum={forum} />
+          ))
+        )}
+      </ScrollView>
 
       {/* Create Forum Modal */}
       <CreateForumModal

@@ -60,12 +60,14 @@ import edumodulequiz from './assets/src/screens/edumodulequiz';
 import allactivity from "./assets/src/components/profile/allactivity";
 import EditProfile from "./assets/src/components/profile/EditProfile";
 import funmodulequiz from "./assets/src/screens/funmodulequiz";
+
+import SearchScreen from "./assets/src/screens/SearchScreen"
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="LandingPage" screenOptions={{ cardStyle: { height: "100%" } }}>
+      <Stack.Navigator initialRouteName="Login" screenOptions={{ cardStyle: { height: "100%" } }}>
         {/* Welcome Screen */}
         <Stack.Screen
           name="Login"
@@ -79,6 +81,11 @@ export default function AppNavigator() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
+          name="SearchScreen"
+          component={SearchScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
           name="HomeCoach"
           component={HomeCoachScreen}
           options={{ headerShown: false }}
@@ -89,11 +96,7 @@ export default function AppNavigator() {
           options={{ headerShown: false }}
         />
         {/* Profile Screens */}
-        <Stack.Screen
-          name="EditProfile"
-          component={EditProfile}
-          options={{ headerShown: false }}
-        />
+        
         
         <Stack.Screen
           name="allactivity"
@@ -331,6 +334,12 @@ export default function AppNavigator() {
           component={LandingPage}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="EditProfile"
+          component={EditProfile}
+          options={{ headerShown: false }}
+        />
+         
         <Stack.Screen name="ModuleScreen" component={ModulesScreen} />
         <Stack.Screen name="ChaptersScreen" component={ChaptersScreen} options={{ title: 'Chapters' }} />
         <Stack.Screen name="VideoScreen" component={VideoScreen} options={{ title: 'Video' }} />

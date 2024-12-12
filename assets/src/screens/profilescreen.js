@@ -20,7 +20,7 @@ import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import { ArrowLeft } from 'lucide-react-native';
 import ActivitySection from "../components/profile/activity";
-//import ContactInfo from "../components/profile/contactinfo";
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -449,37 +449,39 @@ const profilescreen = () => {
         <Text style={styles.contactInfoText}>Contact info</Text>
       </TouchableOpacity>
 
-      {/* Modal */}
       <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={closeModal}
+  animationType="slide"
+  transparent={true}
+  visible={modalVisible}
+  onRequestClose={closeModal}
+>
+  <View style={styles.modalOverlay}>
+    <View style={styles.modalContent}>
+      <Text style={styles.modalTitle}>Contact Info</Text>
+      <Text style={styles.modalText}>Phone: {userData?.phone_number}</Text>
+      <TouchableOpacity 
+        style={styles.modalButton} 
+        onPress={closeModal}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Contact Info</Text>
-            <Text style={styles.modalText}>Email: {userData?.email}</Text>
-            <Text style={styles.modalText}>Phone: {userData?.phone_number}</Text>
-            <Button title="Close" onPress={closeModal} />
-          </View>
-        </View>
-      </Modal>
+        <Text style={styles.modalButtonText}>Close</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal>
     </View>
               
             </View>
 
             <View style={styles.actionButtons}>
-              <TouchableOpacity style={styles.primaryButton}>
-                <Text style={styles.primaryButtonText}>Available</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.secondaryButton}>
+            
+              <TouchableOpacity
+      style={styles.secondaryButton}
+      onPress={() => navigation.navigate('ModuleScreen')}
+    >
                 <Text style={styles.secondaryButtonText}>Add certification</Text>
               </TouchableOpacity>
               
-              <TouchableOpacity style={styles.moreButton}>
-                <Text style={styles.moreButtonText}>More</Text>
-              </TouchableOpacity>
+              
             </View>
 
             <View style={styles.promoCards}>
@@ -488,7 +490,7 @@ const profilescreen = () => {
                 <Text style={styles.promoText}>
                   Share your expertise in anti-doping control and join our global network of professionals.
                 </Text>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('Forum')}>
                   <Text style={styles.getStartedText}>Get started</Text>
                 </TouchableOpacity>
               </View>
@@ -528,33 +530,9 @@ const profilescreen = () => {
             </View>
           </View>            
 
-            <View style={styles.sidebarCard}>
-              <View style={styles.sidebarHeader}>
-                <Text style={styles.sidebarTitle}>Working Languages</Text>
-                <TouchableOpacity 
-                  onPress={handleEditLanguages}
-                  activeOpacity={0.7}
-                >
-                  <Feather name="edit-2" size={16} color={colors.secondaryText} />
-                </TouchableOpacity>
-              </View>
-              <Text style={styles.sidebarText}>English, French</Text>
-            </View>
+            
 
-            <View style={styles.sidebarCard}>
-              <View style={styles.sidebarHeader}>
-                <Text style={styles.sidebarTitle}>WADA Profile & URL</Text>
-                <TouchableOpacity 
-                  onPress={handleEditWadaProfile}
-                  activeOpacity={0.7}
-                >
-                  <Feather name="edit-2" size={16} color={colors.secondaryText} />
-                </TouchableOpacity>
-              </View>
-              <Text style={styles.sidebarLink}>
-                www.wada-ama.org/profile/emma-wilson
-              </Text>
-            </View>
+            
           </ScrollView>
         </View>
       </View>
@@ -568,7 +546,52 @@ const profilescreen = () => {
 
    
 const styles = StyleSheet.create({
-  
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black overlay
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContent: {
+      width: '85%',
+      backgroundColor: '#161B22', // Dark gray background
+      borderRadius: 12,
+      padding: 20,
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5,
+      borderWidth: 1,
+      borderColor: '#002D04', // Dark green border
+    },
+    modalTitle: {
+      fontSize: 20,
+      fontWeight: '600',
+      color: '#00A86B', // Green text
+      marginBottom: 15,
+    },
+    modalText: {
+      color: '#C9D1D9', // Light gray text
+      fontSize: 16,
+      marginBottom: 20,
+      textAlign: 'center',
+    },
+    modalButton: {
+      backgroundColor: '#00A86B', // Green button
+      borderRadius: 8,
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+    },
+    modalButtonText: {
+      color: '#FFFFFF',
+      fontWeight: '600',
+      textAlign: 'center',
+    },
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',

@@ -19,13 +19,53 @@ const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [category, setCategory] = useState('');
-  const [dropdownOpen, setDropdownOpen] = useState(false); // New state for category
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  
+  // New state for validation errors
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+    category: ''
+  });
+
   const navigation = useNavigation();
 
+  const validateForm = () => {
+    let valid = true;
+    const newErrors = { email: '', password: '', category: '' };
+
+    // Email validation
+    if (!email) {
+      newErrors.email = 'Email is required';
+      valid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = 'Invalid email format';
+      valid = false;
+    }
+
+    // Password validation
+    if (!password) {
+      newErrors.password = 'Password is required';
+      valid = false;
+    } else if (password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+      valid = false;
+    }
+
+    // Category validation
+    if (!category) {
+      newErrors.category = 'Please select a category';
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
   const handleLogin = async () => {
-    if (!email || !password || !category) {
-      Alert.alert('Error', 'Please fill in all fields');
+    // First validate the form
+    if (!validateForm()) {
       return;
     }
 
@@ -37,7 +77,7 @@ const LoginScreen = () => {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
-        body: JSON.stringify({ email, password, category }), // Include category in the request body
+        body: JSON.stringify({ email, password, category }),
       });
 
       const responseData = await response.json();
@@ -95,10 +135,15 @@ const LoginScreen = () => {
                 placeholder="Mail"
                 placeholderTextColor="#999"
                 value={email}
-                onChangeText={setEmail}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  // Clear email error when user starts typing
+                  setErrors(prev => ({ ...prev, email: '' }));
+                }}
                 editable={!loading}
               />
             </View>
+            {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
 
             <View style={styles.inputWrapper}>
               <Lock width={20} height={20} color="#00A86B" style={styles.icon} />
@@ -108,10 +153,15 @@ const LoginScreen = () => {
                 placeholderTextColor="#999"
                 secureTextEntry
                 value={password}
-                onChangeText={setPassword}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  // Clear password error when user starts typing
+                  setErrors(prev => ({ ...prev, password: '' }));
+                }}
                 editable={!loading}
               />
             </View>
+            {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
 
             <DropDownPicker
               open={dropdownOpen}
@@ -124,12 +174,17 @@ const LoginScreen = () => {
                 { label: 'Others', value: 'others' },
               ]}
               setOpen={setDropdownOpen}
-              setValue={setCategory}
+              setValue={(val) => {
+                setCategory(val);
+                // Clear category error when user selects a category
+                setErrors(prev => ({ ...prev, category: '' }));
+              }}
               placeholder="Select Category"
               style={styles.dropdown}
               dropDownContainerStyle={styles.dropdownContainer}
               disabled={loading}
             />
+            {errors.category ? <Text style={styles.errorText}>{errors.category}</Text> : null}
 
             <TouchableOpacity
               style={[styles.loginButton, loading && styles.loginButtonDisabled]}
@@ -155,7 +210,17 @@ const LoginScreen = () => {
 };
 
 
+
+
 const styles = StyleSheet.create({
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginBottom: 10,
+    alignSelf: 'flex-start',
+    width: '100%',
+    paddingHorizontal: 16,
+  },
   mainContainer: {
     flex: 1,
   },

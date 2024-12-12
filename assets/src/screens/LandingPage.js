@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
-  View, 
+  View, Linking,
   Text, 
   StyleSheet, 
   ScrollView, 
@@ -26,7 +26,7 @@ import axios from 'axios';
 
 // Import Social Media Icons
 import InstagramIcon from '../../images/socialmedia/instagram.png';
-import TwitterIcon from '../../images/socialmedia/facebook.png';
+import TwitterIcon from '../../images/socialmedia/twitter.png';
 import LinkedinIcon from '../../images/socialmedia/linkedin.png';
 
 const { width, height } = Dimensions.get('window');
@@ -101,23 +101,27 @@ const LandingPage = ({ navigation }) => {
   ];
   
 
-  const scrollToSection = (section) => {
-    switch(section) {
-      case 'solutions':
-        scrollViewRef.current?.scrollTo({
-          y: height * 1.5, // Adjust based on your layout
-          animated: true
+  const solutionsContainerRef = useRef(null);
+
+const scrollToSection = (section) => {
+  switch (section) {
+    case 'solutions':
+      if (solutionsContainerRef.current) {
+        solutionsContainerRef.current.measure((x, y, width, height, pageX, pageY) => {
+          scrollViewRef.current?.scrollTo({
+            y: pageY, // Scroll to the start of the solutions container
+            animated: true,
+          });
         });
-        break;
-        case 'about':
-      scrollViewRef.current?.scrollTo({
-        y: height * 2, // Adjust based on your layout
-        animated: true
-      });
+      }
       break;
-      // Add more sections as needed
-    }
-  };
+
+   
+
+    // Add more sections as needed
+  }
+};
+
 
   const handleNewsletterSubscription = async () => {
     if (email.trim() && email.includes('@')) {
@@ -247,9 +251,7 @@ const LandingPage = ({ navigation }) => {
           resizeMode="contain"
         />
         <View style={styles.navItems}>
-          <TouchableOpacity onPress={() => scrollToSection('about')}>
-            <Text style={styles.navItem}>About</Text>
-          </TouchableOpacity>
+          
           <TouchableOpacity onPress={() => scrollToSection('solutions')}>
             <Text style={styles.navItem}>Features</Text>
           </TouchableOpacity>
@@ -294,35 +296,14 @@ const LandingPage = ({ navigation }) => {
           </View>
         </View>
 
-        {/* About Section */}
-       {/* About Section */}
-        <View style={styles.aboutSection}>
-          <Animated.Image 
-            source={require('../../images/aboutus.png')}
-            style={[styles.image, { opacity: imageOpacity, transform: [{ translateY: imageSlide }] }]}
-            resizeMode="contain"
-          />
-        </View>
-     
-       {/* About Doping Section */}
-<View style={styles.aboutdSection}>
-  <Animated.Image 
-    source={{ uri: 'https://www.dropbox.com/scl/fi/o31rq1ghfxfdywma18l3n/AboutDoping.png?rlkey=wx0zgu5oyphy9sdozzf52jkvn&st=s5yd0z21&raw=1' }}
-    style={[styles.image, { opacity: imageOpacity, transform: [{ translateY: imageSlide }] }]}
-    resizeMode="contain"
-  />
-</View>
-
+       
     
-        {/* Solutions Carousel */}
-        <View style={styles.solutionsContainer}>
-          <Text style={styles.sectionTitle}>
-            Our <Text style={styles.greenText}>Features</Text>
-          </Text>
-          <FeatureCarousel />
-        </View>
-
-        
+        <View ref={solutionsContainerRef} style={styles.solutionsContainer}>
+  <Text style={styles.sectionTitle}>
+    Our <Text style={styles.greenText}>Features</Text>
+  </Text>
+  <FeatureCarousel />
+</View>
 
         {/* Newsletter Section */}
         <View style={styles.newsletterContainer}>
@@ -357,28 +338,28 @@ const LandingPage = ({ navigation }) => {
             <Text style={styles.greenText}>Connect</Text> With NADA
           </Text>
           <View style={styles.socialLinks}>
-            <TouchableOpacity
-              style={styles.socialIcon}
-              onPress={() => navigation.navigate('WebView', { url: 'https://www.instagram.com/nadaindiaoffice/?hl=en' })}
-            >
-              <Image source={InstagramIcon} style={styles.socialIconImage} />
-              <Text style={styles.socialText}>Instagram</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.socialIcon}
-              onPress={() => navigation.navigate('WebView', { url: 'https://x.com/NADAIndiaOffice?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor' })}
-            >
-              <Image source={TwitterIcon} style={styles.socialIconImage} />
-              <Text style={styles.socialText}>Twitter</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.socialIcon}
-              onPress={() => navigation.navigate('WebView', { url: 'https://www.linkedin.com/company/national-anti-doping-agency-india/?originalSubdomain=in' })}
-            >
-              <Image source={LinkedinIcon} style={styles.socialIconImage} />
-              <Text style={styles.socialText}>LinkedIn</Text>
-            </TouchableOpacity>
-          </View>
+      <TouchableOpacity
+        style={styles.socialIcon}
+        onPress={() => Linking.openURL('https://www.instagram.com/nadaindiaoffice/?hl=en')}
+      >
+        <Image source={InstagramIcon} style={styles.socialIconImage} />
+        <Text style={styles.socialText}>Instagram</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.socialIcon}
+        onPress={() => Linking.openURL('https://x.com/NADAIndiaOffice?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor')}
+      >
+        <Image source={TwitterIcon} style={styles.socialIconImage} />
+        <Text style={styles.socialText}>Twitter</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.socialIcon}
+        onPress={() => Linking.openURL('https://www.linkedin.com/company/national-anti-doping-agency-india/?originalSubdomain=in')}
+      >
+        <Image source={LinkedinIcon} style={styles.socialIconImage} />
+        <Text style={styles.socialText}>LinkedIn</Text>
+      </TouchableOpacity>
+    </View>
         </View>
 
       </ScrollView>
@@ -504,23 +485,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
-  aboutSection: {
-    backgroundColor: '#000000',
-    paddingVertical: 50,
-    paddingHorizontal: 40,
-    justifyContent: 'center', // Vertically centers the image
-    alignItems: 'left', // Horizontally centers the image
-    flex: 1, // Ensures the container takes up the full screen height
-  },
-  aboutdSection: {
-    backgroundColor: '#000000',
-    paddingVertical: 40,
-    paddingHorizontal: 40,
-    marginBottom: 10, 
-    justifyContent: 'flex-end',  // Aligns horizontally to the right
-  alignItems: 'flex-end',  // Aligns vertically to the right
-  flex: 1,  // Ensures the container takes up the full screen height
-  },
+ 
   image: {
     width: '65%', // Adjust this as needed
     height: undefined, // Keeps aspect ratio intact
@@ -542,12 +507,7 @@ const styles = StyleSheet.create({
   },
 
   
-  aboutImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-    
-  },
+  
   solutionsContainer: {
     backgroundColor: '#000000',
     paddingVertical: 5,

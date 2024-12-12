@@ -1,23 +1,50 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, StyleSheet, TextInput, Modal } from 'react-native';
 import axios from 'axios';
-import { ChevronLeft, Users, BookOpen, CalendarDays, Link, ArrowDown } from 'lucide-react';
+import { ChevronLeft, Users, BookOpen, CalendarDays, Link, ArrowDown, Search, Filter, X } from 'lucide-react';
 
 const Journals = () => {
   const [journals, setJournals] = useState([]);
+  const [filteredJournals, setFilteredJournals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  
+  // Search and filter states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedJournals, setSelectedJournals] = useState([]);
+  const [selectedAuthors, setSelectedAuthors] = useState([]);
+  
+  // Modal states
+  const [journalModalVisible, setJournalModalVisible] = useState(false);
+  const [authorModalVisible, setAuthorModalVisible] = useState(false);
+
+  // Unique publications and authors extraction
+  const [uniqueJournals, setUniqueJournals] = useState([]);
+  const [uniqueAuthors, setUniqueAuthors] = useState([]);
 
   const fetchJournals = async (currentPage) => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://127.0.0.1:8000/journals?page=${currentPage}&limit=5`);
+      const response = await axios.get(`http://127.0.0.1:8000/journals?page=${currentPage}&limit=20`);
       const newJournals = response.data.data || [];
-
-      setJournals(prev => 
-        currentPage === 1 ? newJournals : [...prev, ...newJournals]
-      );
+  
+      // Update journals and get unique publications and publishers
+      const updatedJournals = currentPage === 1 ? newJournals : [...journals, ...newJournals];
+      setJournals(updatedJournals);
+      
+      // Extract unique PUBLISHERS and authors
+      const publishers_list = [...new Set(updatedJournals.map(j => j.publisher))];
+      const authors_list = [...new Set(
+        updatedJournals.flatMap(j => j.authors || [])
+      )];
+      
+      setUniqueJournals(publishers_list);  // Now this holds PUBLISHERS
+      setUniqueAuthors(authors_list);
+  
+      // Initial filtered results
+      setFilteredJournals(updatedJournals);
+      
       setHasMore(newJournals.length === 3);
     } catch (error) {
       console.error('Error:', error);
@@ -30,12 +57,64 @@ const Journals = () => {
     fetchJournals(1);
   }, []);
 
+  // Search and Filter Logic
+useEffect(() => {
+  let result = journals;
+
+  // Apply publisher filter (was previously publication filter)
+  if (selectedJournals.length > 0) {
+    result = result.filter(journal => 
+      selectedJournals.includes(journal.publisher) // Filtering by publisher
+    );
+  }
+
+  // Apply author filter
+  if (selectedAuthors.length > 0) {
+    result = result.filter(journal => 
+      journal.authors.some(author => 
+        selectedAuthors.includes(author)
+      )
+    );
+  }
+
+  // Apply search query
+  if (searchQuery) {
+    result = result.filter(journal => 
+      journal.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      journal.authors.some(author => 
+        author.toLowerCase().includes(searchQuery.toLowerCase())
+      ) ||
+      journal.journal.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }
+
+  setFilteredJournals(result);
+}, [searchQuery, selectedJournals, selectedAuthors, journals]);
+
+
   const loadMoreJournals = () => {
     if (hasMore && !loading) {
       const nextPage = page + 1;
       setPage(nextPage);
       fetchJournals(nextPage);
     }
+  };
+
+  // Toggle selection for journals and authors
+  const toggleJournalSelection = (journal) => {
+    setSelectedJournals(prev => 
+      prev.includes(journal) 
+        ? prev.filter(j => j !== journal)
+        : [...prev, journal]
+    );
+  };
+
+  const toggleAuthorSelection = (author) => {
+    setSelectedAuthors(prev => 
+      prev.includes(author) 
+        ? prev.filter(a => a !== author)
+        : [...prev, author]
+    );
   };
 
   const JournalCard = ({ journal }) => (
@@ -45,7 +124,7 @@ const Journals = () => {
           {journal?.title || 'No Title Available'}
         </Text>
       </View>
-
+  
       <View style={styles.journalDetailContent}>
         <View style={styles.detailInfoContainer}>
           <View style={styles.detailRow}>
@@ -66,6 +145,12 @@ const Journals = () => {
               Published: {journal?.published_date || 'N/A'}
             </Text>
           </View>
+          {/* New Publisher Field */}
+          <View style={styles.detailRow}>
+            <Text style={styles.detailInfoText}>
+              Publisher: {journal?.publisher || 'N/A'}
+            </Text>
+          </View>
           {journal?.url && (
             <TouchableOpacity 
               onPress={() => window.open(journal.url, '_blank')}
@@ -76,7 +161,7 @@ const Journals = () => {
             </TouchableOpacity>
           )}
         </View>
-
+  
         <View>
           <Text style={styles.doiTitle}>DOI</Text>
           <Text style={styles.doiText}>{journal?.doi || 'N/A'}</Text>
@@ -84,13 +169,121 @@ const Journals = () => {
       </View>
     </TouchableOpacity>
   );
+  
+  // Modal for selecting journals or authors
+  const FilterModal = ({ 
+    visible, 
+    onClose, 
+    title, 
+    items, 
+    selectedItems, 
+    onToggleSelection 
+  }) => (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onClose}
+    >
+      <View style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>{title}</Text>
+            <TouchableOpacity onPress={onClose}>
+              <X style={styles.closeIcon} />
+            </TouchableOpacity>
+          </View>
+          <FlatList
+            data={items}
+            renderItem={({ item }) => (
+              <TouchableOpacity 
+                style={[
+                  styles.filterItem,
+                  selectedItems.includes(item) && styles.selectedFilterItem
+                ]}
+                onPress={() => onToggleSelection(item)}
+              >
+                <Text style={[
+                  styles.filterItemText,
+                  selectedItems.includes(item) && styles.selectedFilterItemText
+                ]}>
+                  {item}
+                </Text>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item) => item}
+          />
+        </View>
+      </View>
+    </Modal>
+  );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.pageTitle}>Refer to latest scientific journals</Text>
+      <Text style={styles.pageTitle}>Scientific Journals</Text>
       
+      {/* Search and Filter Section */}
+      <View style={styles.searchFilterContainer}>
+        <View style={styles.searchInputContainer}>
+          <Search style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search journals, authors..."
+            placeholderTextColor="#666"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
+        
+        {/* Filter Buttons */}
+        <View style={styles.filterButtonsContainer}>
+          <TouchableOpacity 
+            style={styles.filterButton}
+            onPress={() => setJournalModalVisible(true)}
+          >
+            <BookOpen style={styles.filterButtonIcon} />
+            <Text style={styles.filterButtonText}>Publisher</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.filterButton}
+            onPress={() => setAuthorModalVisible(true)}
+          >
+            <Users style={styles.filterButtonIcon} />
+            <Text style={styles.filterButtonText}>Authors</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Selected Filters */}
+        {(selectedJournals.length > 0 || selectedAuthors.length > 0) && (
+          <View style={styles.selectedFiltersContainer}>
+            {selectedJournals.map(journal => (
+              <TouchableOpacity 
+                key={journal} 
+                style={styles.selectedFilterChip}
+                onPress={() => toggleJournalSelection(journal)}
+              >
+                <Text style={styles.selectedFilterChipText}>{journal}</Text>
+                <X style={styles.chipCloseIcon} />
+              </TouchableOpacity>
+            ))}
+            {selectedAuthors.map(author => (
+              <TouchableOpacity 
+                key={author} 
+                style={styles.selectedFilterChip}
+                onPress={() => toggleAuthorSelection(author)}
+              >
+                <Text style={styles.selectedFilterChipText}>{author}</Text>
+                <X style={styles.chipCloseIcon} />
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+      </View>
+      
+      {/* Journals List */}
       <FlatList
-        data={journals}
+        data={filteredJournals}
         renderItem={({ item }) => <JournalCard journal={item} />}
         keyExtractor={(journal, index) => journal?.doi || `journal-${index}`}
         ListFooterComponent={() => (
@@ -111,16 +304,42 @@ const Journals = () => {
             </TouchableOpacity>
           )
         )}
-        horizontal={true}  // Enable horizontal scroll
-        showsHorizontalScrollIndicator={false}  // Hide scroll indicator
-        contentContainerStyle={styles.horizontalContainer}  // Add padding if needed
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.horizontalContainer}
       />
       
-      {loading && journals.length === 0 && (
+      {loading && filteredJournals.length === 0 && (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#1DB954" />
         </View>
       )}
+
+      {!loading && filteredJournals.length === 0 && (
+        <View style={styles.noResultsContainer}>
+          <Text style={styles.noResultsText}>No journals found</Text>
+        </View>
+      )}
+
+      {/* Modals for Filtering */}
+      <FilterModal
+  visible={journalModalVisible}
+  onClose={() => setJournalModalVisible(false)}
+  title="Select Publishers"
+  items={uniqueJournals}  // This should be the list of publishers
+  selectedItems={selectedJournals}  // Selected publishers will be filtered
+  onToggleSelection={toggleJournalSelection}
+/>
+
+
+      <FilterModal
+        visible={authorModalVisible}
+        onClose={() => setAuthorModalVisible(false)}
+        title="Select Authors"
+        items={uniqueAuthors}
+        selectedItems={selectedAuthors}
+        onToggleSelection={toggleAuthorSelection}
+      />
     </View>
   );
 };
@@ -235,6 +454,94 @@ const styles = StyleSheet.create({
   horizontalContainer: {
     paddingVertical: 8,  // Optional padding for better layout
   },
+  filterButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  filterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#222',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    flex: 0.48,
+  },
+  filterButtonIcon: {
+    color: '#1DB954',
+    marginRight: 8,
+  },
+  filterButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    width: '90%',
+    backgroundColor: '#121212',
+    borderRadius: 20,
+    padding: 20,
+    maxHeight: '80%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  modalTitle: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  closeIcon: {
+    color: '#1DB954',
+  },
+  filterItem: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#222',
+  },
+  selectedFilterItem: {
+    backgroundColor: '#1DB954',
+  },
+  filterItemText: {
+    color: '#FFFFFF',
+  },
+  selectedFilterItemText: {
+    color: '#000000',
+  },
+  selectedFiltersContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 10,
+  },
+  selectedFilterChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1DB954',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 20,
+    margin: 5,
+  },
+  selectedFilterChipText: {
+    color: '#000000',
+    marginRight: 5,
+  },
+  chipCloseIcon: {
+    color: '#000000',
+    width: 16,
+    height: 16,
+  },
 });
+
+
 
 export default Journals;

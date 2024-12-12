@@ -145,9 +145,8 @@ const EditProfile = () => {
         if (response.ok) {
           const updatedData = await response.json();
           await AsyncStorage.setItem('userData', JSON.stringify(updatedData));
-          Alert.alert('Success', 'Profile updated successfully', [
-            { text: 'OK', onPress: () => navigation.navigate('ProfilePage', { updatedData }) },
-          ]);
+          // Replace Alert with navigation or toast
+          navigation.navigate('Profile', { updatedData });
         } else {
           const errorData = await response.json();
           Alert.alert('Error', errorData.detail || 'Failed to update profile');
@@ -191,11 +190,11 @@ const EditProfile = () => {
     >
       <View style={styles.container}>
         <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <TouchableOpacity onPress={() => navigation.navigate('Profile', { updatedData })} style={styles.backButton}>
             <Feather name="arrow-left" size={24} color={colors.text} />
           </TouchableOpacity>
           <Text style={styles.title}>Edit Profile</Text>
-          <TouchableOpacity onPress={handleSubmit} style={styles.saveButton}>
+          <TouchableOpacity onPress={handleSubmit,{ updatedData }} style={styles.saveButton}>
             <Text style={styles.saveButtonText}>Save</Text>
             <Feather name="check" size={20} color="#fff" style={styles.saveIcon} />
           </TouchableOpacity>

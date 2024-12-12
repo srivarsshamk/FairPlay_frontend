@@ -13,7 +13,7 @@ import {
 import { Mail, Lock, User, Phone } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import SpaceBackground from '../components/SpaceBackground';
-import { Picker } from '@react-native-picker/picker'; // Import Picker
+import { Picker } from '@react-native-picker/picker';
 
 const SignupScreen = () => {
   const [firstName, setFirstName] = useState('');
@@ -21,13 +21,85 @@ const SignupScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [userType, setUserType] = useState(''); // State for dropdown selection
+  const [userType, setUserType] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // New validation state
+  const [errors, setErrors] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    phoneNumber: '',
+    userType: ''
+  });
+
   const navigation = useNavigation();
 
+  const validateForm = () => {
+    let valid = true;
+    const newErrors = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      phoneNumber: '',
+      userType: ''
+    };
+
+    // First Name Validation
+    if (!firstName.trim()) {
+      newErrors.firstName = 'First Name is required';
+      valid = false;
+    }
+
+    // Last Name Validation
+    if (!lastName.trim()) {
+      newErrors.lastName = 'Last Name is required';
+      valid = false;
+    }
+
+    // Email Validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.trim()) {
+      newErrors.email = 'Email is required';
+      valid = false;
+    } else if (!emailRegex.test(email)) {
+      newErrors.email = 'Invalid email format';
+      valid = false;
+    }
+
+    // Password Validation
+    if (!password) {
+      newErrors.password = 'Password is required';
+      valid = false;
+    } else if (password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+      valid = false;
+    }
+
+    // Phone Number Validation
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneNumber.trim()) {
+      newErrors.phoneNumber = 'Phone Number is required';
+      valid = false;
+    } else if (!phoneRegex.test(phoneNumber)) {
+      newErrors.phoneNumber = 'Invalid phone number (10 digits required)';
+      valid = false;
+    }
+
+    // User Type Validation
+    if (!userType) {
+      newErrors.userType = 'User Type is required';
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
   const handleSignup = async () => {
-    if (!firstName || !lastName || !email || !password || !phoneNumber || !userType) {
-      Alert.alert('Error', 'Please fill in all fields');
+    if (!validateForm()) {
       return;
     }
 
@@ -39,9 +111,9 @@ const SignupScreen = () => {
         email,
         password,
         phone_number: phoneNumber,
-        category: userType, // Send selected user type
-        age:null,
-        bio:null
+        category: userType,
+        age: null,
+        bio: null
       };
 
       const response = await fetch('http://127.0.0.1:8000/users', {
@@ -56,12 +128,8 @@ const SignupScreen = () => {
       const responseData = await response.json();
 
       if (response.ok) {
-        Alert.alert('Success', 'Account created successfully', [
-          {
-            text: 'Login',
-            onPress: () => navigation.navigate('Login'),
-          },
-        ]);
+        // Navigate to Home screen instead of showing an alert
+        navigation.navigate('Home');
       } else {
         const errorMessage = responseData.detail
           ? Array.isArray(responseData.detail)
@@ -78,11 +146,6 @@ const SignupScreen = () => {
       setLoading(false);
     }
   };
-
-  const navigateToLogin = () => {
-    navigation.navigate('Login');
-  };
-
   return (
     <View style={styles.mainContainer}>
       <SpaceBackground />
@@ -101,10 +164,14 @@ const SignupScreen = () => {
                   style={styles.input}
                   placeholder="First Name"
                   value={firstName}
-                  onChangeText={setFirstName}
+                  onChangeText={(text) => {
+                    setFirstName(text);
+                    setErrors(prev => ({ ...prev, firstName: '' }));
+                  }}
                   editable={!loading}
                 />
               </View>
+              {errors.firstName ? <Text style={styles.errorText}>{errors.firstName}</Text> : null}
 
               <View style={styles.inputWrapper}>
                 <User width={20} height={20} color="#00A86B" style={styles.icon} />
@@ -112,10 +179,14 @@ const SignupScreen = () => {
                   style={styles.input}
                   placeholder="Last Name"
                   value={lastName}
-                  onChangeText={setLastName}
+                  onChangeText={(text) => {
+                    setLastName(text);
+                    setErrors(prev => ({ ...prev, lastName: '' }));
+                  }}
                   editable={!loading}
                 />
               </View>
+              {errors.lastName ? <Text style={styles.errorText}>{errors.lastName}</Text> : null}
 
               <View style={styles.inputWrapper}>
                 <Mail width={20} height={20} color="#00A86B" style={styles.icon} />
@@ -125,10 +196,14 @@ const SignupScreen = () => {
                   keyboardType="email-address"
                   autoCapitalize="none"
                   value={email}
-                  onChangeText={setEmail}
+                  onChangeText={(text) => {
+                    setEmail(text);
+                    setErrors(prev => ({ ...prev, email: '' }));
+                  }}
                   editable={!loading}
                 />
               </View>
+              {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
 
               <View style={styles.inputWrapper}>
                 <Phone width={20} height={20} color="#00A86B" style={styles.icon} />
@@ -137,10 +212,14 @@ const SignupScreen = () => {
                   placeholder="Phone Number"
                   keyboardType="phone-pad"
                   value={phoneNumber}
-                  onChangeText={setPhoneNumber}
+                  onChangeText={(text) => {
+                    setPhoneNumber(text);
+                    setErrors(prev => ({ ...prev, phoneNumber: '' }));
+                  }}
                   editable={!loading}
                 />
               </View>
+              {errors.phoneNumber ? <Text style={styles.errorText}>{errors.phoneNumber}</Text> : null}
 
               <View style={styles.inputWrapper}>
                 <Lock width={20} height={20} color="#00A86B" style={styles.icon} />
@@ -149,18 +228,25 @@ const SignupScreen = () => {
                   placeholder="Password"
                   secureTextEntry
                   value={password}
-                  onChangeText={setPassword}
+                  onChangeText={(text) => {
+                    setPassword(text);
+                    setErrors(prev => ({ ...prev, password: '' }));
+                  }}
                   editable={!loading}
                 />
               </View>
+              {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
 
-              {/* Dropdown for user type */}
               <View style={styles.inputWrapper}>
                 <Picker
                   selectedValue={userType}
-                  onValueChange={(itemValue) => setUserType(itemValue)}
+                  onValueChange={(itemValue) => {
+                    setUserType(itemValue);
+                    setErrors(prev => ({ ...prev, userType: '' }));
+                  }}
                   style={styles.picker}
                 >
+                  <Picker.Item label="Select User Type" value="" />
                   <Picker.Item label="Student" value="student" />
                   <Picker.Item label="Athlete" value="athlete" />
                   <Picker.Item label="Coach" value="coach" />
@@ -168,6 +254,7 @@ const SignupScreen = () => {
                   <Picker.Item label="Others" value="others" />
                 </Picker>
               </View>
+              {errors.userType ? <Text style={styles.errorText}>{errors.userType}</Text> : null}
 
               <TouchableOpacity
                 style={[styles.signupButton, loading && styles.signupButtonDisabled]}
@@ -179,7 +266,7 @@ const SignupScreen = () => {
                 </Text>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={navigateToLogin} style={styles.loginLink}>
+              <TouchableOpacity  style={styles.loginLink}>
                 <Text style={styles.loginText}>
                   Already have an account?{' '}
                   <Text style={styles.signupText}>Login</Text>
@@ -193,7 +280,15 @@ const SignupScreen = () => {
   );
 };
 
+
 const styles = StyleSheet.create({
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginBottom: 10,
+    marginLeft: 16,
+    alignSelf: 'flex-start',
+  },
   mainContainer: {
     flex: 1,
   },

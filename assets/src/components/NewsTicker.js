@@ -69,7 +69,7 @@ const NewsTicker = () => {
   }, [news, scrollX]);
 
   const handleSeeMore = () => {
-    navigation.navigate('News');
+    navigation.navigate('NewsDisplay');
   };
 
   const handleNewsPress = (article) => {
