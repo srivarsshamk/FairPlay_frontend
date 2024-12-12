@@ -46,9 +46,22 @@ const LoginScreen = () => {
       if (response.ok) {
         // Store user data in AsyncStorage
         await AsyncStorage.setItem('userData', JSON.stringify(responseData));
-        navigation.navigate('Home', {
-          updateProfile: true,
-        });
+  
+        // Navigate to the appropriate screen based on the category
+        switch (category) {
+          case 'coach':
+            navigation.navigate('HomeCoach', { updateProfile: true });
+            break;
+          case 'experts':
+            navigation.navigate('HomeExpert', { updateProfile: true });
+            break;
+          case 'student':
+          case 'athlete':
+            navigation.navigate('Home', { updateProfile: true });
+            break;
+          default:
+            Alert.alert('Error', 'Invalid category');
+        }
       } else {
         Alert.alert('Login Failed', responseData.detail || 'Invalid credentials');
       }

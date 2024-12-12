@@ -3,6 +3,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "./assets/src/screens/LoginScreen";
 import HomeScreen from "./assets/src/screens/homescreen";
+import HomeCoachScreen from "./assets/src/screens/home_coach";
+import HomeExpertScreen from "./assets/src/screens/home_expert";
 import GameScreen from "./assets/src/screens/gamescreen";
 import Hangman from "./assets/src/components/hangman";
 import Sort from "./assets/src/components/sort";
@@ -74,6 +76,16 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="HomeCoach"
+          component={HomeCoachScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="HomeExpert"
+          component={HomeExpertScreen}
           options={{ headerShown: false }}
         />
         {/* Profile Screens */}

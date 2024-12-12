@@ -164,6 +164,7 @@ const SignupScreen = () => {
                   <Picker.Item label="Student" value="student" />
                   <Picker.Item label="Athlete" value="athlete" />
                   <Picker.Item label="Coach" value="coach" />
+                  <Picker.Item label="Experts" value="experts" />
                   <Picker.Item label="Others" value="others" />
                 </Picker>
               </View>
